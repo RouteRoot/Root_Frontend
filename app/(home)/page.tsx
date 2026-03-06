@@ -12,7 +12,7 @@ export default function Home() {
       <section className="relative h-[calc(100vh-64px)] overflow-hidden bg-linear-to-b from-white via-[#e7d3c2] to-[#ebc3a4]">
         <div className="absolute bottom-10 left-10 z-10">
           <Image
-            src="/rooty-1.svg"
+            src="/rooty-2.svg"
             alt="ROOTY"
             width={640}
             height={450}
