@@ -1,7 +1,10 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import AnimatedKeyword from "@/components/shared/animation/AnimationKeywords";
+import SearchBar from "@/components/shared/search/searchBar";
+import ScrollDownButton from "@/components/buttons/ScrollDownButton";
+
 export default function Home() {
   return (
     <main>
@@ -11,25 +14,27 @@ export default function Home() {
           <Image
             src="/rooty-1.svg"
             alt="ROOTY"
-            width={620}
+            width={640}
             height={450}
             priority
           />
         </div>
-        <div className="relative z-10 mx-auto max-w-7xl h-full flex items-center justify-end px-6 pr-25">
+        <div className="relative z-10 mx-auto flex h-full max-w-7xl items-start justify-end px-6 pr-25 pt-[24vh]">
           <div className="max-w-xl text-left">
             <h1 className="text-6xl font-bold leading-tight text-gray-900">
               뿌리에서 <AnimatedKeyword />
               <br />
               자격증 찾고 계신가요?
             </h1>
-            <p className="mt-6 text-xl text-gray-700 leading-relaxed">
+            <p className="mt-6 text-xl leading-relaxed text-gray-700">
               시험 일정부터 학습 로드맵까지
               <br />
               우리가 당신의 경로를 설계합니다
             </p>
+            <SearchBar />
           </div>
         </div>
+        <ScrollDownButton targetId="second-section" />
       </section>
 
       {/* 두 번째 섹션 */}
