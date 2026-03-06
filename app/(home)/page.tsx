@@ -38,7 +38,7 @@ export default function Home() {
       </section>
 
       {/* 두 번째 섹션 */}
-      <section className="min-h-screen bg-[#f8f8f8]">
+      <section id="second-section" className="min-h-screen bg-[#f8f8f8]">
         <div className="mx-auto max-w-7xl px-6 py-24">두 번째 섹션</div>
       </section>
 
