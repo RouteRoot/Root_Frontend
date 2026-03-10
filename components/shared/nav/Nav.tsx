@@ -17,15 +17,16 @@ export default function Nav() {
         {/* 전체를 살짝 오른쪽으로 */}
         <div className="relative w-full h-full flex items-center lg:ml-10 xl:ml-16">
           <div className="flex items-center shrink-0">
-            <Image
-              src="/logo.svg"
-              alt="ROOT Logo"
-              width={34}
-              height={50}
-              className="h-auto"
-            />
+            <Link href="/">
+              <Image
+                src="/logo.svg"
+                alt="ROOT Logo"
+                width={34}
+                height={50}
+                className="h-auto"
+              />
+            </Link>
           </div>
-
           <ul className="absolute left-1/2 -translate-x-1/2 hidden lg:flex gap-4 xl:gap-6 2xl:gap-8 font">
             {MENUS.map((menu) => (
               <li key={menu.name}>
