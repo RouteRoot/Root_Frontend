@@ -1,7 +1,12 @@
 import axios from "axios";
 
+const baseURL =
+  process.env.NODE_ENV === "development"
+    ? "http://3.106.248.91:8080/api"
+    : "/proxy";
+
 export const axiosInstance = axios.create({
-  baseURL: "http://3.106.248.91:8080/api",
+  baseURL,
 });
 
 axiosInstance.interceptors.request.use((config) => {
@@ -13,3 +18,4 @@ axiosInstance.interceptors.request.use((config) => {
 
   return config;
 });
+ 
