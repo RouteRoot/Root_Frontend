@@ -5,11 +5,12 @@ import Image from "next/image";
 import { login } from "@/app/api/auth/authApi";
 import Input from "@/components/shared/auth/input";
 import BasicButton from "@/components/buttons/BasicButton";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [loginId, setLoginId] = useState("");
   const [loginPw, setLoginPw] = useState("");
-
+  const router = useRouter();   
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -24,12 +25,10 @@ export default function Login() {
       if (token) {
         localStorage.setItem("accessToken", token);
         console.log("localStorage 저장 완료:", token);
+        router.push("/");
       }
-
-      alert("로그인 성공");
     } catch (err) {
       console.error("로그인 실패:", err);
-      alert("로그인 실패");
     }
   };
 
