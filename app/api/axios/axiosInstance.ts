@@ -4,6 +4,7 @@ const baseURL =
   process.env.NODE_ENV === "development"
     ? "http://13.239.246.72:8080/api"
     : "api/proxy";
+//엔드포인트 변경
 
 export const axiosInstance = axios.create({
   baseURL,
