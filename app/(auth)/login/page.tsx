@@ -7,7 +7,6 @@ import Input from "@/components/shared/auth/input";
 import BasicButton from "@/components/buttons/BasicButton";
 
 export default function Login() {
-    
   const [loginId, setLoginId] = useState("");
   const [loginPw, setLoginPw] = useState("");
 
@@ -16,17 +15,27 @@ export default function Login() {
 
     try {
       const result = await login({ loginId, loginPw });
-      console.log(result);
+
+      console.log("전체 응답:", result);
+      console.log("토큰:", result.data?.token);
+
+      const token = result.data?.token;
+
+      if (token) {
+        localStorage.setItem("accessToken", token);
+        console.log("localStorage 저장 완료:", token);
+      }
+
       alert("로그인 성공");
     } catch (err) {
-      console.error(err);
+      console.error("로그인 실패:", err);
       alert("로그인 실패");
     }
   };
 
   return (
     <main>
-      <section className="relative h-[calc(100vh-63.0px)] overflow-hidden bg-linear-to-b from-white via-[#e7d3c2] to-[#ebc3a4]">
+      <section className="relative h-[calc(100vh-63px)] overflow-hidden bg-linear-to-b from-white via-[#e7d3c2] to-[#ebc3a4]">
         <div className="absolute bottom-10 left-10 z-10">
           <Image
             src="/rooty-2.svg"
@@ -36,6 +45,7 @@ export default function Login() {
             priority
           />
         </div>
+
         <div className="relative z-10 mx-auto flex h-full max-w-7xl items-start justify-end px-6 pr-45 pt-[20vh]">
           <div className="max-w-xl text-left">
             <h1 className="text-6xl font-bold leading-tight text-gray-900">
@@ -43,6 +53,7 @@ export default function Login() {
               <br />
               시작해보세요!
             </h1>
+
             <form onSubmit={handleLogin} className="mt-10 space-y-4">
               <Input
                 type="text"
@@ -51,6 +62,7 @@ export default function Login() {
                 autoComplete="username"
                 onChange={(e) => setLoginId(e.target.value)}
               />
+
               <Input
                 type="password"
                 placeholder="비밀번호"
