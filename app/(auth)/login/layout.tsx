@@ -6,8 +6,10 @@ export default function LoginPageLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="bg-white">
-    <Nav />
-    {children}
-  </div>;
+  return (
+    <div>
+      <Nav />
+      {children}
+    </div>
+  );
 }
