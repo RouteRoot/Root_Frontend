@@ -12,7 +12,6 @@ const MENUS = [
       { name: "자격증 검색", href: "/qualifications/search" },
       { name: "로드맵 생성", href: "/roadmap" },
       { name: "나만의 플랜", href: "/plan" },
-      { name: "나만의 플랜", href: "/plan/custom" },
     ],
   },
   {
