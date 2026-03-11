@@ -9,43 +9,42 @@ const MENUS = [
     name: "서비스 소개",
     href: "/",
     sub: [
-      { name: "자격증 검색", href: "/qualifications/search" },
-      { name: "로드맵 생성", href: "/roadmap" },
-      { name: "나만의 플랜", href: "/plan" },
+      { name: "자격증 탐색", href: "/" },
+      { name: "로드맵 생성", href: "/" },
+      { name: "나만의 플랜", href: "/" },
     ],
   },
   {
     name: "자격증 정보",
     href: "/qualifications",
     sub: [
-      { name: "시험일정 조회", href: "/qualifications/schedule" },
+      { name: "자격증 탐색", href: "/qualifications/schedule" },
       { name: "자격증 상세 정보", href: "/qualifications/detail" },
-      { name: "플랜 재계산", href: "/plan/recalculate" },
     ],
   },
   {
-    name: "커리어 확인",
+    name: "학습 플래너",
     href: "/services",
     sub: [
-      { name: "오토파일럿 플랜", href: "/services/autopilot" },
-      { name: "오늘의 할일", href: "/services/today" },
       { name: "학습 큐레이션", href: "/services/curation" },
+      { name: "AI 플래너", href: "/services/autopilot" },
+      { name: "오늘의 할일", href: "/services/today" },
     ],
   },
   {
     name: "커뮤니티",
     href: "/contact",
     sub: [
-      { name: "뿌리 게시판", href: "/community/board" },
       { name: "스터디 모집", href: "/community/study" },
+      { name: "뿌리 게시판", href: "/community/board" },
     ],
   },
   {
     name: "고객센터",
     href: "/support",
     sub: [
-      { name: "질문", href: "/support/faq" },
-      { name: "문의하기", href: "/support/contact" },
+      { name: "FAQ", href: "/support/faq" },
+      { name: "Q&A", href: "/support/qa" },
     ],
   },
 ];
