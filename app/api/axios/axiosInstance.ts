@@ -2,7 +2,7 @@ import axios from "axios";
 
 const baseURL =
   process.env.NODE_ENV === "development"
-    ? "http://13.239.246.72:8080/api"
+    ? "http://13.239.246.72:8080/api/"
     : "api/";
 
 export const axiosInstance = axios.create({
