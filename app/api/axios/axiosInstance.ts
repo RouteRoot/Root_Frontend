@@ -1,9 +1,6 @@
 import axios from "axios";
 
-const baseURL =
-  process.env.NODE_ENV === "development"
-    ? "http://13.239.246.72:8080/api"
-    : "/api";
+const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const axiosInstance = axios.create({
   baseURL,
@@ -18,4 +15,3 @@ axiosInstance.interceptors.request.use((config) => {
 
   return config;
 });
-
