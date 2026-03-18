@@ -10,7 +10,7 @@ export default function WorkspaceLayout({
       <Sidebar />
 
       <main className="min-w-0 flex-1 bg-[#fbfbfa]">
-        <div className="mx-auto w-full max-w-6xl px-10 pb-16 pt-12">
+        <div className="mx-auto w-full max-w-7xl px-10 pb-16 pt-8">
           {children}
         </div>
       </main>
