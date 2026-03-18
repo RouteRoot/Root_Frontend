@@ -40,8 +40,7 @@ export default function Login() {
   return (
     <main className="min-h-screen bg-white">
       <section className="relative min-h-[calc(100vh-31vh)] overflow-hidden bg-white">
-        {/* 왼쪽 이미지 */}
-        <div className="absolute bottom-[7%] left-[4%] w-[45%] max-w-[1000px]">
+        <div className="absolute bottom-[7%] left-[4%] w-[45%] max-w-250">
           <Image
             src="/main-page-image.svg"
             alt="ROOTY"
@@ -52,7 +51,6 @@ export default function Login() {
           />
         </div>
 
-        {/* 오른쪽 로그인 영역 */}
         <div className="absolute right-[13%] top-[25%] w-[40%] max-w-xl">
           <h1 className="text-6xl font-bold leading-tight text-gray-900">
             뿌리에서 스펙을
