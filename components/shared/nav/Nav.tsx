@@ -15,22 +15,14 @@ const MENUS = [
     ],
   },
   {
-    name: "자격증 정보",
+    name: "웹 정보",
     href: "/qualifications",
     sub: [
       { name: "자격증 탐색", href: "/qualifications/schedule" },
       { name: "자격증 상세 정보", href: "/qualifications/detail" },
     ],
   },
-  {
-    name: "학습 플래너",
-    href: "/services",
-    sub: [
-      { name: "학습 큐레이션", href: "/services/curation" },
-      { name: "AI 플래너", href: "/services/autopilot" },
-      { name: "오늘의 할일", href: "/services/today" },
-    ],
-  },
+
   {
     name: "커뮤니티",
     href: "/contact",
