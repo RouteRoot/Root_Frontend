@@ -94,7 +94,7 @@ export default function PlannerPage() {
     totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
 
   return (
-    <main className="min-h-screen bg-white px-6 py-10">
+    <main className="min-h-screen px-6 py-10">
       <div className="mx-auto max-w-6xl">
         <section className="mb-10">
           <p className="mb-3 text-sm font-medium text-gray-500">Planner</p>
