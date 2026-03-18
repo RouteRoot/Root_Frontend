@@ -1,5 +1,4 @@
 "use client";
-import MyRoadmapPreview from "@/components/dashboard/MyRoadmapPreview";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { MessageSquare, Eye, Heart, PenSquare } from "lucide-react";
@@ -17,7 +16,6 @@ export default function CommunityPage() {
 
   return (
     <main className="min-h-screen bg-[#f7f8fc] px-6 py-10 text-[#111827]">
-      <MyRoadmapPreview />
       <div className="mx-auto max-w-6xl">
         <section className="mb-8 rounded-4xl border border-[#ececf2] bg-white p-8 shadow-sm">
           <p className="mb-2 text-sm font-semibold text-[#7c3aed]">COMMUNITY</p>
