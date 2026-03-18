@@ -1,6 +1,4 @@
-// 생성
-export type RoadmapGenerateRequest = {
-  userId: number;
+export type RoadmapFormData = {
   major: string;
   hope: string;
   acquired: string;
@@ -11,18 +9,20 @@ export type RoadmapGenerateRequest = {
   target: string;
 };
 
+export type RoadmapGenerateRequest = RoadmapFormData;
+
 export type RoadmapGenerateResponse = {
   message: string;
   roadmapId: number;
 };
 
-// 조회
+export type TaskStatus = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
 
 export type Task = {
   taskId: number;
   taskName: string;
   description: string;
-  status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+  status: TaskStatus;
 };
 
 export type Phase = {
@@ -37,3 +37,5 @@ export type RoadmapResponse = {
   roadmapId: number;
   phases: Phase[];
 };
+
+export type RoadmapUpdateRequest = RoadmapFormData;

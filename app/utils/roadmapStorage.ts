@@ -11,21 +11,21 @@ export default function useRoadmap(roadmapId: number | null) {
 
   useEffect(() => {
     const fetchRoadmap = async () => {
+      if (roadmapId === null) {
+        setRoadmap(null);
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError("");
 
-        if (!roadmapId) {
-          setRoadmap(null);
-          setLoading(false);
-          return;
-        }
-
         const data = await getRoadmapById(roadmapId);
         setRoadmap(data);
       } catch (err) {
-        console.error("로드맵 조회 실패:", err);
-        setError("로드맵을 불러오지 못했습니다.");
+        console.error(err);
+        setError("로드맵 조회 중 오류가 발생했습니다.");
       } finally {
         setLoading(false);
       }

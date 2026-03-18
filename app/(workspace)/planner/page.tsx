@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import useRoadmap from "@/hooks/useRoadmap";
 
 const statusLabelMap = {
@@ -15,7 +17,15 @@ const statusStyleMap = {
 } as const;
 
 export default function PlannerPage() {
-  const { roadmap, loading, error } = useRoadmap(1);
+  const router = useRouter();
+  const [roadmapId, setRoadmapId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const savedRoadmapId = localStorage.getItem("roadmapId");
+    setRoadmapId(savedRoadmapId ? Number(savedRoadmapId) : null);
+  }, []);
+
+  const { roadmap, loading, error } = useRoadmap(roadmapId);
 
   if (loading) {
     return (
@@ -71,6 +81,15 @@ export default function PlannerPage() {
     return (
       <main className="min-h-screen bg-white px-6 py-10">
         <div className="mx-auto max-w-6xl">
+          <div className="mb-6 flex justify-end">
+            <button
+              onClick={() => router.push("/planner/generate")}
+              className="rounded-2xl bg-black px-5 py-3 text-sm font-medium text-white transition hover:opacity-90"
+            >
+              로드맵 생성하기
+            </button>
+          </div>
+
           <div className="rounded-3xl border border-gray-200 bg-gray-50 p-6 text-gray-600">
             아직 생성된 로드맵이 없습니다.
           </div>
@@ -97,14 +116,25 @@ export default function PlannerPage() {
     <main className="min-h-screen px-6 py-10">
       <div className="mx-auto max-w-6xl">
         <section className="mb-10">
-          <p className="mb-3 text-sm font-medium text-gray-500">Planner</p>
-          <h1 className="text-4xl font-bold tracking-tight text-black">
-            나의 자격증 로드맵
-          </h1>
-          <p className="mt-3 max-w-2xl text-base leading-7 text-gray-600">
-            목표까지 가는 과정을 단계별로 정리했어요. 각 단계에서 필요한
-            자격증과 학습 방향을 한눈에 확인하고 차근차근 진행해보세요.
-          </p>
+          <div className="mb-6 flex items-start justify-between gap-4">
+            <div>
+              <p className="mb-3 text-sm font-medium text-gray-500">Planner</p>
+              <h1 className="text-4xl font-bold tracking-tight text-black">
+                나의 자격증 로드맵
+              </h1>
+              <p className="mt-3 max-w-2xl text-base leading-7 text-gray-600">
+                목표까지 가는 과정을 단계별로 정리했어요. 각 단계에서 필요한
+                자격증과 학습 방향을 한눈에 확인하고 차근차근 진행해보세요.
+              </p>
+            </div>
+
+            <button
+              onClick={() => router.push("/planner/generate")}
+              className="shrink-0 rounded-2xl bg-black px-5 py-3 text-sm font-medium text-white transition hover:opacity-90"
+            >
+              로드맵 생성하기
+            </button>
+          </div>
         </section>
 
         <section className="mb-10 grid grid-cols-1 gap-4 md:grid-cols-3">
