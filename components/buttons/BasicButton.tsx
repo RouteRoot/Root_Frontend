@@ -21,10 +21,10 @@ export default function BasicButton({
     "inline-flex items-center justify-center rounded-xl font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed";
 
   const variantStyle = {
-    primary: "bg-[#6B4F3A] text-white hover:opacity-90",
+    primary: "bg-[#000000] text-white hover:opacity-90",
     outline:
-      "border border-[#6B4F3A] bg-white text-[#6B4F3A] hover:bg-[#f8f3ef]",
-    ghost: "bg-transparent text-[#6B4F3A] hover:bg-[#f8f3ef]",
+      "border border-[#000000] bg-white text-[rgb(255, 255, 255)] hover:bg-[#f8f3ef]",
+    ghost: "bg-transparent text-[#000000] hover:bg-[#f8f3ef]",
   };
 
   const sizeStyle = {
@@ -33,7 +33,7 @@ export default function BasicButton({
     lg: "h-14 px-6 text-lg",
   };
 
-  const widthStyle = fullWidth ? "w-full" : "";
+  const widthStyle = fullWidth ? "w-86" : "";
 
   return (
     <button

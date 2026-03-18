@@ -18,8 +18,8 @@ const MENUS = [
     name: "웹 정보",
     href: "/qualifications",
     sub: [
-      { name: "자격증 탐색", href: "/qualifications/schedule" },
-      { name: "자격증 상세 정보", href: "/qualifications/detail" },
+      { name: "개발자 정보", href: "/qualifications/schedule" },
+      { name: "앱 버전", href: "/qualifications/detail" },
     ],
   },
 
