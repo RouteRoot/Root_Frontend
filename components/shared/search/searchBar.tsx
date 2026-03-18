@@ -15,7 +15,7 @@ export default function SearchBar() {
 
       <input
         type="text"
-        placeholder="찾고 싶은 자격증을 입력하세요"
+        placeholder="로그인하고 이용해 보세요"
         readOnly
         className="w-full bg-transparent outline-none text-gray-800 placeholder-gray-500 cursor-pointer"
       />
