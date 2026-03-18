@@ -41,10 +41,7 @@ export default function GeneratePage() {
       setLoading(true);
       setError("");
 
-      const result = await generateRoadmap(form);
-
-      localStorage.setItem("roadmapId", String(result.roadmapId));
-
+      await generateRoadmap(form);
       router.push("/planner");
     } catch (err) {
       console.error("로드맵 생성 실패:", err);

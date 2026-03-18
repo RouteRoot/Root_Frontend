@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import useRoadmap from "@/hooks/useRoadmap";
 
@@ -18,14 +17,7 @@ const statusStyleMap = {
 
 export default function PlannerPage() {
   const router = useRouter();
-  const [roadmapId, setRoadmapId] = useState<number | null>(null);
-
-  useEffect(() => {
-    const savedRoadmapId = localStorage.getItem("roadmapId");
-    setRoadmapId(savedRoadmapId ? Number(savedRoadmapId) : null);
-  }, []);
-
-  const { roadmap, loading, error } = useRoadmap(roadmapId);
+  const { roadmap, loading, error } = useRoadmap();
 
   if (loading) {
     return (

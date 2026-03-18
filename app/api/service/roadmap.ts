@@ -6,12 +6,8 @@ import type {
 } from "@/types/roadmap";
 
 // 조회
-export const getRoadmapById = async (
-  roadmapId: number,
-): Promise<RoadmapResponse> => {
-  const res = await axiosInstance.get<RoadmapResponse>(
-    `/roadmaps/${roadmapId}`,
-  );
+export const getRoadmapByToken = async (): Promise<RoadmapResponse> => {
+  const res = await axiosInstance.get<RoadmapResponse>(`/roadmaps/`);
   return res.data;
 };
 

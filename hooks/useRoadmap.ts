@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getRoadmapById } from "@/app/api/service/roadmap";
+import { getRoadmapByToken } from "@/app/api/service/roadmap";
 import type { RoadmapResponse } from "@/types/roadmap";
 
-export default function useRoadmap(roadmapId: number | null) {
+export default function useRoadmap() {
   const [roadmap, setRoadmap] = useState<RoadmapResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -15,13 +15,7 @@ export default function useRoadmap(roadmapId: number | null) {
         setLoading(true);
         setError("");
 
-        if (!roadmapId) {
-          setRoadmap(null);
-          setLoading(false);
-          return;
-        }
-
-        const data = await getRoadmapById(roadmapId);
+        const data = await getRoadmapByToken();
         setRoadmap(data);
       } catch (err) {
         console.error("로드맵 조회 실패:", err);
@@ -32,7 +26,7 @@ export default function useRoadmap(roadmapId: number | null) {
     };
 
     fetchRoadmap();
-  }, [roadmapId]);
+  }, []);
 
   return { roadmap, loading, error };
 }
