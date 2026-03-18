@@ -1,344 +1,213 @@
 "use client";
 
-const mockRoadmap = {
-  roadmapId: 1,
-  phases: [
-    {
-      phaseId: 1,
-      phaseNumber: 1,
-      phaseTitle: "기초 경쟁력 확보",
-      estimatedWeeks: 10,
-      tasks: [
-        {
-          taskId: 1,
-          taskName: "정보처리기사",
-          description:
-            "프론트엔드 개발자로 진출하기 위한 첫 걸음으로 정보처리기사 자격증을 준비합니다. 필기 과목을 중심으로 개념을 익히고 기출문제를 반복 풀이합니다.",
-          status: "NOT_STARTED",
-        },
-        {
-          taskId: 2,
-          taskName: "영어 토익 850 이상",
-          description:
-            "IT 기업에서 우대하는 영어 능력을 확보하기 위해 토익 점수를 향상시킵니다. 듣기와 독해를 균형 있게 학습합니다.",
-          status: "IN_PROGRESS",
-        },
-      ],
-    },
-    {
-      phaseId: 2,
-      phaseNumber: 2,
-      phaseTitle: "직무 직접 경쟁력 강화",
-      estimatedWeeks: 8,
-      tasks: [
-        {
-          taskId: 3,
-          taskName: "React 프로젝트 완성",
-          description:
-            "실제 서비스 형태의 프론트엔드 프로젝트를 완성하여 포트폴리오에 담을 수 있는 결과물을 만듭니다.",
-          status: "IN_PROGRESS",
-        },
-        {
-          taskId: 4,
-          taskName: "Next.js 학습",
-          description:
-            "라우팅, 서버 컴포넌트, API 연결 구조를 익혀 실무형 프론트엔드 역량을 강화합니다.",
-          status: "NOT_STARTED",
-        },
-      ],
-    },
-  ],
-};
+import useRoadmap from "@/hooks/useRoadmap";
 
-const mockPlan = {
-  targetExam: "정보처리기사",
-  totalWeeks: 11,
-  weeklyPlans: [
-    {
-      weekNumber: 1,
-      weeklyGoal: "소프트웨어 생명주기와 요구사항 분석 이해",
-      dailyPlans: [
-        {
-          dailyPlanId: 1,
-          studyDate: "2026-03-17",
-          completed: false,
-          dayNumber: 1,
-          topic: "소프트웨어 생명주기",
-          description:
-            "요구사항 분석, 설계, 구현, 테스트, 유지보수 개념을 정리합니다.",
-          estimatedHours: 2,
-          rest: false,
-        },
-        {
-          dailyPlanId: 2,
-          studyDate: "2026-03-18",
-          completed: true,
-          dayNumber: 2,
-          topic: "요구사항 도출 기법",
-          description:
-            "인터뷰, 설문조사, 워크숍 등 요구사항 도출 방법을 학습합니다.",
-          estimatedHours: 2,
-          rest: false,
-        },
-        {
-          dailyPlanId: 3,
-          studyDate: "2026-03-19",
-          completed: false,
-          dayNumber: 3,
-          topic: "복습",
-          description: "전날 학습한 개념을 다시 정리하고 기출 5문제를 풉니다.",
-          estimatedHours: 1,
-          rest: false,
-        },
-      ],
-    },
-    {
-      weekNumber: 2,
-      weeklyGoal: "UI 설계와 화면 흐름 이해",
-      dailyPlans: [
-        {
-          dailyPlanId: 4,
-          studyDate: "2026-03-24",
-          completed: false,
-          dayNumber: 1,
-          topic: "UI 설계 원칙",
-          description: "좋은 사용자 인터페이스 설계 원칙을 정리합니다.",
-          estimatedHours: 2,
-          rest: false,
-        },
-        {
-          dailyPlanId: 5,
-          studyDate: "2026-03-25",
-          completed: false,
-          dayNumber: 2,
-          topic: "화면 설계서 읽기",
-          description: "화면 흐름도와 와이어프레임 해석 연습을 합니다.",
-          estimatedHours: 2,
-          rest: false,
-        },
-        {
-          dailyPlanId: 6,
-          studyDate: "2026-03-26",
-          completed: false,
-          dayNumber: 3,
-          topic: "휴식일",
-          description: "휴식 및 가벼운 복습",
-          estimatedHours: 0,
-          rest: true,
-        },
-      ],
-    },
-  ],
-};
+const statusLabelMap = {
+  NOT_STARTED: "시작 전",
+  IN_PROGRESS: "진행 중",
+  COMPLETED: "완료",
+} as const;
 
-const getStatusStyle = (status: string) => {
-  switch (status) {
-    case "COMPLETED":
-      return "bg-green-100 text-green-700";
-    case "IN_PROGRESS":
-      return "bg-blue-100 text-blue-700";
-    default:
-      return "bg-gray-100 text-gray-600";
-  }
-};
+const statusStyleMap = {
+  NOT_STARTED: "bg-gray-100 text-gray-600 border-gray-200",
+  IN_PROGRESS: "bg-black text-white border-black",
+  COMPLETED: "bg-green-50 text-green-700 border-green-200",
+} as const;
 
 export default function PlannerPage() {
-  const totalTasks = mockRoadmap.phases.flatMap((phase) => phase.tasks).length;
-  const completedTasks = mockRoadmap.phases
-    .flatMap((phase) => phase.tasks)
-    .filter((task) => task.status === "COMPLETED").length;
+  const { roadmap, loading, error } = useRoadmap(1);
 
-  const totalDailyPlans = mockPlan.weeklyPlans.flatMap(
-    (week) => week.dailyPlans,
-  ).length;
-  const completedDailyPlans = mockPlan.weeklyPlans
-    .flatMap((week) => week.dailyPlans)
-    .filter((plan) => plan.completed).length;
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-white px-6 py-10">
+        <div className="mx-auto max-w-6xl animate-pulse">
+          <div className="mb-4 h-10 w-56 rounded-xl bg-gray-200" />
+          <div className="mb-10 h-5 w-80 rounded-lg bg-gray-100" />
+
+          <div className="space-y-6">
+            {[1, 2, 3].map((item) => (
+              <div
+                key={item}
+                className="rounded-3xl border border-gray-200 bg-white p-6"
+              >
+                <div className="mb-4 h-8 w-48 rounded-lg bg-gray-200" />
+                <div className="mb-6 h-4 w-28 rounded-lg bg-gray-100" />
+                <div className="space-y-4">
+                  {[1, 2].map((card) => (
+                    <div
+                      key={card}
+                      className="rounded-2xl border border-gray-100 bg-gray-50 p-5"
+                    >
+                      <div className="mb-3 h-5 w-40 rounded bg-gray-200" />
+                      <div className="mb-2 h-4 w-full rounded bg-gray-100" />
+                      <div className="h-4 w-4/5 rounded bg-gray-100" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="min-h-screen bg-white px-6 py-10">
+        <div className="mx-auto max-w-6xl">
+          <div className="rounded-3xl border border-red-200 bg-red-50 p-6">
+            <h2 className="text-xl font-semibold text-red-600">
+              로드맵을 불러오지 못했습니다.
+            </h2>
+            <p className="mt-2 text-sm text-red-500">{error}</p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (!roadmap) {
+    return (
+      <main className="min-h-screen bg-white px-6 py-10">
+        <div className="mx-auto max-w-6xl">
+          <div className="rounded-3xl border border-gray-200 bg-gray-50 p-6 text-gray-600">
+            아직 생성된 로드맵이 없습니다.
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  const totalTasks = roadmap.phases.reduce(
+    (acc, phase) => acc + phase.tasks.length,
+    0,
+  );
+
+  const completedTasks = roadmap.phases.reduce(
+    (acc, phase) =>
+      acc + phase.tasks.filter((task) => task.status === "COMPLETED").length,
+    0,
+  );
 
   const progressPercent =
-    totalDailyPlans === 0
-      ? 0
-      : Math.round((completedDailyPlans / totalDailyPlans) * 100);
+    totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
 
   return (
-    <div className="min-h-screen bg-[#fbfbfa] text-[#111]">
-      {/* 헤더 */}
-      <section className="mb-10">
-        <p className="mb-2 text-[14px] text-[#9a948c]">Planner</p>
-        <h1 className="text-[36px] font-bold tracking-[-0.02em] text-[#191919]">
-          학습 플래너
-        </h1>
-      </section>
-
-      {/* 상단 요약 카드 */}
-      <section className="mb-10 grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-[#e7e5e4] bg-white p-5">
-          <p className="text-[14px] text-[#9a948c]">목표 직무</p>
-          <h2 className="mt-2 text-[22px] font-semibold text-[#191919]">
-            프론트엔드 개발자
-          </h2>
-        </div>
-
-        <div className="rounded-2xl border border-[#e7e5e4] bg-white p-5">
-          <p className="text-[14px] text-[#9a948c]">목표 시험</p>
-          <h2 className="mt-2 text-[22px] font-semibold text-[#191919]">
-            {mockPlan.targetExam}
-          </h2>
-        </div>
-
-        <div className="rounded-2xl border border-[#e7e5e4] bg-white p-5">
-          <p className="text-[14px] text-[#9a948c]">학습 진행률</p>
-          <h2 className="mt-2 text-[22px] font-semibold text-[#191919]">
-            {completedDailyPlans} / {totalDailyPlans} 완료
-          </h2>
-          <div className="mt-3 h-2 w-full rounded-full bg-[#ecebe7]">
-            <div
-              className="h-2 rounded-full bg-[#191919]"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-          <p className="mt-2 text-[13px] text-[#8b8680]">
-            {progressPercent}% 진행 중
+    <main className="min-h-screen bg-white px-6 py-10">
+      <div className="mx-auto max-w-6xl">
+        <section className="mb-10">
+          <p className="mb-3 text-sm font-medium text-gray-500">Planner</p>
+          <h1 className="text-4xl font-bold tracking-tight text-black">
+            나의 자격증 로드맵
+          </h1>
+          <p className="mt-3 max-w-2xl text-base leading-7 text-gray-600">
+            목표까지 가는 과정을 단계별로 정리했어요. 각 단계에서 필요한
+            자격증과 학습 방향을 한눈에 확인하고 차근차근 진행해보세요.
           </p>
-        </div>
-      </section>
+        </section>
 
-      {/* 로드맵 */}
-      <section className="mb-12">
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <p className="text-[14px] text-[#9a948c]">Roadmap</p>
-            <h2 className="text-[24px] font-semibold text-[#191919]">로드맵</h2>
+        <section className="mb-10 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="rounded-3xl border border-gray-200 bg-white p-6">
+            <p className="text-sm text-gray-500">전체 단계</p>
+            <h2 className="mt-2 text-3xl font-bold text-black">
+              {roadmap.phases.length}
+            </h2>
           </div>
-          <p className="text-[14px] text-[#8b8680]">
-            전체 Task {totalTasks}개 / 완료 {completedTasks}개
-          </p>
-        </div>
 
-        <div className="space-y-6">
-          {mockRoadmap.phases.map((phase) => (
+          <div className="rounded-3xl border border-gray-200 bg-white p-6">
+            <p className="text-sm text-gray-500">전체 태스크</p>
+            <h2 className="mt-2 text-3xl font-bold text-black">{totalTasks}</h2>
+          </div>
+
+          <div className="rounded-3xl border border-gray-200 bg-white p-6">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm text-gray-500">진행률</p>
+                <h2 className="mt-2 text-3xl font-bold text-black">
+                  {progressPercent}%
+                </h2>
+              </div>
+              <div className="min-w-24 text-right text-sm text-gray-500">
+                {completedTasks} / {totalTasks} 완료
+              </div>
+            </div>
+
+            <div className="mt-5 h-2 w-full overflow-hidden rounded-full bg-gray-100">
+              <div
+                className="h-full rounded-full bg-black transition-all duration-500"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="space-y-8">
+          {roadmap.phases.map((phase, phaseIndex) => (
             <div
               key={phase.phaseId}
-              className="rounded-2xl border border-[#e7e5e4] bg-white p-6"
+              className="rounded-[28px] border border-gray-200 bg-white p-6 md:p-8"
             >
-              <div className="mb-5">
-                <p className="text-[14px] text-[#9a948c]">
-                  Phase {phase.phaseNumber}
-                </p>
-                <h3 className="mt-1 text-[22px] font-semibold text-[#191919]">
-                  {phase.phaseTitle}
-                </h3>
-                <p className="mt-1 text-[14px] text-[#6b7280]">
-                  예상 기간: {phase.estimatedWeeks}주
-                </p>
+              <div className="mb-6 flex flex-col gap-4 border-b border-gray-100 pb-6 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <div className="mb-2 inline-flex rounded-full border border-gray-200 px-3 py-1 text-xs font-medium text-gray-500">
+                    Phase {phaseIndex + 1}
+                  </div>
+                  <h2 className="text-2xl font-bold tracking-tight text-black md:text-3xl">
+                    {phase.phaseTitle}
+                  </h2>
+                  <p className="mt-2 text-sm text-gray-500">
+                    예상 학습 기간 {phase.estimatedWeeks}주
+                  </p>
+                </div>
+
+                <div className="rounded-2xl bg-gray-50 px-4 py-3 text-sm text-gray-600">
+                  총 {phase.tasks.length}개의 준비 항목
+                </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 {phase.tasks.map((task) => (
-                  <div
+                  <article
                     key={task.taskId}
-                    className="rounded-xl border border-[#f0eeeb] bg-[#fcfcfb] p-4"
+                    className="group rounded-3xl border border-gray-100 bg-gray-50 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-200 hover:bg-white"
                   >
-                    <div className="mb-2 flex items-start justify-between gap-3">
-                      <div>
-                        <h4 className="text-[16px] font-semibold text-[#191919]">
-                          {task.taskName}
-                        </h4>
-                        <p className="mt-2 text-[14px] leading-6 text-[#666]">
-                          {task.description}
-                        </p>
+                    <div className="mb-4 flex items-start justify-between gap-3">
+                      <div className="flex min-w-0 items-start gap-3">
+                        <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-white">
+                          {task.status === "COMPLETED" ? (
+                            <div className="h-2.5 w-2.5 rounded-sm bg-black" />
+                          ) : (
+                            <div className="h-2.5 w-2.5 rounded-sm bg-transparent" />
+                          )}
+                        </div>
+
+                        <div className="min-w-0">
+                          <h3 className="truncate text-lg font-semibold text-black">
+                            {task.taskName}
+                          </h3>
+                        </div>
                       </div>
 
                       <span
-                        className={`shrink-0 rounded-full px-3 py-1 text-[12px] font-medium ${getStatusStyle(
-                          task.status,
-                        )}`}
+                        className={`shrink-0 rounded-full border px-3 py-1 text-xs font-medium ${
+                          statusStyleMap[task.status]
+                        }`}
                       >
-                        {task.status}
+                        {statusLabelMap[task.status]}
                       </span>
                     </div>
-                  </div>
+
+                    <p className="text-sm leading-7 whitespace-pre-line text-gray-600">
+                      {task.description}
+                    </p>
+                  </article>
                 ))}
               </div>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* 학습 플랜 */}
-      <section>
-        <div className="mb-4">
-          <p className="text-[14px] text-[#9a948c]">Study Plan</p>
-          <h2 className="text-[24px] font-semibold text-[#191919]">
-            학습 계획
-          </h2>
-        </div>
-
-        <div className="space-y-6">
-          {mockPlan.weeklyPlans.map((week) => (
-            <div
-              key={week.weekNumber}
-              className="rounded-2xl border border-[#e7e5e4] bg-white p-6"
-            >
-              <div className="mb-5">
-                <p className="text-[14px] text-[#9a948c]">
-                  Week {week.weekNumber}
-                </p>
-                <h3 className="mt-1 text-[20px] font-semibold text-[#191919]">
-                  {week.weeklyGoal}
-                </h3>
-              </div>
-
-              <div className="space-y-3">
-                {week.dailyPlans.map((plan) => (
-                  <div
-                    key={plan.dailyPlanId}
-                    className="flex items-start justify-between rounded-xl border border-[#f0eeeb] bg-[#fcfcfb] px-4 py-4"
-                  >
-                    <div className="flex items-start gap-3">
-                      <input
-                        type="checkbox"
-                        checked={plan.completed}
-                        readOnly
-                        className="mt-1 h-4 w-4 accent-[#191919]"
-                      />
-
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-[15px] font-medium text-[#191919]">
-                            Day {plan.dayNumber}. {plan.topic}
-                          </p>
-
-                          {plan.rest && (
-                            <span className="rounded-full bg-[#f3f4f6] px-2 py-0.5 text-[12px] text-[#6b7280]">
-                              휴식
-                            </span>
-                          )}
-                        </div>
-
-                        <p className="mt-1 text-[14px] text-[#6b7280]">
-                          {plan.description}
-                        </p>
-
-                        <div className="mt-2 flex items-center gap-3 text-[13px] text-[#9a948c]">
-                          <span>{plan.studyDate}</span>
-                          {!plan.rest && (
-                            <span>{plan.estimatedHours}시간 예정</span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    <button className="rounded-lg border border-[#e7e5e4] bg-white px-3 py-2 text-[14px] text-[#44403c] transition hover:bg-[#f7f7f5]">
-                      상세
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
+    </main>
   );
 }

@@ -18,22 +18,22 @@ export type RoadmapGenerateResponse = {
 
 // 조회
 
-export type RoadmapTask = {
+export type Task = {
   taskId: number;
   taskName: string;
   description: string;
-  status: string;
+  status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
 };
 
-export type RoadmapPhase = {
+export type Phase = {
   phaseId: number;
-  phaseNumber: number;
+  phaseNumber: number | null;
   phaseTitle: string;
   estimatedWeeks: number;
-  tasks: RoadmapTask[];
+  tasks: Task[];
 };
 
-export type RoadmapDetailResponse = {
+export type RoadmapResponse = {
   roadmapId: number;
-  phases: RoadmapPhase[];
+  phases: Phase[];
 };

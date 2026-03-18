@@ -1,10 +1,9 @@
 import { axiosInstance } from "../axios/axiosInstance";
+import { RoadmapResponse } from "@/types/roadmap";
 
-import type { RoadmapDetailResponse } from "@/types/roadmap";
-
-export const getRoadmapDetail = async (
-  roadmapId: number,
-): Promise<RoadmapDetailResponse> => {
-  const { data } = await axiosInstance.get(`/roadmaps/${roadmapId}`);
-  return data;
+export const getRoadmapById = async (roadmapId: number) => {
+  const res = await axiosInstance.get<RoadmapResponse>(
+    `/roadmaps/${roadmapId}`,
+  );
+  return res.data;
 };
