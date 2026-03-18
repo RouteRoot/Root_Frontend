@@ -15,7 +15,7 @@ function SectionPlaceholder({
       <h2 className="mb-4 text-[15px] font-semibold text-[#676767]">{title}</h2>
 
       <div
-        className={`w-full rounded-[20px] border border-[#E9E9E7] bg-white ${height ?? "h-[220px]"}`}
+        className={`w-full rounded-[20px] border border-[#E9E9E7] bg-white ${height ?? "h-55"}`}
       />
     </section>
   );
@@ -30,7 +30,7 @@ export default function DashboardPage() {
 
   return (
     <main className="min-h-screen px-8">
-      <div className="mx-auto max-w-[1120px]">
+      <div className="mx-auto max-w280">
         <div className="mb-12 flex justify-center">
           <DashboardSearchBar
             nickname="민서"

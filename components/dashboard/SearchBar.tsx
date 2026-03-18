@@ -24,9 +24,9 @@ export default function DashboardSearchBar({
 
   return (
     <div className="flex w-full justify-center">
-      <div className="flex h-12 w-full max-w-[420px] items-center gap-3 rounded-full px-4 text-[15px] text-[#666666]">
+      <div className="flex h-12 w-full max-w-105 items-center gap-3 rounded-full px-4 text-[15px] text-[#666666]">
         <Search
-          className="h-[18px] w-[18px] shrink-0 text-[#6B6B6B]"
+          className="h-4.5 w-4.5 shrink-0 text-[#6B6B6B]"
           strokeWidth={1.8}
         />
 
