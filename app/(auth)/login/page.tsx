@@ -53,9 +53,9 @@ export default function Login() {
 
         <div className="absolute right-[13%] top-[25%] w-[40%] max-w-xl">
           <h1 className="text-6xl font-bold leading-tight text-gray-900">
-            뿌리에서 스펙을
+            뿌리와 함께
             <br />
-            시작해보세요!
+            성공을 시작해요!
           </h1>
 
           <form onSubmit={handleLogin} className="mt-8 space-y-4">
