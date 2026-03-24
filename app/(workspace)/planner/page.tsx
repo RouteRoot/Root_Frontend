@@ -95,6 +95,7 @@ export default function PlannerPage() {
         setError("");
 
         const savedExamTaskId = localStorage.getItem("examTaskId");
+        console.log("planner에서 조회할 examTaskId:", savedExamTaskId);
 
         if (!savedExamTaskId) {
           setError("생성된 학습 플랜이 없습니다.");
@@ -102,6 +103,18 @@ export default function PlannerPage() {
         }
 
         const data = await getPlanByExamTaskId(Number(savedExamTaskId));
+
+        console.log("plan 전체:", data);
+        console.log(
+          "dailyPlanIds:",
+          data.weeklyPlans.flatMap((week: WeeklyPlan) =>
+            week.dailyPlans.map((day: DailyPlan) => ({
+              id: day.dailyPlanId,
+              topic: day.topic,
+            })),
+          ),
+        );
+
         setPlan(data);
       } catch (err) {
         console.error("학습 플랜 조회 실패:", err);
@@ -143,11 +156,14 @@ export default function PlannerPage() {
   }, [weeklyPlans]);
 
   const handleCheckDailyPlan = async (dailyPlanId: number) => {
+    console.log("handleCheckDailyPlan param:", dailyPlanId);
+
     if (!plan) return;
 
     const previousPlan = structuredClone(plan);
     setCheckingId(dailyPlanId);
 
+    // optimistic update
     setPlan((prev) => {
       if (!prev) return prev;
 
@@ -166,6 +182,7 @@ export default function PlannerPage() {
 
     try {
       const result = await checkDailyPlan(dailyPlanId);
+      console.log("체크 응답:", result);
 
       setPlan((prev) => {
         if (!prev) return prev;
@@ -343,10 +360,15 @@ export default function PlannerPage() {
                           </div>
 
                           <button
-                            onClick={() =>
+                            onClick={() => {
+                              console.log(
+                                "🔥 today card click:",
+                                day.dailyPlanId,
+                                day.topic,
+                              );
                               !day.isRest &&
-                              handleCheckDailyPlan(day.dailyPlanId)
-                            }
+                                handleCheckDailyPlan(day.dailyPlanId);
+                            }}
                             disabled={
                               day.isRest || checkingId === day.dailyPlanId
                             }
@@ -501,10 +523,15 @@ export default function PlannerPage() {
                           </div>
 
                           <button
-                            onClick={() =>
+                            onClick={() => {
+                              console.log(
+                                "🔥 week card click:",
+                                day.dailyPlanId,
+                                day.topic,
+                              );
                               !day.isRest &&
-                              handleCheckDailyPlan(day.dailyPlanId)
-                            }
+                                handleCheckDailyPlan(day.dailyPlanId);
+                            }}
                             disabled={day.isRest || isChecking}
                             className={`shrink-0 rounded-xl px-4 py-2 text-sm font-medium transition ${
                               day.isRest

@@ -8,6 +8,7 @@ import type {
 // 조회
 export const getRoadmapByToken = async (): Promise<RoadmapResponse> => {
   const res = await axiosInstance.get<RoadmapResponse>(`/roadmaps/`);
+  console.log("getRoadmapByToken response:", res.data);
   return res.data;
 };
 

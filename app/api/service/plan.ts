@@ -1,4 +1,5 @@
 import { axiosInstance } from "../axios/axiosInstance";
+
 export async function generatePlan(payload: {
   examTaskId: number;
   examDate: string;
@@ -17,8 +18,12 @@ export async function getPlanByExamTaskId(examTaskId: number) {
 }
 
 export async function checkDailyPlan(dailyPlanId: number) {
+  console.log("planApi checkDailyPlan:", dailyPlanId);
+  console.log("axios baseURL:", axiosInstance.defaults.baseURL);
+
   const response = await axiosInstance.patch(
-    `/plans/daily/${dailyPlanId}/check`,
+    `/plans/daily/${dailyPlanId}/check`
   );
+
   return response.data;
 }
