@@ -41,8 +41,17 @@ export default function GeneratePage() {
       setLoading(true);
       setError("");
 
-      await generateRoadmap(form);
-      router.push("/planner");
+      const result = await generateRoadmap(form);
+
+      localStorage.setItem("plan_daily", String(form.daily));
+      localStorage.setItem("plan_weekly", String(form.weekly));
+      localStorage.setItem("plan_skillLevel", form.mylevel);
+
+      if (result?.roadmapId) {
+        localStorage.setItem("roadmapId", String(result.roadmapId));
+      }
+
+      router.push("/roadmap");
     } catch (err) {
       console.error("로드맵 생성 실패:", err);
       setError("로드맵 생성 중 오류가 발생했습니다.");
@@ -190,7 +199,7 @@ export default function GeneratePage() {
           <div className="mt-8 flex items-center justify-end gap-3">
             <button
               type="button"
-              onClick={() => router.push("/planner")}
+              onClick={() => router.push("/roadmap")}
               className="rounded-2xl border border-gray-200 px-5 py-3 text-sm font-medium text-black transition hover:bg-gray-50"
             >
               취소

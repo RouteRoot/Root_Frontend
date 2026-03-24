@@ -19,6 +19,13 @@ export default function PlannerPage() {
   const router = useRouter();
   const { roadmap, loading, error } = useRoadmap();
 
+  const handleSelectTask = (taskId: number, taskName: string) => {
+    localStorage.setItem("selectedExamTaskId", String(taskId));
+    localStorage.setItem("selectedCertificationName", taskName);
+
+    router.push("/planner/generate");
+  };
+
   if (loading) {
     return (
       <main className="min-h-screen bg-white px-6 py-10">
@@ -121,7 +128,7 @@ export default function PlannerPage() {
             </div>
 
             <button
-              onClick={() => router.push("/planner/generate")}
+              onClick={() => router.push("/roadmap/generate")}
               className="shrink-0 rounded-2xl bg-black px-5 py-3 text-sm font-medium text-white transition hover:opacity-90"
             >
               로드맵 생성하기
@@ -223,6 +230,17 @@ export default function PlannerPage() {
                     <p className="text-sm leading-7 whitespace-pre-line text-gray-600">
                       {task.description}
                     </p>
+
+                    <div className="mt-5 flex justify-end">
+                      <button
+                        onClick={() =>
+                          handleSelectTask(task.taskId, task.taskName)
+                        }
+                        className="rounded-2xl bg-black px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+                      >
+                        이 시험으로 플랜 만들기
+                      </button>
+                    </div>
                   </article>
                 ))}
               </div>
@@ -233,4 +251,3 @@ export default function PlannerPage() {
     </main>
   );
 }
-
