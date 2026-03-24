@@ -28,7 +28,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
-, "app/(workspace)/planner"  ],
+    "**/*.mts",
+    "app/(workspace)/roadmap"
+  ],
   "exclude": ["node_modules"]
 }
