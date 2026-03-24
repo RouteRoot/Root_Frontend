@@ -73,7 +73,7 @@ export default function PlannerGeneratePage() {
   return (
     <main className="min-h-screen bg-white px-6 py-10">
       <div className="mx-auto max-w-2xl">
-        <section className="rounded-[28px] border border-gray-200 bg-white p-6 md:p-8">
+        <section className="rounded-[28px] border border-gray-20 p-6 md:p-8">
           <div className="mb-8">
             <p className="mb-2 text-sm font-medium text-gray-500">Planner</p>
             <h1 className="text-3xl font-bold tracking-tight text-black">
