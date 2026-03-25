@@ -439,7 +439,7 @@ export default function PlannerPage() {
                           key={day.dailyPlanId}
                           className={`rounded-2xl border p-5 transition-all duration-300 ${
                             day.isCompleted
-                              ? "scale-[1.01] border-black bg-[#5ec78e] text-white shadow-[0_8px_24px_rgba(0,0,0,0.16)]"
+                              ? "scale-[1.01] border-[#00711c] bg-[#5ec78e] text-white shadow-[0_8px_24px_rgba(0,0,0,0.16)]"
                               : "border-neutral-200 bg-[#FCFCFB] text-black hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)]"
                           }`}
                         >
