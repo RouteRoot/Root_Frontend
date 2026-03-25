@@ -324,8 +324,7 @@ export default function DashboardPage() {
               </div>
 
               <p className="text-xs leading-5 text-neutral-500">
-                지금은 캘린더 선택만 되도록 해뒀고, 나중에 선택한 날짜 기준으로
-                API 다시 호출하도록 연결하면 돼.
+             
               </p>
             </CardContent>
           </Card>
