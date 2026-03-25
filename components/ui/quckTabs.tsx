@@ -25,7 +25,7 @@ const quickLinks = [
   {
     label: "자격증 검색",
     description: "원하는 자격증 정보 찾기",
-    href: "/qualifications",
+    href: "/certificate",
     icon: Search,
   },
   {

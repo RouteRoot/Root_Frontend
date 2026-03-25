@@ -21,7 +21,7 @@ import { getMe } from "@/app/api/service/user";
 
 const navItems = [
   { label: "대시보드", href: "/dashboard", icon: LayoutDashboard },
-  { label: "자격증 검색", href: "/qualifications", icon: BadgeCheck },
+  { label: "자격증 검색", href: "/certificate", icon: BadgeCheck },
   { label: "플래너", href: "/planner", icon: BookOpen },
   { label: "로드맵", href: "/roadmap", icon: Map },
   { label: "커뮤니티", href: "/community", icon: MessageSquare },
