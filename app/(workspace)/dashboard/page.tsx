@@ -68,7 +68,7 @@ export default function DashboardPage() {
 
   const [completed, setCompleted] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-  const [isGoalOpen, setIsGoalOpen] = useState(true);
+  const [isGoalOpen, setIsGoalOpen] = useState(false);
 
   useEffect(() => {
     const fetchDashboard = async () => {
