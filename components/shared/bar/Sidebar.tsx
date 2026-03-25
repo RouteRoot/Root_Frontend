@@ -1,65 +1,107 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  BadgeCheck,
-  BookOpen,
-  MessageSquare,
   Search,
+  BookOpen,
+  Map,
+  MessageSquare,
   PanelLeftClose,
   PanelLeftOpen,
+  Settings,
+  ChevronRight,
+  Sparkles,
+  BadgeCheck,
 } from "lucide-react";
+
+import { getMe } from "@/app/api/service/user";
 
 const navItems = [
   { label: "대시보드", href: "/dashboard", icon: LayoutDashboard },
-  { label: "자격증 정보", href: "/certificate", icon: BadgeCheck },
-  { label: "학습 플래너", href: "/planner", icon: BookOpen },
+  { label: "자격증 검색", href: "/qualifications", icon: BadgeCheck },
+  { label: "플래너", href: "/planner", icon: BookOpen },
+  { label: "로드맵", href: "/roadmap", icon: Map },
   { label: "커뮤니티", href: "/community", icon: MessageSquare },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [userName, setUserName] = useState("사용자");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMe = async () => {
+      try {
+        const me = await getMe();
+        setUserName(me.name);
+      } catch (error) {
+        console.error("유저 정보 불러오기 실패:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMe();
+  }, []);
 
   return (
     <aside
-      className={`h-screen shrink-0 border-r border-[#e9e7e3] bg-[#f7f7f5] transition-all duration-300 ${
-        isCollapsed ? "w-16" : "w-58"
+      className={`sticky top-0 h-screen shrink-0 border-r border-[#e9e7e3] bg-[#f7f7f5] transition-all duration-300 ${
+        isCollapsed ? "w-16" : "w-56"
       }`}
     >
       <div className="flex h-full flex-col overflow-hidden">
-        <div className="px-3 pt-2">
+        {/* 상단 워크스페이스 */}
+        <div className="px-3 pt-3">
           <div
-            className={`flex h-8 items-center rounded-md px-2 text-[14px] text-[#2f2f2f] hover:bg-[#ecebe7] ${
-              isCollapsed ? "justify-center" : "justify-between"
+            className={`rounded-2xl border border-[#ebe9e4] bg-white px-3 py-3 shadow-sm ${
+              isCollapsed ? "flex justify-center" : ""
             }`}
           >
-            {!isCollapsed && (
-              <div className="flex min-w-0 items-center gap-2">
-                <span className="truncate font-medium">민서의 뿌리</span>
+            {isCollapsed ? (
+              <button
+                type="button"
+                onClick={() => setIsCollapsed(false)}
+                className="flex h-9 w-9 items-center justify-center rounded-xl text-[#5f5a54] transition hover:bg-[#f3f2ee] hover:text-[#191919]"
+                aria-label="사이드바 펼치기"
+              >
+                <PanelLeftOpen size={18} />
+              </button>
+            ) : (
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-2xl bg-black text-white">
+                    <Sparkles size={18} />
+                  </div>
+
+                  <p className="text-[12px] text-[#9a948c]">Workspace</p>
+
+                  <h2 className="truncate text-[15px] font-semibold text-[#191919]">
+                    {loading ? "불러오는 중..." : `${userName}의 뿌리`}
+                  </h2>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsCollapsed(true)}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[#78716c] transition hover:bg-[#f3f2ee] hover:text-[#191919]"
+                  aria-label="사이드바 접기"
+                >
+                  <PanelLeftClose size={18} />
+                </button>
               </div>
             )}
-
-            <button
-              type="button"
-              onClick={() => setIsCollapsed((prev) => !prev)}
-              className="flex items-center justify-center text-[#78716c] hover:text-[#191919]"
-            >
-              {isCollapsed ? (
-                <PanelLeftOpen size={16} />
-              ) : (
-                <PanelLeftClose size={16} />
-              )}
-            </button>
           </div>
         </div>
 
-        <div className="px-3 pt-2">
+        {/* 검색 */}
+        <div className="px-3 pt-3">
           <button
-            className={`flex h-8 w-full items-center rounded-md px-2 text-[14px] text-[#78716c] transition hover:bg-[#ecebe7] hover:text-[#191919] ${
+            className={`flex h-10 w-full items-center rounded-xl px-3 text-[14px] text-[#78716c] transition hover:bg-[#ecebe7] hover:text-[#191919] ${
               isCollapsed ? "justify-center" : "gap-2"
             }`}
           >
@@ -68,8 +110,15 @@ export default function Sidebar() {
           </button>
         </div>
 
-        <div className="px-3 pt-1">
-          <nav className="space-y-0.5">
+        {/* 메뉴 */}
+        <div className="px-3 pt-2">
+          {!isCollapsed && (
+            <p className="mb-2 px-2 text-[12px] font-medium tracking-wide text-[#9a948c]">
+              메뉴
+            </p>
+          )}
+
+          <nav className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = pathname === item.href;
@@ -78,16 +127,31 @@ export default function Sidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex h-8 items-center rounded-md px-2 text-[14px] transition ${
-                    active
-                      ? "bg-[#ecebe7] text-[#191919]"
-                      : "text-[#5f5a54] hover:bg-[#ecebe7] hover:text-[#191919]"
-                  } ${isCollapsed ? "justify-center" : "gap-2"}`}
                   title={isCollapsed ? item.label : undefined}
+                  className={`group flex h-11 items-center rounded-xl px-3 text-[14px] transition ${
+                    active
+                      ? "bg-white text-[#191919] shadow-sm"
+                      : "text-[#5f5a54] hover:bg-[#ecebe7] hover:text-[#191919]"
+                  } ${isCollapsed ? "justify-center" : "justify-between"}`}
                 >
-                  <Icon size={16} strokeWidth={1.9} />
+                  <div
+                    className={`flex items-center ${isCollapsed ? "" : "gap-3"}`}
+                  >
+                    <Icon size={18} strokeWidth={1.9} />
+                    {!isCollapsed && (
+                      <span className="truncate">{item.label}</span>
+                    )}
+                  </div>
+
                   {!isCollapsed && (
-                    <span className="truncate">{item.label}</span>
+                    <ChevronRight
+                      size={16}
+                      className={`transition ${
+                        active
+                          ? "text-[#b0aaa3]"
+                          : "text-transparent group-hover:text-[#b0aaa3]"
+                      }`}
+                    />
                   )}
                 </Link>
               );
@@ -95,38 +159,15 @@ export default function Sidebar() {
           </nav>
         </div>
 
-        <div className="mt-4 min-h-0 flex-1 overflow-y-auto px-3 pb-4">
-          {!isCollapsed && (
-            <>
-              <div className="mb-1 px-2 text-[14px] text-[#9a948c]">
-                최근 항목
-              </div>
-
-              <div className="space-y-0.5">
-                <button className="flex h-8 w-full items-center gap-2 rounded-md px-2 text-[14px] text-[#5f5a54] transition hover:bg-[#ecebe7] hover:text-[#191919]">
-                  <span className="truncate">정보처리기사</span>
-                </button>
-
-                <button className="flex h-8 w-full items-center gap-2 rounded-md px-2 text-[14px] text-[#5f5a54] transition hover:bg-[#ecebe7] hover:text-[#191919]">
-                  <span className="truncate">학습 체크리스트</span>
-                </button>
-
-                <button className="flex h-8 w-full items-center gap-2 rounded-md px-2 text-[14px] text-[#5f5a54] transition hover:bg-[#ecebe7] hover:text-[#191919]">
-                  <span className="truncate">나의 자격증 로드맵</span>
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-
-        <div className="border-t border-[#ebe9e4] px-3 py-3">
+        {/* 하단 설정 */}
+        <div className="mt-auto border-t border-[#ebe9e4] px-3 py-3">
           <button
-            className={`flex h-8 w-full items-center rounded-md px-2 text-[14px] text-[#5f5a54] transition hover:bg-[#ecebe7] hover:text-[#191919] ${
-              isCollapsed ? "justify-center" : "gap-2"
+            className={`flex h-10 w-full items-center rounded-xl px-3 text-[14px] text-[#5f5a54] transition hover:bg-[#ecebe7] hover:text-[#191919] ${
+              isCollapsed ? "justify-center" : "gap-3"
             }`}
             title={isCollapsed ? "설정" : undefined}
           >
-            <span>⚙️</span>
+            <Settings size={17} />
             {!isCollapsed && <span>설정</span>}
           </button>
         </div>

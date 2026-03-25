@@ -1,408 +1,406 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import QuickTabs from "@/components/ui/quckTabs";
+
+import { useRouter } from "next/navigation";
 import {
-  Bell,
   BookOpen,
   CalendarDays,
   CheckCircle2,
-  Clock3,
-  FileText,
-  Goal,
-  Search,
-  Sparkles,
-  Trophy,
+  ChevronDown,
+  ChevronRight,
+  Target,
+  TrendingUp,
 } from "lucide-react";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { getDashboard } from "@/app/api/service/dashboard";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 
-type RoadmapItem = {
-  id: number;
-  title: string;
-  progress: number;
-  status: "시작 전" | "진행 중" | "완료";
-  weeks: string;
+type DashboardData = {
+  currentStudyPlan: {
+    completed: boolean;
+    dailyPlanId: number;
+    date: string;
+    topic: string;
+    weekNumber: number;
+    weeklyGoal: string;
+    weeklyPlanId: number;
+  };
+  planProgress: {
+    completedPlanDays: number;
+    totalPlanDays: number;
+  };
+  roadmapProgress: {
+    completedTasks: number;
+    totalTasks: number;
+  };
 };
 
-type PlanItem = {
-  id: number;
-  day: string;
-  title: string;
-  time: string;
-  done: boolean;
-};
-
-type ExamItem = {
-  id: number;
-  name: string;
-  dday: string;
-  period: string;
-  status: "접수 예정" | "학습 중" | "마감 임박";
-};
-
-const roadmapData: RoadmapItem[] = [
-  { id: 1, title: "정보처리기사 필기 로드맵", progress: 72, status: "진행 중", weeks: "8주 플랜" },
-  { id: 2, title: "SQLD 단기 대비 로드맵", progress: 45, status: "진행 중", weeks: "4주 플랜" },
-  { id: 3, title: "토익 800+ 목표 로드맵", progress: 100, status: "완료", weeks: "6주 플랜" },
-];
-
-const planData: PlanItem[] = [
-  { id: 1, day: "오늘", title: "데이터베이스 정규화 복습", time: "19:00 - 20:30", done: false },
-  { id: 2, day: "오늘", title: "운영체제 페이지 교체 알고리즘 문제풀이", time: "21:00 - 22:00", done: false },
-  { id: 3, day: "내일", title: "정보처리기사 기출 1회", time: "10:00 - 11:30", done: true },
-  { id: 4, day: "내일", title: "자기소개서 키워드 정리", time: "14:00 - 15:00", done: false },
-];
-
-const examData: ExamItem[] = [
-  { id: 1, name: "정보처리기사", dday: "D-18", period: "2026.04.11 접수 마감", status: "학습 중" },
-  { id: 2, name: "SQLD", dday: "D-32", period: "2026.04.25 시험", status: "접수 예정" },
-  { id: 3, name: "토익", dday: "D-5", period: "2026.03.29 시험", status: "마감 임박" },
-];
-
-function getStatusBadgeVariant(status: string) {
-  switch (status) {
-    case "완료":
-      return "default";
-    case "진행 중":
-      return "secondary";
-    case "마감 임박":
-      return "destructive";
-    default:
-      return "outline";
-  }
+function getPercent(done: number, total: number) {
+  if (!total) return 0;
+  return Math.round((done / total) * 100);
 }
 
 export default function DashboardPage() {
-  const [query, setQuery] = useState("");
+  const router = useRouter();
 
-  const filteredPlans = useMemo(() => {
-    if (!query.trim()) return planData;
-    return planData.filter((item) =>
-      item.title.toLowerCase().includes(query.toLowerCase())
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const [completed, setCompleted] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [isGoalOpen, setIsGoalOpen] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const result = await getDashboard();
+        setData(result);
+        setCompleted(result.currentStudyPlan.completed);
+        setSelectedDate(new Date(result.currentStudyPlan.date));
+      } catch (error) {
+        console.error("대시보드 불러오기 실패:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboard();
+  }, []);
+
+  const handleGoToPlanner = () => {
+    if (!data) return;
+    router.push(`/planner?planId=${data.currentStudyPlan.dailyPlanId}`);
+  };
+
+  const handleGoToRoadmap = () => {
+    router.push("/roadmap");
+  };
+
+  const handleToggleComplete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCompleted((prev) => !prev);
+
+    // 나중에 PATCH 연결
+  };
+
+  const handleToggleGoal = () => {
+    setIsGoalOpen((prev) => !prev);
+  };
+
+  const planPercent = useMemo(() => {
+    if (!data) return 0;
+    return getPercent(
+      data.planProgress.completedPlanDays,
+      data.planProgress.totalPlanDays,
     );
-  }, [query]);
+  }, [data]);
 
-  const completedCount = planData.filter((item) => item.done).length;
-  const totalProgress =
-    Math.round(
-      roadmapData.reduce((acc, cur) => acc + cur.progress, 0) / roadmapData.length
-    ) || 0;
+  const roadmapPercent = useMemo(() => {
+    if (!data) return 0;
+    return getPercent(
+      data.roadmapProgress.completedTasks,
+      data.roadmapProgress.totalTasks,
+    );
+  }, [data]);
 
-  return (
-    <main className="min-h-screen bg-[#fafaf8] text-black">
-      <div className="mx-auto flex max-w-[1440px] gap-6 px-4 py-6 md:px-6">
-        {/* 좌측 사이드 */}
-        <aside className="hidden w-[240px] shrink-0 rounded-3xl border bg-white p-4 shadow-sm lg:block">
-          <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-black text-white">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">AI 커리어 플래너</p>
-              <h1 className="text-lg font-semibold">뿌리 Dashboard</h1>
-            </div>
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#fafaf8] p-6">
+        <div className="mx-auto max-w-6xl space-y-6">
+          <div className="h-10 w-40 animate-pulse rounded-xl bg-neutral-200" />
+          <div className="grid gap-6 xl:grid-cols-[1.5fr_0.9fr]">
+            <div className="h-[340px] animate-pulse rounded-3xl bg-neutral-200" />
+            <div className="h-[340px] animate-pulse rounded-3xl bg-neutral-200" />
           </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="h-44 animate-pulse rounded-3xl bg-neutral-200" />
+            <div className="h-44 animate-pulse rounded-3xl bg-neutral-200" />
+          </div>
+        </div>
+      </main>
+    );
+  }
 
-          <nav className="space-y-2">
-            <Button variant="secondary" className="w-full justify-start rounded-2xl">
-              <Goal className="mr-2 h-4 w-4" />
-              대시보드
-            </Button>
-            <Button variant="ghost" className="w-full justify-start rounded-2xl">
-              <BookOpen className="mr-2 h-4 w-4" />
-              로드맵
-            </Button>
-            <Button variant="ghost" className="w-full justify-start rounded-2xl">
-              <CalendarDays className="mr-2 h-4 w-4" />
-              학습 플랜
-            </Button>
-            <Button variant="ghost" className="w-full justify-start rounded-2xl">
-              <Trophy className="mr-2 h-4 w-4" />
-              자격증 일정
-            </Button>
-            <Button variant="ghost" className="w-full justify-start rounded-2xl">
-              <FileText className="mr-2 h-4 w-4" />
-              커리어 기록
-            </Button>
-          </nav>
-
-          <Separator className="my-6" />
-
-          <Card className="rounded-3xl border-0 bg-black text-white shadow-none">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">오늘의 집중 목표</CardTitle>
-              <CardDescription className="text-zinc-300">
-                2개 완료하면 루트가 한 단계 성장해요.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Progress value={68} className="mb-3" />
-              <p className="text-sm text-zinc-300">진행률 68%</p>
+  if (!data) {
+    return (
+      <main className="min-h-screen bg-[#fafaf8] p-6">
+        <div className="mx-auto max-w-6xl">
+          <Card className="rounded-3xl border border-red-100 bg-white shadow-sm">
+            <CardContent className="p-6 text-sm text-red-500">
+              데이터를 불러오지 못했어요.
             </CardContent>
           </Card>
-        </aside>
+        </div>
+      </main>
+    );
+  }
 
-        {/* 메인 */}
-        <section className="min-w-0 flex-1 space-y-6">
-          {/* 상단 헤더 */}
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">화요일, 3월 24일</p>
-              <h2 className="text-3xl font-bold tracking-tight">민서님, 오늘도 뿌리를 내려볼까요?</h2>
-            </div>
+  const { currentStudyPlan, planProgress, roadmapProgress } = data;
 
-            <div className="flex items-center gap-3">
-              <div className="relative w-full md:w-[320px]">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="오늘 할 일, 자격증, 로드맵 검색"
-                  className="rounded-2xl bg-white pl-9"
-                />
+  return (
+    <main className="min-h-screen bg-[#fafaf8] p-6">
+      <div className="mx-auto max-w-6xl space-y-6">
+        {/* 헤더 */}
+        <div className="space-y-10">
+          <p className="text-sm text-neutral-500">Dashboard
+          </p>
+          <QuickTabs />
+
+          <h1 className="text-3xl font-bold tracking-tight text-black">
+            오늘의 학습 현황
+          </h1>
+        </div>
+
+        {/* 상단 */}
+        <div className="grid gap-6 xl:grid-cols-[1.5fr_0.9fr]">
+          {/* 메인 학습 카드 */}
+          <Card
+            onClick={handleGoToPlanner}
+            className="cursor-pointer rounded-3xl border-0 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
+          >
+            <CardHeader className="pb-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="space-y-2">
+                  <CardDescription className="text-sm text-neutral-500">
+                    Today&apos;s Study Plan
+                  </CardDescription>
+                  <CardTitle className="text-3xl font-semibold tracking-tight text-black">
+                    {currentStudyPlan.topic}
+                  </CardTitle>
+                  <p className="text-sm text-neutral-500">
+                    {currentStudyPlan.weekNumber}주차 학습
+                  </p>
+                </div>
+
+                <Badge
+                  onClick={handleToggleComplete}
+                  variant={completed ? "default" : "secondary"}
+                  className="cursor-pointer rounded-full px-4 py-1 text-xs hover:opacity-80"
+                >
+                  {completed ? "완료" : "진행 중"}
+                </Badge>
+              </div>
+            </CardHeader>
+
+            <CardContent className="space-y-5">
+              {/* 목표 */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleToggleGoal();
+                }}
+                className="flex w-full items-center justify-between rounded-2xl bg-[#f5f5f2] p-5 text-left transition hover:bg-[#efefea]"
+              >
+                <div>
+                  <div className="mb-2 flex items-center gap-2 text-sm text-neutral-500">
+                    <Target className="h-4 w-4" />
+                    이번 주 목표
+                  </div>
+                  <p className="text-lg font-medium text-black">
+                    {currentStudyPlan.weeklyGoal}
+                  </p>
+                </div>
+
+                <div className="ml-4 shrink-0 text-neutral-500">
+                  {isGoalOpen ? (
+                    <ChevronDown className="h-5 w-5" />
+                  ) : (
+                    <ChevronRight className="h-5 w-5" />
+                  )}
+                </div>
+              </button>
+
+              {isGoalOpen && (
+                <div className="rounded-2xl border border-neutral-200 bg-white p-4 text-sm leading-6 text-neutral-600">
+                  현재 학습 주제를 중심으로 이번 주 목표를 진행 중이에요. 이
+                  카드를 클릭하면 플래너 페이지로 이동해서 세부 계획을 볼 수
+                  있어요.
+                </div>
+              )}
+
+              {/* 하단 요약 */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-2xl border border-neutral-200 bg-white p-4">
+                  <div className="mb-2 flex items-center gap-2 text-sm text-neutral-500">
+                    <CheckCircle2 className="h-4 w-4" />
+                    학습 상태
+                  </div>
+                  <p className="text-base font-semibold text-black">
+                    {completed ? "오늘 학습 완료" : "오늘 학습 진행 중"}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-neutral-200 bg-white p-4">
+                  <div className="mb-2 flex items-center gap-2 text-sm text-neutral-500">
+                    <BookOpen className="h-4 w-4" />
+                    이동
+                  </div>
+                  <p className="text-base font-semibold text-black">
+                    클릭해서 플래너 상세 보기
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 캘린더 카드 */}
+          <Card className="rounded-3xl border-0 bg-white shadow-sm">
+            <CardHeader>
+              <CardDescription className="text-neutral-500">
+                Study Calendar
+              </CardDescription>
+              <CardTitle className="text-2xl font-semibold text-black">
+                학습 날짜
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent className="space-y-4">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start rounded-2xl border-neutral-200 bg-white text-left font-normal",
+                      !selectedDate && "text-muted-foreground",
+                    )}
+                  >
+                    <CalendarDays className="mr-2 h-4 w-4" />
+                    {selectedDate
+                      ? format(selectedDate, "yyyy년 M월 d일", { locale: ko })
+                      : "날짜를 선택하세요"}
+                  </Button>
+                </PopoverTrigger>
+
+                <PopoverContent
+                  className="w-auto rounded-2xl p-0"
+                  align="start"
+                >
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={setSelectedDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+
+              <div className="rounded-2xl bg-[#f5f5f2] p-4">
+                <p className="mb-1 text-sm text-neutral-500">
+                  현재 학습 기준일
+                </p>
+                <p className="font-semibold text-black">
+                  {selectedDate
+                    ? format(selectedDate, "M월 d일 EEEE", { locale: ko })
+                    : "-"}
+                </p>
               </div>
 
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="icon" className="rounded-2xl bg-white">
-                    <Bell className="h-4 w-4" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent className="w-[360px] sm:w-[420px]">
-                  <SheetHeader>
-                    <SheetTitle>알림</SheetTitle>
-                  </SheetHeader>
+              <div className="rounded-2xl border border-neutral-200 p-4">
+                <p className="mb-1 text-sm text-neutral-500">연결된 주차</p>
+                <p className="font-semibold text-black">
+                  {currentStudyPlan.weekNumber}주차 학습 플랜
+                </p>
+              </div>
 
-                  <div className="mt-6 space-y-4">
-                    <Card className="rounded-2xl">
-                      <CardContent className="p-4">
-                        <p className="font-medium">정보처리기사 접수 마감 임박</p>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          3일 안에 접수해야 해요.
-                        </p>
-                      </CardContent>
-                    </Card>
+              <p className="text-xs leading-5 text-neutral-500">
+                지금은 캘린더 선택만 되도록 해뒀고, 나중에 선택한 날짜 기준으로
+                API 다시 호출하도록 연결하면 돼.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
 
-                    <Card className="rounded-2xl">
-                      <CardContent className="p-4">
-                        <p className="font-medium">오늘 학습 플랜 2개 남음</p>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          DB 복습과 운영체제 문제풀이가 남아 있어요.
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
-          </div>
-
-          {/* 요약 카드 */}
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <Card className="rounded-3xl border bg-white shadow-sm">
-              <CardContent className="flex items-center justify-between p-6">
+        {/* 진행률 */}
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card
+            onClick={handleGoToPlanner}
+            className="cursor-pointer rounded-3xl border-0 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
+          >
+            <CardHeader>
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">전체 로드맵 진행률</p>
-                  <h3 className="mt-2 text-3xl font-bold">{totalProgress}%</h3>
+                  <CardDescription>Plan Progress</CardDescription>
+                  <CardTitle className="text-xl">플랜 진행률</CardTitle>
                 </div>
-                <div className="rounded-2xl bg-zinc-100 p-3">
-                  <Goal className="h-5 w-5" />
+                <div className="rounded-2xl bg-[#f5f5f2] p-3">
+                  <TrendingUp className="h-5 w-5 text-black" />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </CardHeader>
 
-            <Card className="rounded-3xl border bg-white shadow-sm">
-              <CardContent className="flex items-center justify-between p-6">
+            <CardContent className="space-y-4">
+              <div className="flex items-end justify-between gap-4">
+                <p className="text-4xl font-bold text-black">{planPercent}%</p>
+                <p className="text-sm text-neutral-500">
+                  {planProgress.completedPlanDays} /{" "}
+                  {planProgress.totalPlanDays}일
+                </p>
+              </div>
+
+              <Progress value={planPercent} className="h-3 rounded-full" />
+
+              <p className="text-sm text-neutral-500">
+                클릭하면 플래너 페이지로 이동해요.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card
+            onClick={handleGoToRoadmap}
+            className="cursor-pointer rounded-3xl border-0 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
+          >
+            <CardHeader>
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">완료한 계획</p>
-                  <h3 className="mt-2 text-3xl font-bold">
-                    {completedCount}/{planData.length}
-                  </h3>
+                  <CardDescription>Roadmap Progress</CardDescription>
+                  <CardTitle className="text-xl">로드맵 진행률</CardTitle>
                 </div>
-                <div className="rounded-2xl bg-zinc-100 p-3">
-                  <CheckCircle2 className="h-5 w-5" />
+                <div className="rounded-2xl bg-[#f5f5f2] p-3">
+                  <BookOpen className="h-5 w-5 text-black" />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </CardHeader>
 
-            <Card className="rounded-3xl border bg-white shadow-sm">
-              <CardContent className="flex items-center justify-between p-6">
-                <div>
-                  <p className="text-sm text-muted-foreground">다가오는 시험</p>
-                  <h3 className="mt-2 text-3xl font-bold">{examData.length}개</h3>
-                </div>
-                <div className="rounded-2xl bg-zinc-100 p-3">
-                  <CalendarDays className="h-5 w-5" />
-                </div>
-              </CardContent>
-            </Card>
+            <CardContent className="space-y-4">
+              <div className="flex items-end justify-between gap-4">
+                <p className="text-4xl font-bold text-black">
+                  {roadmapPercent}%
+                </p>
+                <p className="text-sm text-neutral-500">
+                  {roadmapProgress.completedTasks} /{" "}
+                  {roadmapProgress.totalTasks}개
+                </p>
+              </div>
 
-            <Card className="rounded-3xl border bg-white shadow-sm">
-              <CardContent className="flex items-center justify-between p-6">
-                <div>
-                  <p className="text-sm text-muted-foreground">이번 주 집중 시간</p>
-                  <h3 className="mt-2 text-3xl font-bold">12.5h</h3>
-                </div>
-                <div className="rounded-2xl bg-zinc-100 p-3">
-                  <Clock3 className="h-5 w-5" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+              <Progress value={roadmapPercent} className="h-3 rounded-full" />
 
-          {/* 메인 콘텐츠 */}
-          <div className="grid gap-6 xl:grid-cols-[1.4fr_0.9fr]">
-            {/* 왼쪽 */}
-            <div className="space-y-6">
-              <Card className="rounded-3xl border bg-white shadow-sm">
-                <CardHeader>
-                  <CardTitle>학습 현황</CardTitle>
-                  <CardDescription>
-                    로드맵, 플랜, 시험 일정을 한 번에 확인해요.
-                  </CardDescription>
-                </CardHeader>
-
-                <CardContent>
-                  <Tabs defaultValue="roadmap" className="w-full">
-                    <TabsList className="mb-4 grid w-full grid-cols-3 rounded-2xl">
-                      <TabsTrigger value="roadmap" className="rounded-2xl">로드맵</TabsTrigger>
-                      <TabsTrigger value="plan" className="rounded-2xl">플랜</TabsTrigger>
-                      <TabsTrigger value="exam" className="rounded-2xl">시험 일정</TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="roadmap" className="space-y-4">
-                      {roadmapData.map((item) => (
-                        <Card key={item.id} className="rounded-2xl border bg-[#fcfcfb] shadow-none">
-                          <CardContent className="p-5">
-                            <div className="mb-3 flex items-start justify-between gap-3">
-                              <div>
-                                <h4 className="font-semibold">{item.title}</h4>
-                                <p className="mt-1 text-sm text-muted-foreground">{item.weeks}</p>
-                              </div>
-                              <Badge variant={getStatusBadgeVariant(item.status)}>
-                                {item.status}
-                              </Badge>
-                            </div>
-                            <Progress value={item.progress} className="mb-2" />
-                            <p className="text-sm text-muted-foreground">{item.progress}% 완료</p>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </TabsContent>
-
-                    <TabsContent value="plan" className="space-y-4">
-                      {filteredPlans.map((item) => (
-                        <div
-                          key={item.id}
-                          className="flex items-center justify-between rounded-2xl border bg-[#fcfcfb] p-4"
-                        >
-                          <div className="min-w-0">
-                            <div className="mb-1 flex items-center gap-2">
-                              <Badge variant="outline">{item.day}</Badge>
-                              {item.done && <Badge>완료</Badge>}
-                            </div>
-                            <p className="truncate font-medium">{item.title}</p>
-                            <p className="text-sm text-muted-foreground">{item.time}</p>
-                          </div>
-
-                          <Button
-                            variant={item.done ? "secondary" : "outline"}
-                            className="rounded-2xl"
-                          >
-                            {item.done ? "완료됨" : "확인"}
-                          </Button>
-                        </div>
-                      ))}
-
-                      {filteredPlans.length === 0 && (
-                        <div className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-                          검색 결과가 없어요.
-                        </div>
-                      )}
-                    </TabsContent>
-
-                    <TabsContent value="exam" className="space-y-4">
-                      {examData.map((item) => (
-                        <Card key={item.id} className="rounded-2xl border bg-[#fcfcfb] shadow-none">
-                          <CardContent className="flex items-center justify-between gap-4 p-5">
-                            <div>
-                              <div className="mb-2 flex items-center gap-2">
-                                <h4 className="font-semibold">{item.name}</h4>
-                                <Badge variant={getStatusBadgeVariant(item.status)}>
-                                  {item.status}
-                                </Badge>
-                              </div>
-                              <p className="text-sm text-muted-foreground">{item.period}</p>
-                            </div>
-
-                            <div className="rounded-2xl bg-black px-4 py-3 text-sm font-semibold text-white">
-                              {item.dday}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </TabsContent>
-                  </Tabs>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* 오른쪽 */}
-            <div className="space-y-6">
-              <Card className="rounded-3xl border bg-white shadow-sm">
-                <CardHeader>
-                  <CardTitle>오늘의 목표</CardTitle>
-                  <CardDescription>가볍게 3개만 끝내도 충분해요.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="rounded-2xl border bg-[#fcfcfb] p-4">
-                    <p className="font-medium">정보처리기사 기출 20문제 풀기</p>
-                    <p className="mt-1 text-sm text-muted-foreground">예상 소요 40분</p>
-                  </div>
-                  <div className="rounded-2xl border bg-[#fcfcfb] p-4">
-                    <p className="font-medium">운영체제 교체 알고리즘 정리</p>
-                    <p className="mt-1 text-sm text-muted-foreground">예상 소요 50분</p>
-                  </div>
-                  <div className="rounded-2xl border bg-[#fcfcfb] p-4">
-                    <p className="font-medium">SQLD 요약노트 2페이지 작성</p>
-                    <p className="mt-1 text-sm text-muted-foreground">예상 소요 30분</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="rounded-3xl border bg-white shadow-sm">
-                <CardHeader>
-                  <CardTitle>AI 추천</CardTitle>
-                  <CardDescription>지금 민서님에게 가장 필요한 액션</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="rounded-2xl bg-black p-5 text-white">
-                    <p className="text-sm text-zinc-300">추천 우선순위 1</p>
-                    <h4 className="mt-1 text-lg font-semibold">토익 시험 전 모의고사 1회 진행</h4>
-                    <p className="mt-2 text-sm text-zinc-300">
-                      시험이 D-5라서 새로운 개념보다 실전 감각 유지가 더 중요해요.
-                    </p>
-                  </div>
-
-                  <Button className="w-full rounded-2xl">추천 플랜 생성하기</Button>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
+              <p className="text-sm text-neutral-500">
+                클릭하면 로드맵 페이지로 이동해요.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </main>
   );
