@@ -81,7 +81,6 @@ export default function PlannerGeneratePage() {
       const result = await generatePlan(payload);
       console.log("플랜 생성 응답:", result);
 
-      // ✅ 생성 성공 후 조회용 examTaskId 저장
       localStorage.setItem("examTaskId", String(result.examTaskId));
 
       router.push("/planner");
@@ -94,7 +93,7 @@ export default function PlannerGeneratePage() {
   };
 
   return (
-    <main className="min-h-screen bg-white px-6 py-10">
+    <main className="min-h-screen px-6 py-10">
       <div className="mx-auto max-w-2xl">
         <section className="rounded-[28px] border border-gray-200 p-6 md:p-8">
           <div className="mb-8">

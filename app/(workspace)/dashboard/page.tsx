@@ -74,11 +74,26 @@ export default function DashboardPage() {
     const fetchDashboard = async () => {
       try {
         const result = await getDashboard();
+
+        const hasValidData =
+          result &&
+          result.currentStudyPlan &&
+          typeof result.currentStudyPlan.topic === "string" &&
+          result.currentStudyPlan.topic.trim() !== "" &&
+          result.planProgress &&
+          result.roadmapProgress;
+
+        if (!hasValidData) {
+          setData(null);
+          return;
+        }
+
         setData(result);
         setCompleted(result.currentStudyPlan.completed);
         setSelectedDate(new Date(result.currentStudyPlan.date));
       } catch (error) {
         console.error("대시보드 불러오기 실패:", error);
+        setData(null);
       } finally {
         setLoading(false);
       }
@@ -94,6 +109,10 @@ export default function DashboardPage() {
 
   const handleGoToRoadmap = () => {
     router.push("/roadmap");
+  };
+
+  const handleGoToGenerate = () => {
+    router.push("/roadmap/generate");
   };
 
   const handleToggleComplete = (e: React.MouseEvent) => {
@@ -144,10 +163,39 @@ export default function DashboardPage() {
   if (!data) {
     return (
       <main className="min-h-screen bg-[#fafaf8] p-6">
-        <div className="mx-auto max-w-6xl">
-          <Card className="rounded-3xl border border-red-100 bg-white shadow-sm">
-            <CardContent className="p-6 text-sm text-red-500">
-              데이터를 불러오지 못했어요.
+        <div className="mx-auto max-w-6xl space-y-6">
+          <div className="space-y-10">
+            <p className="text-sm text-neutral-500">Dashboard</p>
+            <QuickTabs />
+
+            <h1 className="text-3xl font-bold tracking-tight text-black">
+              오늘의 학습 현황
+            </h1>
+          </div>
+
+          <Card className="rounded-3xl border-0 bg-white shadow-sm">
+            <CardContent className="flex flex-col items-center justify-center px-6 py-16 text-center">
+              <div className="mb-4 rounded-2xl bg-[#f5f5f2] p-4">
+                <BookOpen className="h-7 w-7 text-black" />
+              </div>
+
+              <h2 className="text-2xl font-semibold text-black">
+                아직 생성된 로드맵과 학습 플랜이 없어요
+              </h2>
+
+              <p className="mt-3 max-w-md text-sm leading-6 text-neutral-500">
+                먼저 로드맵을 생성하면 자격증 일정과 학습 플랜이 연결된
+                대시보드를 확인할 수 있어요.
+              </p>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Button
+                  onClick={handleGoToGenerate}
+                  className="rounded-2xl px-6"
+                >
+                  로드맵 생성하기
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -160,10 +208,8 @@ export default function DashboardPage() {
   return (
     <main className="min-h-screen bg-[#fafaf8] p-6">
       <div className="mx-auto max-w-6xl space-y-6">
-        {/* 헤더 */}
         <div className="space-y-10">
-          <p className="text-sm text-neutral-500">Dashboard
-          </p>
+          <p className="text-sm text-neutral-500">Dashboard</p>
           <QuickTabs />
 
           <h1 className="text-3xl font-bold tracking-tight text-black">
@@ -171,9 +217,7 @@ export default function DashboardPage() {
           </h1>
         </div>
 
-        {/* 상단 */}
         <div className="grid gap-6 xl:grid-cols-[1.5fr_0.9fr]">
-          {/* 메인 학습 카드 */}
           <Card
             onClick={handleGoToPlanner}
             className="cursor-pointer rounded-3xl border-0 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
@@ -203,7 +247,6 @@ export default function DashboardPage() {
             </CardHeader>
 
             <CardContent className="space-y-5">
-              {/* 목표 */}
               <button
                 type="button"
                 onClick={(e) => {
@@ -239,7 +282,6 @@ export default function DashboardPage() {
                 </div>
               )}
 
-              {/* 하단 요약 */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl border border-neutral-200 bg-white p-4">
                   <div className="mb-2 flex items-center gap-2 text-sm text-neutral-500">
@@ -264,7 +306,6 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          {/* 캘린더 카드 */}
           <Card className="rounded-3xl border-0 bg-white shadow-sm">
             <CardHeader>
               <CardDescription className="text-neutral-500">
@@ -323,14 +364,11 @@ export default function DashboardPage() {
                 </p>
               </div>
 
-              <p className="text-xs leading-5 text-neutral-500">
-             
-              </p>
+              <p className="text-xs leading-5 text-neutral-500"></p>
             </CardContent>
           </Card>
         </div>
 
-        {/* 진행률 */}
         <div className="grid gap-6 md:grid-cols-2">
           <Card
             onClick={handleGoToPlanner}
