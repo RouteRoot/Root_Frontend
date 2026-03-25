@@ -235,7 +235,7 @@ export default function DashboardPage() {
                 <div className="rounded-2xl border border-neutral-200 bg-white p-4 text-sm leading-6 text-neutral-600">
                   현재 학습 주제를 중심으로 이번 주 목표를 진행 중이에요. 이
                   카드를 클릭하면 플래너 페이지로 이동해서 세부 계획을 볼 수
-                  있어요.
+                  있어요. **나중에 세부계획도 넣기**
                 </div>
               )}
 

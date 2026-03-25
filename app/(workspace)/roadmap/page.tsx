@@ -19,12 +19,11 @@ export default function PlannerPage() {
   const router = useRouter();
   const { roadmap, loading, error } = useRoadmap();
 
-  const handleSelectTask = (taskId: number, taskName: string) => {
-    localStorage.setItem("selectedExamTaskId", String(taskId));
-    localStorage.setItem("selectedCertificationName", taskName);
-
-    router.push("/planner/generate");
-  };
+ const handleSelectTask = (taskId: number, taskName: string) => {
+   router.push(
+     `/planner/generate?taskId=${taskId}&name=${encodeURIComponent(taskName)}`,
+   );
+ };
 
   if (loading) {
     return (

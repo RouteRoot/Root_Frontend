@@ -182,7 +182,7 @@ export default function PlannerPage() {
 
     try {
       const result = await checkDailyPlan(dailyPlanId);
-      console.log("체크 응답:", result);
+      console.log("🔥 체크 응답:", result);
 
       setPlan((prev) => {
         if (!prev) return prev;

@@ -35,7 +35,9 @@ export type Phase = {
 
 export type RoadmapResponse = {
   roadmapId: number;
+  daily: number;
+  weekly: number;
+  mylevel: string;
   phases: Phase[];
 };
-
 export type RoadmapUpdateRequest = RoadmapFormData;
