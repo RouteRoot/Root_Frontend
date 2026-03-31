@@ -16,7 +16,7 @@ import {
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 
-import { getDashboard } from "@/app/api/service/dashboard";
+import { getDashboard } from "@/app/api/dashboard/dashboard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { generateRoadmap } from "@/app/api/service/roadmap";
+import { generateRoadmap } from "@/app/api/roadmap/roadmap";
 import type { RoadmapFormData } from "@/types/roadmap";
 
 export default function GeneratePage() {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { checkDailyPlan, getPlanByExamTaskId } from "@/app/api/service/plan";
+import { checkDailyPlan, getPlanByExamTaskId } from "@/app/api/plan/plan";
 
 type DailyPlan = {
   dailyPlanId: number;

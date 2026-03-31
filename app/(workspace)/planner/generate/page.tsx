@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { generatePlan } from "@/app/api/service/plan";
-import { getRoadmapByToken } from "@/app/api/service/roadmap";
+import { generatePlan } from "@/app/api/plan/plan";
+import { getRoadmapByToken } from "@/app/api/roadmap/roadmap";
 
 export default function PlannerGeneratePage() {
   const router = useRouter();

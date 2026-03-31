@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getRoadmapByToken } from "@/app/api/service/roadmap";
+import { getRoadmapByToken } from "@/app/api/roadmap/roadmap";
 import type { RoadmapResponse } from "@/types/roadmap";
 
 export default function useRoadmap() {
