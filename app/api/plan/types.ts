@@ -38,7 +38,6 @@ export interface PlanCheckResponse {
   message: string;
 }
 
-/** 새로 추가: 플랜 탭 목록 */
 export interface PlanTab {
   examTaskId: number;
   taskName: string;

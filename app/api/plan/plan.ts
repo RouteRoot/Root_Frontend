@@ -12,6 +12,7 @@ export async function generatePlan(
 ): Promise<PlanResponse> {
   const response = await axiosInstance.post("/plans", payload);
   return response.data;
+  
 }
 
 // 플랜 탭 목록 조회
