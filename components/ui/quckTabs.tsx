@@ -13,7 +13,7 @@ const quickLinks = [
   {
     label: "플래너",
     description: "오늘 할 일과 학습 계획 보기",
-    href: "/planner",
+    href: "/plan",
     icon: CalendarDays,
   },
   {

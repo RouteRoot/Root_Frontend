@@ -3,7 +3,7 @@ import type {
   RoadmapResponse,
   RoadmapGenerateRequest,
   RoadmapGenerateResponse,
-} from "@/types/roadmap";
+} from "./types";
 
 // 조회
 export const getRoadmapByToken = async (): Promise<RoadmapResponse> => {

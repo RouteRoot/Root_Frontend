@@ -102,9 +102,9 @@ export default function DashboardPage() {
     fetchDashboard();
   }, []);
 
-  const handleGoToPlanner = () => {
+  const handleGoToPlan = () => {
     if (!data) return;
-    router.push(`/planner?planId=${data.currentStudyPlan.dailyPlanId}`);
+    router.push(`/plan?planId=${data.currentStudyPlan.dailyPlanId}`);
   };
 
   const handleGoToRoadmap = () => {
@@ -219,7 +219,7 @@ export default function DashboardPage() {
 
         <div className="grid gap-6 xl:grid-cols-[1.5fr_0.9fr]">
           <Card
-            onClick={handleGoToPlanner}
+            onClick={handleGoToPlan}
             className="cursor-pointer rounded-3xl border-0 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
           >
             <CardHeader className="pb-4">
@@ -371,7 +371,7 @@ export default function DashboardPage() {
 
         <div className="grid gap-6 md:grid-cols-2">
           <Card
-            onClick={handleGoToPlanner}
+            onClick={handleGoToPlan}
             className="cursor-pointer rounded-3xl border-0 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
           >
             <CardHeader>

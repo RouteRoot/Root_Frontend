@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { generatePlan } from "@/app/api/plan/plan";
 import { getRoadmapByToken } from "@/app/api/roadmap/roadmap";
 
-export default function PlannerGeneratePage() {
+export default function PlanGeneratePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -83,7 +83,7 @@ export default function PlannerGeneratePage() {
 
       localStorage.setItem("examTaskId", String(result.examTaskId));
 
-      router.push("/planner");
+      router.push("/plan");
     } catch (err) {
       console.error("학습 플랜 생성 실패:", err);
       setError("학습 플랜 생성에 실패했습니다.");
@@ -97,7 +97,7 @@ export default function PlannerGeneratePage() {
       <div className="mx-auto max-w-2xl">
         <section className="rounded-[28px] border border-gray-200 p-6 md:p-8">
           <div className="mb-8">
-            <p className="mb-2 text-sm font-medium text-gray-500">Planner</p>
+            <p className="mb-2 text-sm font-medium text-gray-500">Plan</p>
             <h1 className="text-3xl font-bold tracking-tight text-black">
               학습 플랜 만들기
             </h1>

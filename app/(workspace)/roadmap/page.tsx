@@ -15,13 +15,13 @@ const statusStyleMap = {
   COMPLETED: "bg-green-50 text-green-700 border-green-200",
 } as const;
 
-export default function PlannerPage() {
+export default function PlanPage() {
   const router = useRouter();
   const { roadmap, loading, error } = useRoadmap();
 
  const handleSelectTask = (taskId: number, taskName: string) => {
    router.push(
-     `/planner/generate?taskId=${taskId}&name=${encodeURIComponent(taskName)}`,
+     `/plan/generate?taskId=${taskId}&name=${encodeURIComponent(taskName)}`,
    );
  };
 
@@ -81,7 +81,7 @@ export default function PlannerPage() {
         <div className="mx-auto max-w-6xl">
           <div className="mb-6 flex justify-end">
             <button
-              onClick={() => router.push("/planner/generate")}
+              onClick={() => router.push("/plan/generate")}
               className="rounded-2xl bg-black px-5 py-3 text-sm font-medium text-white transition hover:opacity-90"
             >
               로드맵 생성하기
@@ -116,7 +116,7 @@ export default function PlannerPage() {
         <section className="mb-10">
           <div className="mb-6 flex items-start justify-between gap-4">
             <div>
-              <p className="mb-3 text-sm font-medium text-gray-500">Planner</p>
+              <p className="mb-3 text-sm font-medium text-gray-500">Plan</p>
               <h1 className="text-4xl font-bold tracking-tight text-black">
                 나의 자격증 로드맵
               </h1>
