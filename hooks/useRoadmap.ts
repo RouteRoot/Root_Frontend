@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getRoadmapByToken } from "@/app/api/roadmap/roadmap";
-import type { RoadmapResponse } from "@/types/roadmap";
+import type { RoadmapResponse } from "@/app/api/roadmap/types";
 
 export default function useRoadmap() {
   const [roadmap, setRoadmap] = useState<RoadmapResponse | null>(null);
