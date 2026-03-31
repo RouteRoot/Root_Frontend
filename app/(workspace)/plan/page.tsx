@@ -172,7 +172,7 @@ export default function PlannPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f7f5] px-6 py-8 text-[#111827]">
+    <main className="min-h-screen px-6 py-8 text-[#111827]">
       <div className="mx-auto max-w-6xl">
         {/* 헤더 */}
         <section className="mb-6 rounded-2xl border border-[#e9e7e3] bg-white p-6">
@@ -273,7 +273,7 @@ export default function PlannPage() {
                 </div>
               ) : (
                 <p className="mt-4 text-sm text-gray-500">
-                  현재 남아 있는 학습 계획이 없습니다.
+                   모두 완료 하셨습니다!
                 </p>
               )}
             </section>
