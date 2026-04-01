@@ -27,7 +27,7 @@ type SectionViewModel = {
 
 function PhaseCard({ step, title, description }: { step: string; title: string; description: string }) {
   return (
-    <div className="h-[280px] rounded-[14px] border border-[#9DDEB9] bg-[#EEFAF3] p-6">
+    <div className="h-[330px] rounded-[14px] border border-[#9DDEB9] bg-[#EEFAF3] p-6">
       <p
         className="mb-4 text-[13px] font-semibold leading-none text-[#2FA66A]"
         style={{
@@ -49,7 +49,7 @@ function PhaseCard({ step, title, description }: { step: string; title: string; 
       </h3>
 
       <p
-        className="line-clamp-4 text-[13px] leading-[1.9] text-[#454B55]"
+        className="line-clamp-8 text-[13px] leading-[1.9] text-[#454B55]"
         style={{
           fontFamily:
             'Inter, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif',
@@ -286,7 +286,7 @@ export default function PhaseSection() {
 
   return (
     <div
-      className="space-y-24"
+      className="space-y-24 mt-10"
       style={{
         fontFamily:
           'Inter, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif',
