@@ -1,14 +1,30 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Noto_Serif_KR } from "next/font/google";
 import PhaseSection from "@/components/roadmap/PhaseSection";
+import { getMe } from "@/app/api/service/user"; 
 
 const serif = Noto_Serif_KR({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
 });
 
-export default function WelcomePage() {
+export default function RoadmapPage() {
+    const [username, setUsername] = useState("");
+
+    useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const data = await getMe();
+        setUsername(data.name);
+      } catch (error) {
+        console.error("유저 정보 가져오기 실패", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
   return (
     <main className={`min-h-screen bg-white`}>
       <div className="mx-auto w-full max-w-[930px] px-8 py-14">
@@ -25,7 +41,7 @@ export default function WelcomePage() {
 
         {/* 본문 */}
         <div className="mt-6 text-[14px] leading-[2] text-[#515a66]">
-          <p>민서님, 이제 뿌리를 내려보세요.</p>
+          <p>{username}님, 이제 뿌리를 내려보세요.</p>
           <p>
             이 로드맵은 당신의 목표까지 도달하기 위한 흐름을 정리한
             학습 가이드입니다. 각 단계를 따라가며 차근차근 학습을
