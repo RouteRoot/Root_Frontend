@@ -50,11 +50,12 @@ function TodayFocusCardComponent({
 
       <div className="relative mb-4 flex items-start justify-between">
         <div
-          className={`mb-3 inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-bold tracking-[0.08em] transition ${
+          className={`mb-3 inline-flex items-center rounded-full px-3 py-[5px] text-[10px] font-semibold tracking-[0.04em] transition ${
             isDone
-              ? "border-black bg-black text-white"
-              : "border-[#d8d0c5] bg-[#f6f1e9] text-[#6c6257]"
+              ? "bg-[#1f1c19] text-white"
+              : "bg-[#adfab3] text-[#5f564c] ring-1 ring-[#7de46d]"
           }`}
+          style={titleFontStyle}
         >
           {isDone ? "완료" : "진행중"}
         </div>
@@ -97,18 +98,22 @@ function TodayFocusCardComponent({
         </p>
 
         <div className="mt-5 flex items-center justify-between gap-3">
-          <div className="inline-flex items-center rounded-full border border-black/20 bg-white px-3 py-1 text-[10px] font-medium tracking-[0.08em] text-[#5e5851]">
+          <div
+            className="inline-flex items-center rounded-full bg-[#ffffff] px-3 py-[6px] text-[10px] font-medium tracking-[0.04em] text-[#111111] ring-1 ring-[#cdcdcd]"
+            style={titleFontStyle}
+          >
             {hours}
           </div>
 
           <button
             type="button"
             onClick={onToggleStatus}
-            className={`inline-flex items-center rounded-md border px-3 py-1 text-[10px] font-bold tracking-[0.08em] transition ${
+            className={`inline-flex items-center rounded-full px-4 py-[6px] text-[10px] font-semibold tracking-[0.04em] transition ${
               isDone
-                ? "border-black bg-black text-white"
-                : "border-black/20 bg-white text-[#3f3a34] hover:bg-black hover:text-white"
+                ? "bg-[#1f1c19] text-white"
+                : "bg-[#ffffff] text-[#3f3a34] ring-1 ring-[#dbdbdb] hover:bg-[#1f1c19] hover:text-white hover:ring-[#1f1c19]"
             }`}
+            style={titleFontStyle}
           >
             {isDone ? "완료됨" : "완료 체크"}
           </button>

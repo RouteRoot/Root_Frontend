@@ -25,7 +25,7 @@ function StudySummaryCardComponent({
     totalDays > 0 ? Math.min((completedDays / totalDays) * 100, 100) : 0;
 
   return (
-    <section className="w-[300px] rounded-[10px] border border-[#d0d0d0] bg-white px-5 py-4 text-[#2f2c28]">
+    <section className="w-[300px] overflow-hidden rounded-[10px] border border-[#d0d0d0] bg-white px-5 py-4 text-[#2f2c28]">
       <div className="mb-4 flex items-center gap-2">
         <h3
           className="shrink-0 text-[12px] font-semibold text-[#2d2a26]"

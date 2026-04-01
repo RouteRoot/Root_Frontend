@@ -85,26 +85,30 @@ export default function WeeklyStudyTracker({
   };
 
   return (
-    <div className="w-full max-w-[760px]">
-      <div className="flex items-center gap-2 px-2 py-2">
-        <Check className="h-4 w-4 text-[#2f2c28]" />
+    <div className="ml-auto w-full max-w-[800px]">
+      <div className="mb-2 flex items-center gap-2 px-2 py-1">
+        <Check className="h-4 w-4 text-[#000000]" />
         <h2 className="text-[14px] font-semibold text-[#2f2c28]">{title}</h2>
       </div>
 
       {groupedItems.map((group) => (
-        <div key={group.weekNumber} className="mb-8">
-          <div className="px-2 py-2 text-[13px] font-semibold text-[#2f2c28]">
-            {group.weekNumber}주차
+        <div key={group.weekNumber} className="mb-9">
+          <div className="mb-2 px-2 pb-1">
+            <div className="text-[15px] font-semibold text-[#2f2c28]">
+              {group.weekNumber}주차
+            </div>
           </div>
 
           <table className="w-full border-collapse text-left">
             <thead>
-              <tr className="border-b border-[#ece9e2] text-[12px] text-[#8a847a]">
-                <th className="px-2 py-2 font-medium">학습항목</th>
-                <th className="px-2 py-2 font-medium">주차 / Day</th>
-                <th className="px-2 py-2 font-medium">학습일</th>
-                <th className="px-2 py-2 font-medium">학습시간</th>
-                <th className="px-2 py-2 font-medium text-center">액션</th>
+              <tr className="border-b border-[#ebe6df] text-[12px] text-[#8a8176]">
+                <th className="px-2 py-2 align-middle font-medium">학습항목</th>
+                <th className="px-2 py-2 align-middle font-medium">주차 / Day</th>
+                <th className="px-2 py-2 align-middle font-medium">학습일</th>
+                <th className="px-2 py-2 align-middle font-medium">학습시간</th>
+                <th className="px-2 py-2 align-middle text-center font-medium">
+                  액션
+                </th>
               </tr>
             </thead>
 
@@ -157,53 +161,68 @@ function StudyRow({
       ? "완료"
       : item.status === "IN_PROGRESS"
       ? "진행"
-      : "미착수";
+      : "예정";
+
+  const statusChipClassName =
+    item.status === "COMPLETED"
+      ? "bg-[#e8f7ee] text-[#1f7a4d] border border-[#cfe6d7]"
+      : item.status === "IN_PROGRESS"
+      ? "bg-[#fff6db] text-[#a06b00] border border-[#ecd9a2]"
+      : "bg-[#f3eee6] text-[#6f685d] border border-[#ddd3c4]";
+
+  const badgeText = isToday ? "TODAY" : isFocused ? "FOCUS" : null;
 
   return (
     <>
-      <tr className="border-b border-[#f1eee8] text-[13px] text-[#312e29] hover:bg-[#fafafa]">
-        <td className="px-2 py-2">
+      <tr
+        className={`border-b border-[#ebe6df] text-[13px] text-[#2f2c28] transition-colors duration-200 ${
+          isFocused ? "bg-[#f7f7fa]" : "hover:bg-[#fbfaf8]"
+        }`}
+      >
+        <td
+          className={`px-2 py-2 ${
+            isFocused ? " border-[#8a6246] pl-[6px]" : ""
+          }`}
+        >
           <button
             type="button"
             onClick={onRowClick}
             className="flex w-full items-center gap-2 text-left"
           >
-            {isOpen ? (
-              <ChevronDown className="h-3.5 w-3.5 shrink-0 text-[#8a847a]" />
-            ) : (
-              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#8a847a]" />
-            )}
-
-            <span
-              className={`h-2 w-2 shrink-0 rounded-full ${
-                isCompleted ? "bg-black" : "bg-[#c9c2b6]"
-              }`}
-            />
-
-            <span className={isCompleted ? "line-through text-[#9a9489]" : ""}>
-              {item.subject}
+            <span className="shrink-0">
+              {isOpen ? (
+                <ChevronDown className="h-3.5 w-3.5 text-[#9a9288]" />
+              ) : (
+                <ChevronRight className="h-3.5 w-3.5 text-[#9a9288]" />
+              )}
             </span>
 
-            {isToday && (
-              <span className="ml-2 rounded-full border border-[#ddd6cb] px-2 py-[2px] text-[10px] text-[#6f685d]">
-                TODAY
+            <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
+              <span
+                className={`min-w-0 truncate ${
+                  isCompleted
+                    ? "text-[#a0998f] line-through"
+                    : "font-medium text-[#2f2c28]"
+                }`}
+              >
+                {item.subject}
               </span>
-            )}
 
-            {isFocused && !isToday && (
-              <span className="ml-2 rounded-full border border-[#ddd6cb] px-2 py-[2px] text-[10px] text-[#6f685d]">
-                FOCUS
-              </span>
-            )}
+              {badgeText && (
+                <span className="shrink-0 rounded-full border border-[#ddd3c4] bg-[#eff4f6] px-2 py-[2px] text-[10px] leading-none text-[#6f685d]">
+                  {badgeText}
+                </span>
+              )}
+            </div>
           </button>
         </td>
 
-        <td className="px-2 py-2 text-[#6f685d]">{item.weekDay}</td>
-        <td className="px-2 py-2 text-[#6f685d]">{item.studyDate}</td>
+        <td className="px-2 py-2 text-[#7a7268]">{item.weekDay}</td>
+        <td className="px-2 py-2 text-[#7a7268]">{item.studyDate}</td>
 
         <td className="px-2 py-2">
-          <div className="flex items-center gap-1 text-[#6f685d]">
-            <Clock3 className="h-3 w-3" />
+          <div className="flex items-center gap-1 text-[#7a7268]">
+            <Clock3 className="h-3 w-3 shrink-0 text-[#8a8176]" />
             <span>{item.hours}</span>
           </div>
         </td>
@@ -215,7 +234,7 @@ function StudyRow({
               e.stopPropagation();
               onToggleStatus?.(item.id);
             }}
-            className="text-[11px] text-[#5e5851] hover:text-black"
+            className={`inline-flex items-center rounded-full px-3 py-[4px] text-[10px] font-medium transition-opacity duration-200 hover:opacity-80 ${statusChipClassName}`}
           >
             {statusText}
           </button>
@@ -223,9 +242,9 @@ function StudyRow({
       </tr>
 
       {isOpen && (
-        <tr className="border-b border-[#f1eee8] bg-[#fcfcfb]">
+        <tr className="border-b border-[#ebe6df] bg-[#f1f5f9]">
           <td colSpan={5} className="px-8 py-3">
-            <div className="text-[12px] leading-[1.7] text-[#5b564f]">
+            <div className="text-[12px] leading-[1.75] text-[#5b564f]">
               {item.description || "세부 설명이 없습니다."}
             </div>
           </td>

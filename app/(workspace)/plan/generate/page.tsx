@@ -26,7 +26,7 @@ export default function PlanGeneratePage() {
         setRoadmapLoading(true);
         setError("");
 
-        const taskId = searchParams.get("taskId");
+        const taskId = searchParams.get("examTaskId");
         const name = searchParams.get("name");
 
         if (taskId) setExamTaskId(taskId);

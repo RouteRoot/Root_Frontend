@@ -1,28 +1,30 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import TodayFocusCard from "@/components/plan/todayPlannerCard";
+import StudySummaryCard from "@/components/plan/StudySummaryCard";
+import WeeklyStudyTracker, {
+  type StudyItem,
+} from "@/components/plan/weekliyStudyPlanner";
 import {
-  CalendarDays,
-  CheckCircle2,
-  ChevronDown,
-  ChevronRight,
-  Clock3,
-  Target,
-  BookOpen,
-  Circle,
-} from "lucide-react";
-import {
-  getPlanTabs,
   getPlanByExamTaskId,
   checkDailyPlan,
+  getPlanTabs,
 } from "@/app/api/plan/plan";
-import type {
-  DailyPlan,
-  PlanResponse,
-  PlanTab,
-} from "@/app/api/plan/types";
+import type { PlanResponse, PlanTab } from "@/app/api/plan/types";
 
-type ExpandedMap = Record<number, boolean>;
+type FlattenedDailyPlan = {
+  dailyPlanId: number;
+  studyDate: string;
+  isCompleted: boolean;
+  dayNumber: number;
+  topic: string;
+  description: string;
+  estimatedHours: number;
+  isRest: boolean;
+  weekNumber: number;
+};
 
 export default function PlanPage() {
   const [tabs, setTabs] = useState<PlanTab[]>([]);
@@ -30,28 +32,43 @@ export default function PlanPage() {
     null
   );
   const [plan, setPlan] = useState<PlanResponse | null>(null);
-  const [loadingTabs, setLoadingTabs] = useState(true);
-  const [loadingPlan, setLoadingPlan] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [expandedItems, setExpandedItems] = useState<ExpandedMap>({});
+
+  const [tabsLoading, setTabsLoading] = useState(true);
+  const [planLoading, setPlanLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const tabRefs = useRef<Record<number, HTMLButtonElement | null>>({});
 
   useEffect(() => {
     const fetchTabs = async () => {
       try {
-        setLoadingTabs(true);
-        setError(null);
+        setTabsLoading(true);
+        setError("");
 
-        const data = await getPlanTabs();
-        setTabs(data);
+        const tabData = await getPlanTabs();
+        setTabs(tabData);
 
-        if (data.length > 0) {
-          setSelectedExamTaskId(data[0].examTaskId);
+        if (tabData.length === 0) {
+          setSelectedExamTaskId(null);
+          setPlan(null);
+          return;
         }
-      } catch (err) {
-        console.error(err);
-        setError("플랜 목록을 불러오지 못했어요.");
+
+        const savedExamTaskId = localStorage.getItem("examTaskId");
+        const savedId = savedExamTaskId ? Number(savedExamTaskId) : null;
+
+        const matchedTab = savedId
+          ? tabData.find((tab) => tab.examTaskId === savedId)
+          : null;
+
+        setSelectedExamTaskId(
+          matchedTab ? matchedTab.examTaskId : tabData[0].examTaskId
+        );
+      } catch (error) {
+        console.error("플랜 탭 조회 실패:", error);
+        setError("플랜 탭을 불러오지 못했습니다.");
       } finally {
-        setLoadingTabs(false);
+        setTabsLoading(false);
       }
     };
 
@@ -59,507 +76,312 @@ export default function PlanPage() {
   }, []);
 
   useEffect(() => {
-    if (selectedExamTaskId === null) return;
-
     const fetchPlan = async () => {
-      try {
-        setLoadingPlan(true);
-        setError(null);
+      if (selectedExamTaskId === null) return;
 
-        const data = await getPlanByExamTaskId(selectedExamTaskId);
-        setPlan(data);
-        setExpandedItems({});
-      } catch (err) {
-        console.error(err);
-        setError("플랜 정보를 불러오지 못했어요.");
+      try {
+        setPlanLoading(true);
+        setError("");
+
+        const response = await getPlanByExamTaskId(selectedExamTaskId);
+        setPlan(response);
+        localStorage.setItem("examTaskId", String(selectedExamTaskId));
+      } catch (error) {
+        console.error("플랜 조회 실패:", error);
+        setError("플랜을 불러오지 못했습니다.");
       } finally {
-        setLoadingPlan(false);
+        setPlanLoading(false);
       }
     };
 
     fetchPlan();
   }, [selectedExamTaskId]);
 
-  const progress = useMemo(() => {
-    if (!plan) {
-      return { total: 0, completed: 0, percent: 0 };
-    }
+  useEffect(() => {
+    if (selectedExamTaskId === null) return;
 
-    const allDailyPlans = plan.weeklyPlans.flatMap((week) => week.dailyPlans);
-    const studyPlans = allDailyPlans.filter((item) => !item.isRest);
-    const completedPlans = studyPlans.filter((item) => item.isCompleted);
+    const activeTab = tabRefs.current[selectedExamTaskId];
+    activeTab?.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest",
+    });
+  }, [selectedExamTaskId]);
 
-    const total = studyPlans.length;
-    const completed = completedPlans.length;
-    const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
-
-    return { total, completed, percent };
-  }, [plan]);
-
-  const todayFocus = useMemo(() => {
-    if (!plan) return null;
-
-    for (const week of plan.weeklyPlans) {
-      for (const daily of week.dailyPlans) {
-        if (!daily.isRest && !daily.isCompleted) {
-          return {
-            ...daily,
-            weekNumber: week.weekNumber,
-            weeklyGoal: week.weeklyGoal,
-          };
-        }
-      }
-    }
-
-    return null;
-  }, [plan]);
-
-  const allTasks = useMemo(() => {
+  const allDailyPlans = useMemo<FlattenedDailyPlan[]>(() => {
     if (!plan) return [];
 
-    return plan.weeklyPlans.flatMap((week) =>
-      week.dailyPlans.map((daily) => ({
-        ...daily,
-        weekNumber: week.weekNumber,
-        weeklyGoal: week.weeklyGoal,
+    return plan.weeklyPlans.flatMap((weeklyPlan) =>
+      weeklyPlan.dailyPlans.map((dailyPlan) => ({
+        ...dailyPlan,
+        weekNumber: weeklyPlan.weekNumber,
       }))
     );
   }, [plan]);
 
-  const toggleExpanded = (dailyPlanId: number) => {
-    setExpandedItems((prev) => ({
-      ...prev,
-      [dailyPlanId]: !prev[dailyPlanId],
-    }));
-  };
+  const todayFocus = useMemo<FlattenedDailyPlan | null>(() => {
+    if (allDailyPlans.length === 0) return null;
 
-  const handleCheck = async (dailyPlanId: number) => {
-    if (!plan) return;
+    const nextPlan = allDailyPlans.find(
+      (item) => !item.isCompleted && !item.isRest
+    );
 
-    const previousPlan = plan;
+    if (nextPlan) return nextPlan;
 
-    setPlan({
-      ...plan,
-      weeklyPlans: plan.weeklyPlans.map((week) => ({
-        ...week,
-        dailyPlans: week.dailyPlans.map((daily) =>
-          daily.dailyPlanId === dailyPlanId
-            ? { ...daily, isCompleted: !daily.isCompleted }
-            : daily
-        ),
-      })),
-    });
+    return allDailyPlans[allDailyPlans.length - 1] ?? null;
+  }, [allDailyPlans]);
 
+  const trackerItems = useMemo<StudyItem[]>(() => {
+    return allDailyPlans
+      .filter((item) => !item.isRest)
+      .map((item) => ({
+        id: item.dailyPlanId,
+        subject: item.topic,
+        weekDay: `${item.weekNumber}주차 · ${item.dayNumber}DAY`,
+        studyDate: formatDateToMMDD(item.studyDate),
+        hours: `${item.estimatedHours}시간`,
+        status: item.isCompleted
+          ? "COMPLETED"
+          : todayFocus?.dailyPlanId === item.dailyPlanId
+          ? "IN_PROGRESS"
+          : "NOT_STARTED",
+        description: item.description,
+      }));
+  }, [allDailyPlans, todayFocus]);
+
+  const completedCount = useMemo(() => {
+    return trackerItems.filter((item) => item.status === "COMPLETED").length;
+  }, [trackerItems]);
+
+  const totalEstimatedHours = useMemo(() => {
+    return allDailyPlans
+      .filter((item) => !item.isRest)
+      .reduce((acc, cur) => acc + cur.estimatedHours, 0);
+  }, [allDailyPlans]);
+
+  const handleToggleDailyPlan = async (dailyPlanId: number) => {
     try {
       const result = await checkDailyPlan(dailyPlanId);
 
-      setPlan((current) => {
-        if (!current) return current;
+      setPlan((prev) => {
+        if (!prev) return prev;
 
         return {
-          ...current,
-          weeklyPlans: current.weeklyPlans.map((week) => ({
-            ...week,
-            dailyPlans: week.dailyPlans.map((daily) =>
-              daily.dailyPlanId === dailyPlanId
-                ? { ...daily, isCompleted: result.isCompleted }
-                : daily
+          ...prev,
+          weeklyPlans: prev.weeklyPlans.map((weeklyPlan) => ({
+            ...weeklyPlan,
+            dailyPlans: weeklyPlan.dailyPlans.map((dailyPlan) =>
+              dailyPlan.dailyPlanId === dailyPlanId
+                ? { ...dailyPlan, isCompleted: result.isCompleted }
+                : dailyPlan
             ),
           })),
         };
       });
-    } catch (err) {
-      console.error(err);
-      setPlan(previousPlan);
-      alert("체크 상태를 변경하지 못했어요.");
+    } catch (error) {
+      console.error("일일 계획 체크 실패:", error);
     }
   };
 
-  if (loadingTabs) {
-    return (
-      <main className="min-h-screen bg-[#f7f7f5] px-6 py-8 text-[#191919]">
-        <div className="mx-auto max-w-7xl">
-          <NotionCard>플래너를 불러오는 중...</NotionCard>
-        </div>
-      </main>
-    );
+  if (tabsLoading) {
+    return <div className="px-5 pt-5"></div>;
   }
 
   if (error) {
-    return (
-      <main className="min-h-screen bg-[#f7f7f5] px-6 py-8 text-[#191919]">
-        <div className="mx-auto max-w-7xl">
-          <div className="rounded-2xl border border-red-200 bg-white px-6 py-5 text-sm text-red-500">
-            {error}
-          </div>
-        </div>
-      </main>
-    );
+    return <div className="px-5 pt-5 text-red-500">{error}</div>;
   }
 
   if (tabs.length === 0) {
-    return (
-      <main className="min-h-scree px-6 py-8 text-[#191919]">
-        <div className="mx-auto max-w-7xl">
-          <NotionCard>
-            <p className="text-sm text-[#787774]">Planner</p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight">
-              아직 생성된 플랜이 없어요
-            </h1>
-            <p className="mt-3 text-sm leading-6 text-[#787774]">
-              먼저 목표 시험에 대한 학습 플랜을 생성해보세요.
-            </p>
-          </NotionCard>
-        </div>
-      </main>
-    );
+    return <div className="px-5 pt-5">생성된 플랜이 없습니다. 로드맵 페이지에서 새로운 플랜을 생성해보세요.</div>;
   }
 
   return (
-    <main className="min-h-screen px-6 py-8 text-[#191919]">
-      <div className="mx-auto max-w-7xl space-y-6">
-        <NotionCard>
-          <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
-            <div>
-              <p className="text-sm text-[#787774]">Planner</p>
-              <h1 className="mt-2 text-3xl font-semibold tracking-tight">
-                학습 플래너
-              </h1>
-              <p className="mt-3 text-sm leading-6 text-[#787774]">
-                시험별 학습 흐름을 정리하고, 오늘의 학습과 전체 계획을 한눈에
-                확인해보세요.
-              </p>
-            </div>
+    <div className="px-5 pb-8">
+      <h1>
+       <div className="text-2xl font-bold mb-10">AI Planner</div>
+      </h1>
+      <div className="mb-6 border-b border-neutral-200">
+        <div className="flex gap-5 overflow-x-auto whitespace-nowrap scrollbar-hide">
+          {tabs.map((tab) => {
+            const isActive = tab.examTaskId === selectedExamTaskId;
 
-            <div className="flex flex-wrap gap-2">
-              {tabs.map((tab) => {
-                const active = tab.examTaskId === selectedExamTaskId;
+            return (
+              <button
+                key={tab.examTaskId}
+                ref={(el) => {
+                  tabRefs.current[tab.examTaskId] = el;
+                }}
+                type="button"
+                onClick={() => setSelectedExamTaskId(tab.examTaskId)}
+                className={`relative shrink-0 pb-3 text-sm font-bold transition-colors duration-300 ${
+                  isActive
+                    ? "text-black"
+                    : "text-neutral-400 hover:text-black"
+                }`}
+              >
+                {tab.taskName}
 
-                return (
-                  <button
-                    key={tab.examTaskId}
-                    onClick={() => setSelectedExamTaskId(tab.examTaskId)}
-                    className={`rounded-full px-4 py-2 text-sm transition ${
-                      active
-                        ? "bg-[#191919] text-white"
-                        : "border border-[#e9e9e7] bg-white text-[#37352f] hover:bg-[#f1f1ef]"
-                    }`}
-                  >
-                    {tab.taskName}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </NotionCard>
-
-        {loadingPlan ? (
-          <NotionCard>선택한 플랜을 불러오는 중...</NotionCard>
-        ) : plan ? (
-          <>
-            <section className="grid gap-4 xl:grid-cols-[1.35fr_0.95fr]">
-              <NotionCard>
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-sm text-[#787774]">현재 선택된 플랜</p>
-                    <h2 className="mt-2 text-2xl font-semibold">{plan.taskName}</h2>
-                    <p className="mt-2 text-sm text-[#787774]">
-                      총 {plan.totalWeeks}주 동안 진행되는 학습 계획이에요.
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-[#ecebe8] bg-[#fbfbfa] px-4 py-3 text-right">
-                    <p className="text-xs text-[#787774]">전체 진행률</p>
-                    <p className="mt-1 text-xl font-semibold">
-                      {progress.percent}%
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-6 h-2.5 w-full overflow-hidden rounded-full bg-[#ecebe8]">
-                  <div
-                    className="h-full rounded-full bg-[#191919] transition-all"
-                    style={{ width: `${progress.percent}%` }}
+                {isActive && (
+                  <motion.span
+                    layoutId="active-tab-underline"
+                    className="absolute bottom-0 left-0 h-[2px] w-full bg-black"
+                    transition={{
+                      type: "spring",
+                      stiffness: 380,
+                      damping: 32,
+                    }}
                   />
-                </div>
-
-                <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                  <SummaryCard
-                    icon={<BookOpen className="h-4 w-4" />}
-                    label="총 학습 항목"
-                    value={`${progress.total}개`}
-                  />
-                  <SummaryCard
-                    icon={<CheckCircle2 className="h-4 w-4" />}
-                    label="완료한 학습"
-                    value={`${progress.completed}개`}
-                  />
-                  <SummaryCard
-                    icon={<Target className="h-4 w-4" />}
-                    label="남은 학습"
-                    value={`${progress.total - progress.completed}개`}
-                  />
-                </div>
-              </NotionCard>
-
-              <NotionCard>
-                <div className="flex items-center gap-2 text-sm text-[#787774]">
-                  <CalendarDays className="h-4 w-4" />
-                  오늘의 학습
-                </div>
-
-                {todayFocus ? (
-                  <div className="mt-5 rounded-2xl border border-[#ecebe8] bg-[#fbfbfa] p-5">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p className="text-xs text-[#787774]">
-                          {todayFocus.weekNumber}주차 · Day {todayFocus.dayNumber}
-                        </p>
-                        <h3 className="mt-2 text-lg font-semibold leading-7">
-                          {todayFocus.topic}
-                        </h3>
-                      </div>
-
-                      <button
-                        onClick={() => handleCheck(todayFocus.dailyPlanId)}
-                        className="rounded-full bg-[#191919] px-4 py-2 text-sm text-white transition hover:opacity-90"
-                      >
-                        완료 체크
-                      </button>
-                    </div>
-
-                    <p className="mt-4 text-sm leading-6 text-[#5f5e5b]">
-                      {todayFocus.description}
-                    </p>
-
-                    <div className="mt-5 flex flex-wrap gap-2">
-                      <InfoChip
-                        icon={<Clock3 className="h-3.5 w-3.5" />}
-                        text={`${todayFocus.estimatedHours}시간`}
-                      />
-                      <InfoChip
-                        icon={<CalendarDays className="h-3.5 w-3.5" />}
-                        text={todayFocus.studyDate}
-                      />
-                    </div>
-
-                    <div className="mt-5 rounded-2xl border border-[#ecebe8] bg-white px-4 py-3">
-                      <p className="text-xs text-[#787774]">이번 주 목표</p>
-                      <p className="mt-1 text-sm font-medium text-[#191919]">
-                        {todayFocus.weeklyGoal}
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="mt-5 rounded-2xl border border-[#ecebe8] bg-[#fbfbfa] p-5 text-sm text-[#787774]">
-                    남아 있는 학습 계획이 없어요. 잘하고 있어요!
-                  </div>
                 )}
-              </NotionCard>
-            </section>
-
-            <NotionCard className="overflow-hidden p-0">
-              <div className="border-b border-[#efeeec] px-6 py-5">
-                <p className="text-sm text-[#787774]">All Tasks</p>
-                <h2 className="mt-1 text-2xl font-semibold tracking-tight">
-                  전체 학습 계획
-                </h2>
-                <p className="mt-2 text-sm text-[#787774]">
-                  항목을 클릭하면 상세 설명과 목표를 확인할 수 있어요.
-                </p>
-              </div>
-
-              <div className="hidden grid-cols-[120px_140px_1.6fr_150px_120px_140px] gap-4 border-b border-[#efeeec] bg-[#fbfbfa] px-6 py-3 text-xs font-medium text-[#787774] lg:grid">
-                <div>상태</div>
-                <div>주차 / Day</div>
-                <div>학습 항목</div>
-                <div>학습일</div>
-                <div>예상 시간</div>
-                <div>액션</div>
-              </div>
-
-              <div className="divide-y divide-[#f1f0ee]">
-                {allTasks.map((task) => {
-                  const isExpanded = !!expandedItems[task.dailyPlanId];
-
-                  return (
-                    <div key={task.dailyPlanId} className="bg-white">
-                      <button
-                        type="button"
-                        onClick={() => toggleExpanded(task.dailyPlanId)}
-                        className="w-full px-6 py-4 text-left transition hover:bg-[#fcfcfb]"
-                      >
-                        <div className="flex flex-col gap-3 lg:grid lg:grid-cols-[120px_140px_1.6fr_150px_120px_140px] lg:items-center lg:gap-4">
-                          <div>
-                            <StatusBadge
-                              isRest={task.isRest}
-                              isCompleted={task.isCompleted}
-                            />
-                          </div>
-
-                          <div className="text-sm text-[#37352f]">
-                            {task.weekNumber}주차 · Day {task.dayNumber}
-                          </div>
-
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2">
-                              {isExpanded ? (
-                                <ChevronDown className="h-4 w-4 shrink-0 text-[#9b9a97]" />
-                              ) : (
-                                <ChevronRight className="h-4 w-4 shrink-0 text-[#9b9a97]" />
-                              )}
-                              <span className="truncate text-sm font-medium text-[#191919]">
-                                {task.topic}
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="text-sm text-[#5f5e5b]">
-                            {task.studyDate}
-                          </div>
-
-                          <div className="text-sm text-[#5f5e5b]">
-                            {task.estimatedHours}시간
-                          </div>
-
-                          <div onClick={(e) => e.stopPropagation()}>
-                            {!task.isRest && (
-                              <button
-                                onClick={() => handleCheck(task.dailyPlanId)}
-                                className={`rounded-full px-3.5 py-2 text-xs font-medium transition ${
-                                  task.isCompleted
-                                    ? "border border-[#e9e9e7] bg-white text-[#5f5e5b] hover:bg-[#f7f7f5]"
-                                    : "bg-[#191919] text-white hover:opacity-90"
-                                }`}
-                              >
-                                {task.isCompleted ? "체크 해제" : "완료 체크"}
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      </button>
-
-                      {isExpanded && (
-                        <div className="border-t border-[#f3f2f0] bg-[#fbfbfa] px-6 py-5">
-                          <div className="grid gap-4 xl:grid-cols-[1.3fr_0.9fr]">
-                            <div>
-                              <p className="text-xs text-[#787774]">상세 설명</p>
-                              <p className="mt-2 text-sm leading-7 text-[#37352f]">
-                                {task.description}
-                              </p>
-                            </div>
-
-                            <div className="space-y-3">
-                              <div className="rounded-2xl border border-[#ecebe8] bg-white px-4 py-3">
-                                <p className="text-xs text-[#787774]">이번 주 목표</p>
-                                <p className="mt-1 text-sm font-medium text-[#191919]">
-                                  {task.weeklyGoal}
-                                </p>
-                              </div>
-
-                              <div className="flex flex-wrap gap-2">
-                                <InfoChip
-                                  icon={<CalendarDays className="h-3.5 w-3.5" />}
-                                  text={task.studyDate}
-                                />
-                                <InfoChip
-                                  icon={<Clock3 className="h-3.5 w-3.5" />}
-                                  text={`${task.estimatedHours}시간`}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </NotionCard>
-          </>
-        ) : null}
+              </button>
+            );
+          })}
+        </div>
       </div>
-    </main>
-  );
-}
 
-function NotionCard({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <section
-      className={`rounded-3xl border border-[#e9e9e7] bg-white px-6 py-6 shadow-[0_1px_2px_rgba(15,15,15,0.04)] ${className}`}
-    >
-      {children}
-    </section>
-  );
-}
+      {planLoading || !plan ? (
+        <div className="pt-4"></div>
+      ) : (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selectedExamTaskId}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.28, ease: "easeOut" }}
+            className="grid h-[calc(100vh-1210px)] grid-cols-[310px_minmax(0,1fr)] gap-7"
+          >
+            <motion.div
+              initial={{ opacity: 0, x: -14 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="sticky top-0 flex h-fit flex-col gap-6 self-start"
+            >
+              <motion.div
+                whileHover={{ y: -2 }}
+                transition={{ duration: 0.2 }}
+              >
+                <TodayFocusCard
+                  day={todayFocus ? getDayFromDate(todayFocus.studyDate) : "00"}
+                  month={
+                    todayFocus ? getMonthFromDate(todayFocus.studyDate) : "MONTH"
+                  }
+                  monthNumber={
+                    todayFocus
+                      ? getMonthNumberFromDate(todayFocus.studyDate)
+                      : "00"
+                  }
+                  weekday={
+                    todayFocus ? getWeekdayFromDate(todayFocus.studyDate) : "DAY"
+                  }
+                  sectionTitle="Today's Focus"
+                  weekLabel={todayFocus ? `${todayFocus.weekNumber}주차` : "1주차"}
+                  dayLabel={todayFocus ? `${todayFocus.dayNumber}DAY` : "1DAY"}
+                  subject={todayFocus?.topic ?? "오늘의 학습이 없습니다"}
+                  description={
+                    todayFocus?.description ?? "새로운 학습 계획을 생성해보세요."
+                  }
+                  hours={
+                    todayFocus ? `${todayFocus.estimatedHours}시간` : "0시간"
+                  }
+                  status={todayFocus?.isCompleted ? "done" : "in-progress"}
+                  onToggleStatus={() => {
+                    if (todayFocus) {
+                      handleToggleDailyPlan(todayFocus.dailyPlanId);
+                    }
+                  }}
+                />
+              </motion.div>
 
-function SummaryCard({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-[#ecebe8] bg-[#fbfbfa] px-4 py-4">
-      <div className="flex items-center gap-2 text-xs text-[#787774]">
-        {icon}
-        {label}
-      </div>
-      <p className="mt-2 text-lg font-semibold text-[#191919]">{value}</p>
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.06, duration: 0.35, ease: "easeOut" }}
+                whileHover={{ y: -2 }}
+              >
+                <StudySummaryCard
+                  title="Study Summary"
+                  totalDays={trackerItems.length}
+                  completedDays={completedCount}
+                  currentWeek={todayFocus ? `${todayFocus.weekNumber}주차` : "-"}
+                  totalHours={`${totalEstimatedHours}시간`}
+                />
+              </motion.div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 14 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="min-w-0 overflow-y-auto pr-1 scrollbar-hide"
+            >
+              <WeeklyStudyTracker
+                title={plan.taskName}
+                items={trackerItems}
+                focusedItemId={todayFocus?.dailyPlanId ?? null}
+                onToggleStatus={handleToggleDailyPlan}
+              />
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
+      )}
     </div>
   );
 }
 
-function InfoChip({
-  icon,
-  text,
-}: {
-  icon: React.ReactNode;
-  text: string;
-}) {
-  return (
-    <div className="inline-flex items-center gap-1.5 rounded-full border border-[#e9e9e7] bg-white px-3 py-1.5 text-xs text-[#5f5e5b]">
-      {icon}
-      {text}
-    </div>
-  );
+function parseDateParts(dateString: string) {
+  const [year, month, day] = dateString.split("-").map(Number);
+  return { year, month, day };
 }
 
-function StatusBadge({
-  isRest,
-  isCompleted,
-}: {
-  isRest: boolean;
-  isCompleted: boolean;
-}) {
-  if (isRest) {
-    return (
-      <span className="inline-flex rounded-full bg-[#f1f1ef] px-3 py-1 text-xs font-medium text-[#787774]">
-        휴식일
-      </span>
-    );
-  }
+function formatDateToMMDD(dateString: string) {
+  const { month, day } = parseDateParts(dateString);
+  return `${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
 
-  if (isCompleted) {
-    return (
-      <span className="inline-flex rounded-full bg-[#eef7ee] px-3 py-1 text-xs font-medium text-[#2f6b3b]">
-        완료
-      </span>
-    );
-  }
+function getDayFromDate(dateString: string) {
+  const { day } = parseDateParts(dateString);
+  return String(day).padStart(2, "0");
+}
 
-  return (
-    <span className="inline-flex rounded-full bg-[#f3f2f0] px-3 py-1 text-xs font-medium text-[#5f5e5b]">
-      진행 전
-    </span>
-  );
+function getMonthNumberFromDate(dateString: string) {
+  const { month } = parseDateParts(dateString);
+  return String(month).padStart(2, "0");
+}
+
+function getMonthFromDate(dateString: string) {
+  const { month } = parseDateParts(dateString);
+
+  const monthNames = [
+    "JANUARY",
+    "FEBRUARY",
+    "MARCH",
+    "APRIL",
+    "MAY",
+    "JUNE",
+    "JULY",
+    "AUGUST",
+    "SEPTEMBER",
+    "OCTOBER",
+    "NOVEMBER",
+    "DECEMBER",
+  ];
+
+  return monthNames[month - 1] ?? "MONTH";
+}
+
+function getWeekdayFromDate(dateString: string) {
+  const { year, month, day } = parseDateParts(dateString);
+
+  const weekdays = [
+    "SUNDAY",
+    "MONDAY",
+    "TUESDAY",
+    "WEDNESDAY",
+    "THURSDAY",
+    "FRIDAY",
+    "SATURDAY",
+  ];
+
+  const date = new Date(year, month - 1, day);
+  return weekdays[date.getDay()] ?? "DAY";
 }
