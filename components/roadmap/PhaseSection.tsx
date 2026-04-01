@@ -71,7 +71,7 @@ function PhaseCard({
 
 function AddCard() {
   return (
-    <div className="flex h-[280px] items-center justify-center rounded-[14px] border border-[#9DDEB9] bg-[#EEFAF3] p-6">
+    <div className="flex h-[330px] items-center justify-center rounded-[14px] border border-[#9DDEB9] bg-[#EEFAF3] p-6">
       <span
         className="flex h-[56px] w-[56px] items-center justify-center rounded-full border border-[#9DDEB9] text-[30px] font-medium leading-none text-[#2FA66A]"
         style={{
