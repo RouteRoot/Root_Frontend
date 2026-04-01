@@ -25,7 +25,15 @@ type SectionViewModel = {
   cards: Task[];
 };
 
-function PhaseCard({ step, title, description }: { step: string; title: string; description: string }) {
+function PhaseCard({
+  step,
+  title,
+  description,
+}: {
+  step: string;
+  title: string;
+  description: string;
+}) {
   return (
     <div className="h-[330px] rounded-[14px] border border-[#9DDEB9] bg-[#EEFAF3] p-6">
       <p
@@ -194,6 +202,46 @@ function SectionActionButtons({
   );
 }
 
+function BottomRegenerateButton() {
+  const router = useRouter();
+
+  return (
+    <div className="mt-16 flex justify-center">
+      <button
+        type="button"
+        onClick={() => router.push("/roadmap/generate")}
+        className="inline-flex h-[46px] items-center justify-center rounded-full border border-[#1eb926] bg-[#c2e2ba] px-6 text-[14px] font-medium text-[#333333] transition hover:bg-[#F9FAFB]"
+        style={{
+          fontFamily:
+            'Inter, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif',
+        }}
+      >
+        로드맵 재생성하기
+      </button>
+    </div>
+  );
+}
+
+function EmptyRoadmapState() {
+  const router = useRouter();
+
+  return (
+    <div className="flex min-h-[60vh] items-center justify-center">
+      <button
+        type="button"
+        onClick={() => router.push("/roadmap/generate")}
+        className="inline-flex h-[48px] items-center justify-center rounded-full bg-[#2FA66A] px-6 text-[15px] font-semibold text-white transition hover:opacity-90"
+        style={{
+          fontFamily:
+            'Inter, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif',
+        }}
+      >
+        로드맵 생성하기
+      </button>
+    </div>
+  );
+}
+
 function PhaseBlock({
   section,
   roadmap,
@@ -250,7 +298,7 @@ function PhaseBlock({
           alt={section.imageAlt}
           width={760}
           height={430}
-          className="h-auto w-full max-w-[760px] object-contain"
+          className="h-auto w-full max-w-[600px] object-contain"
           priority
         />
       </div>
@@ -272,12 +320,8 @@ export default function PhaseSection() {
     );
   }
 
-  if (error || !roadmap) {
-    return (
-      <div className="py-16 text-[15px] text-red-500">
-        {error || "로드맵 데이터가 없습니다."}
-      </div>
-    );
+  if (error || !roadmap || roadmap.phases.length === 0) {
+    return <EmptyRoadmapState />;
   }
 
   const sections = roadmap.phases.map((phase, index) =>
@@ -286,7 +330,7 @@ export default function PhaseSection() {
 
   return (
     <div
-      className="space-y-24 mt-10"
+      className="mt-10 space-y-24"
       style={{
         fontFamily:
           'Inter, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif',
@@ -297,6 +341,8 @@ export default function PhaseSection() {
           <PhaseBlock section={section} roadmap={roadmap} />
         </div>
       ))}
+
+      <BottomRegenerateButton />
     </div>
   );
 }
@@ -331,11 +377,11 @@ function getPhaseLabel(phaseNumber: number) {
 function getPhaseImage(phaseNumber: number) {
   switch (phaseNumber) {
     case 1:
-      return "/images/moxt-phase-01.png";
+      return "/phase-hero1.png";
     case 2:
-      return "/images/moxt-phase-02.png";
+      return "/phase-hero.png";
     case 3:
-      return "/images/moxt-phase-03.png";
+      return "/phase-hero5.png";
     default:
       return "/images/moxt-phase-01.png";
   }

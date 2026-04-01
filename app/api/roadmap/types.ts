@@ -1,8 +1,10 @@
 export type RoadmapFormData = {
+  educationStatus: string;
+  grade: number;
   major: string;
   hope: string;
-  acquired: string;
-  status: string;
+  isMajorRelated: boolean;
+  career: number;
   daily: number;
   weekly: number;
   mylevel: string;

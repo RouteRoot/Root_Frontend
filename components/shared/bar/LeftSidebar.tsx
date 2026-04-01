@@ -87,7 +87,7 @@ export default function LeftSidebar() {
               }`}
             >
               <Image
-                src="/logo1.svg"
+                src="/bubu.svg"
                 alt="logo"
                 width={20}
                 height={20}
