@@ -139,3 +139,22 @@
     @apply font-sans;
   }
 } */
+
+
+@keyframes roadmap-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.roadmap-marquee {
+  animation: roadmap-marquee 24s linear infinite;
+  will-change: transform;
+}
+
+.roadmap-marquee:hover {
+  animation-play-state: paused;
+}
