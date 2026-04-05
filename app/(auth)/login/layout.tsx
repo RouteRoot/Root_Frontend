@@ -1,14 +1,12 @@
 import React from "react";
-import Nav from "@/components/shared/nav/Nav";
-//
-export default function LoginPageLayout({
+
+export default function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <div>
-      <Nav />
       {children}
     </div>
   );
