@@ -15,3 +15,23 @@ export type LoginResult = {
   rawText: string;
   data: LoginResponse | null;
 };
+
+
+export type SignupRequest = {
+  loginId: string;
+  loginPw: string;
+  name: string;
+  nickname: string;
+  birthDate: string;
+  phoneNumber: string;
+};
+
+export type SignupResponse = {
+  message?: string;
+};
+
+export type SignupResult = {
+  status: number;
+  rawText: string;
+  data: SignupResponse | null;
+};
