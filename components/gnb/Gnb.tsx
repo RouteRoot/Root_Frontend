@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -95,6 +96,14 @@ export default function Gnb() {
             textShadow: isDashboard ? "0 0 0.2px #4F46E5" : "none",
           }}
         >
+          {/* <Image
+            src="/bubu.svg"
+            alt="bubu"
+            width={24}
+            height={24}
+            className="object-contain mt-0.5 mr-2"
+            priority
+          /> */}
           <span className="text-[24px] font-black italic tracking-[-0.04em]">
             BBURI
           </span>
