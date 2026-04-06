@@ -64,18 +64,20 @@ export default function RoadmapBar({
   }
 
   return (
-    <div className="mt-4 w-full overflow-hidden rounded-[30px]  bg-white px-5 py-4">
-      <div className="relative overflow-hidden">
+    <Link
+      href="/roadmap"
+      className="group mt-4 block w-full rounded-[30px] bg-white px-5 py-4"
+    >
+      <div className="overflow-hidden rounded-[2px]">
         <div className="roadmap-marquee flex w-max items-center gap-4">
           {loopItems.map((item, index) => (
-            <Link
+            <div
               key={`${item.id}-${index}`}
-              href={`/roadmap/${item.id}`}
               className={`
                 ${getCardStyle(item.phase)}
-                group flex h-[60px] min-w-[164px] shrink-0 items-center justify-between
+                flex h-[60px] min-w-[164px] shrink-0 items-center justify-between
                 rounded-[20px] px-5
-                transition-transform duration-300 hover:-translate-y-[1px]
+                transition-transform duration-300 group-hover:-translate-y-[1px]
               `}
             >
               <span className="line-clamp-1 pr-3 text-[15px] font-bold tracking-[-0.01em] text-white">
@@ -91,7 +93,7 @@ export default function RoadmapBar({
               >
                 {item.status}
               </span>
-            </Link>
+            </div>
           ))}
         </div>
       </div>
@@ -101,7 +103,7 @@ export default function RoadmapBar({
           animation: roadmap-loop 50s linear infinite;
         }
 
-        .roadmap-marquee:hover {
+        .group:hover .roadmap-marquee {
           animation-play-state: paused;
         }
 
@@ -114,6 +116,6 @@ export default function RoadmapBar({
           }
         }
       `}</style>
-    </div>
+    </Link>
   );
 }
