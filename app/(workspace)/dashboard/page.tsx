@@ -21,16 +21,7 @@ const noticeMock = [
   },
 ];
 
-const roadmapMock = [
-  { id: 1, title: "정보처리기사", status: "진행중" as const },
-  { id: 2, title: "SQLD", status: "예정" as const },
-  { id: 3, title: "리액트", status: "완료" as const },
-  { id: 4, title: "토익", status: "예정" as const },
-  { id: 5, title: "자격증", status: "예정" as const },
-  { id: 6, title: "AWS-Developer", status: "예정" as const },
-  { id: 7, title: "한국사 자격증", status: "예정" as const },
-  { id: 8, title: "AWS-Solutions-Architect", status: "예정" as const },
-];
+
 
 export default function Page() {
   return (
@@ -49,7 +40,7 @@ export default function Page() {
 
         {/* ROADMAP */}
         <div className="max-w-255">
-          <RoadmapBar items={roadmapMock} />
+          <RoadmapBar  />
         </div>
 
         {/* FEATURES */}

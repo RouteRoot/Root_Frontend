@@ -139,7 +139,7 @@ export default function RoadmapTimelineSection() {
           {/* 왼쪽 */}
           <div className="border-r border-[#EEF2F7] bg-[#FBFCFE]">
             <div className="flex h-[50px] items-center px-6 text-[11px] font-semibold text-[#A0AEC0]">
-              프로젝트
+              페이즈
             </div>
 
             {phaseRows.map((row, index) => (
