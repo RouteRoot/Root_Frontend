@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 type RoadmapBarItem = {
   id: number;
@@ -28,23 +28,14 @@ const mockRoadmapItems: RoadmapBarItem[] = [
 export default function RoadmapBar({
   items = mockRoadmapItems,
 }: RoadmapBarProps) {
+  const [isPaused, setIsPaused] = useState(false);
+
   const loopItems = useMemo(() => {
     if (items.length === 0) return [];
     return [...items, ...items];
   }, [items]);
 
-  const getCardStyle = (phase: 1 | 2 | 3) => {
-    switch (phase) {
-      case 1:
-        return "bg-[#6b5ff1]";
-      case 2:
-        return "bg-[#6b5ff1]";
-      case 3:
-        return "bg-[#6b5ff1]";
-      default:
-        return "bg-[#6b5ff1]";
-    }
-  };
+  const getCardStyle = () => "bg-[#6b5ff1]";
 
   const getStatusStyle = (status: RoadmapBarItem["status"]) => {
     switch (status) {
@@ -59,28 +50,32 @@ export default function RoadmapBar({
     }
   };
 
-  if (items.length === 0) {
-    return null;
-  }
+  if (items.length === 0) return null;
 
   return (
     <Link
       href="/roadmap"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
       className="group mt-4 block w-full rounded-[30px] bg-white px-5 py-4"
     >
-      <div className="overflow-hidden rounded-[2px]">
-        <div className="roadmap-marquee flex w-max items-center gap-4">
+      <div className="overflow-hidden">
+        <div
+          className="roadmap-marquee flex w-max items-center gap-4"
+          style={{
+            animationPlayState: isPaused ? "paused" : "running",
+          }}
+        >
           {loopItems.map((item, index) => (
             <div
               key={`${item.id}-${index}`}
               className={`
-                ${getCardStyle(item.phase)}
+                ${getCardStyle()}
                 flex h-[60px] min-w-[164px] shrink-0 items-center justify-between
                 rounded-[20px] px-5
-                transition-transform duration-300 group-hover:-translate-y-[1px]
               `}
             >
-              <span className="line-clamp-1 pr-3 text-[15px] font-bold tracking-[-0.01em] text-white">
+              <span className="line-clamp-1 pr-3 text-[15px] font-bold text-white">
                 {item.title}
               </span>
 
@@ -101,10 +96,6 @@ export default function RoadmapBar({
       <style jsx>{`
         .roadmap-marquee {
           animation: roadmap-loop 50s linear infinite;
-        }
-
-        .group:hover .roadmap-marquee {
-          animation-play-state: paused;
         }
 
         @keyframes roadmap-loop {
