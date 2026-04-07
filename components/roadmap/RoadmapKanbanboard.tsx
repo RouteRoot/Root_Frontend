@@ -136,7 +136,7 @@ function PhaseColumn({
 }) {
   return (
     <section
-      className={`flex min-h-[420px] flex-col rounded-[24px] border border-[#E8EDF5] ${getColumnTone(index)}`}
+      className={`flex min-h-105 flex-col rounded-3xl border border-[#E8EDF5] ${getColumnTone(index)}`}
     >
       <div className="border-b border-[#EEF2F7] px-5 py-4">
         <div className="flex items-center gap-2">
@@ -145,7 +145,7 @@ function PhaseColumn({
           </h3>
 
           {phase.phaseNumber !== null && (
-            <span className="rounded-full bg-[#F1EEFF] px-2 py-[4px] text-[10px] font-semibold leading-none text-[#6D5DF6]">
+            <span className="rounded-full bg-[#F1EEFF] px-2 py-1 text-[10px] font-semibold leading-none text-[#6D5DF6]">
               Phase {phase.phaseNumber}
             </span>
           )}
@@ -219,9 +219,9 @@ export default function RoadmapKanbanBoard() {
     <section className="mt-8 w-full">
       <div className="mb-4 flex items-center gap-5">
         <h2 className="shrink-0 text-[28px] font-extrabold leading-none tracking-[-0.04em] text-[#0B1B3B]">
-          칸반보드
+          DETAILS
         </h2>
-        <div className="hidden h-px min-w-[220px] flex-1 bg-[#E9EDF3] md:block" />
+        <div className="hidden h-px min-w-55 flex-1 bg-[#E9EDF3] md:block" />
       </div>
 
       <div className="mb-5 flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#94A3B8]">
@@ -246,7 +246,7 @@ export default function RoadmapKanbanBoard() {
               {[1, 2, 3].map((item) => (
                 <div
                   key={item}
-                  className="rounded-[24px] border border-[#E8EDF5] bg-[#FBFCFE] p-4"
+                  className="rounded-3xl border border-[#E8EDF5] bg-[#FBFCFE] p-4"
                 >
                   <div className="h-5 w-28 animate-pulse rounded-md bg-[#EEF2F7]" />
                   <div className="mt-2 h-4 w-20 animate-pulse rounded-md bg-[#F3F6FA]" />
@@ -284,7 +284,7 @@ export default function RoadmapKanbanBoard() {
 
         {loadState === "success" && phases.length > 0 && (
           <div className="overflow-x-auto px-6 py-6">
-            <div className="grid min-w-[980px] gap-4 lg:grid-cols-3">
+            <div className="grid min-w-245 gap-4 lg:grid-cols-3">
               {phases.map((phase, index) => (
                 <PhaseColumn
                   key={phase.phaseId}

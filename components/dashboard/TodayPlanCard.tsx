@@ -18,11 +18,11 @@ export default function TodayPlanCard({
   return (
     <Link
       href={href}
-      className="mt-24 flex overflow-hidden rounded-[32px] border border-slate-200 bg-white px-8 py-3 transition-colors hover:bg-slate-50"
+      className="mt-24 flex overflow-hidden rounded-4xl border border-slate-200 bg-white px-8 py-3 transition-colors hover:bg-slate-50"
     >
       {/* 왼쪽 세로선 */}
       <div className="mr-5 flex items-center">
-        <div className="w-[4px] h-9 rounded-full bg-indigo-600" />
+        <div className="w-1 h-9 rounded-full bg-indigo-600" />
       </div>
 
       {/* 왼쪽 타이틀 */}

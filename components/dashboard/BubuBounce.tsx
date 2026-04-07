@@ -42,7 +42,7 @@ export default function BubuBounce({
   return (
     <div className={`flex items-center ${className}`}>
       {/* 왼쪽 텍스트: 폭 고정 */}
-      <div className="w-[230px] pr-3 text-[14px] font-medium text-slate-400 ml-6">
+      <div className="w-57.5 pr-3 text-[14px] font-medium text-slate-400 ml-6">
         {text}
       </div>
 

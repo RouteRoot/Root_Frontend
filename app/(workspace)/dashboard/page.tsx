@@ -4,6 +4,8 @@ import RoadmapBar from "@/components/dashboard/RoadmapBar";
 import BubuBounce from "@/components/dashboard/BubuBounce";
 import TodayPlanCard from "@/components/dashboard/TodayPlanCard";
 
+import Image from "next/image";
+
 const noticeMock = [
   {
     id: 1,
@@ -21,12 +23,10 @@ const noticeMock = [
   },
 ];
 
-
-
 export default function Page() {
   return (
-    <div className="grid grid-cols-[minmax(0,2fr)_500px] gap-3">
-      {/* 왼쪽 */}
+    <div className="grid grid-cols-[minmax(0,2fr)_500px] gap-x-3 gap-y-10">
+      {/* 위쪽: 왼쪽 묶음 */}
       <div className="flex flex-col gap-10">
         {/* NOTICE */}
         <div>
@@ -40,18 +40,12 @@ export default function Page() {
 
         {/* ROADMAP */}
         <div className="max-w-255">
-          <RoadmapBar  />
-        </div>
-
-        {/* FEATURES */}
-        <div>
-          <SectionHeader title="FEATURES" />
-          <div className="mt-4 text-[14px] text-slate-400">기능 영역</div>
+          <RoadmapBar />
         </div>
       </div>
 
-      {/* 오른쪽 */}
-      <div className="h-full">
+      {/* 위쪽: 오른쪽 PLAN */}
+      <div>
         <SectionHeader title="PLAN" />
         <div className="mt-20">
           <BubuBounce className="ml-10" />
@@ -64,6 +58,12 @@ export default function Page() {
             href="/plan"
           />
         </div>
+      </div>
+
+      {/* 아래 한 줄 전체 */}
+      <div className="col-span-2">
+        <SectionHeader title="FEATURES" />
+        
       </div>
     </div>
   );

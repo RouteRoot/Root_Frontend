@@ -35,7 +35,7 @@ export default function RoadmapBar({
     return [...items, ...items];
   }, [items]);
 
-  const getCardStyle = () => "bg-[#6b5ff1]";
+  const getCardStyle = () => "bg-[#7366fa]";
 
   const getStatusStyle = (status: RoadmapBarItem["status"]) => {
     switch (status) {
@@ -71,7 +71,7 @@ export default function RoadmapBar({
               key={`${item.id}-${index}`}
               className={`
                 ${getCardStyle()}
-                flex h-[60px] min-w-[164px] shrink-0 items-center justify-between
+                flex h-15 min-w-15 shrink-0 items-center justify-between
                 rounded-[20px] px-5
               `}
             >
@@ -82,7 +82,7 @@ export default function RoadmapBar({
               <span
                 className={`
                   ${getStatusStyle(item.status)}
-                  shrink-0 rounded-full px-3 py-[6px]
+                  shrink-0 rounded-full px-3 py-1.5
                   text-[12px] font-extrabold leading-none
                 `}
               >

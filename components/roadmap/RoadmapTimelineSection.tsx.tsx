@@ -1,5 +1,9 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 type CertificateStatus = "IN_PROGRESS" | "ACQUIRED" | "PLANNED";
 
 type CertificateCard = {
@@ -20,8 +24,8 @@ const phaseRows: PhaseRow[] = [
   {
     id: 1,
     phase: "Phase 1",
-    title: "기본기 다지기",
-    description: "기초 역량을 탄탄하게 다지는 단계입니다",
+    title: "기초 경쟁력 확보",
+    description: "기초 역량을 탄탄하게 다지는 단계",
     certificates: [
       { id: 101, name: "컴퓨터활용능력 2급", status: "IN_PROGRESS" },
       { id: 102, name: "SQLD", status: "IN_PROGRESS" },
@@ -30,8 +34,8 @@ const phaseRows: PhaseRow[] = [
   {
     id: 2,
     phase: "Phase 2",
-    title: "핵심 역량 강화",
-    description: "실무에 필요한 자격증을 익히는 단계입니다",
+    title: "직무 직접 경쟁력 강화",
+    description: "실무에 필요한 자격증을 익히는 단계",
     certificates: [
       { id: 201, name: "정보처리기사", status: "IN_PROGRESS" },
       { id: 202, name: "리눅스마스터 2급", status: "IN_PROGRESS" },
@@ -41,8 +45,8 @@ const phaseRows: PhaseRow[] = [
   {
     id: 3,
     phase: "Phase 3",
-    title: "실전 완성",
-    description: "이것까지 취득하면 당신은 고수의 단계입니다",
+    title: "상위 기업 안정권 진입",
+    description: "이것까지 취득하면 당신은 고수의 단계!",
     certificates: [
       { id: 301, name: "ADsP", status: "IN_PROGRESS" },
       { id: 302, name: "포트폴리오 완성", status: "IN_PROGRESS" },
@@ -93,23 +97,105 @@ function getStatusLabel(status: CertificateStatus) {
 }
 
 export default function RoadmapTimelineSection() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!dropdownRef.current) return;
+
+      if (!dropdownRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleRegenerate = () => {
+    setIsMenuOpen(false);
+    router.push("/roadmap/generate");
+  };
+
+  const handleEdit = () => {
+    setIsMenuOpen(false);
+    console.log("로드맵 수정하기 클릭");
+    // TODO: 수정하기 로직 연결
+  };
+
   return (
     <section className="w-full">
       {/* 상단 헤더 */}
       <div className="mb-4 flex items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-5">
           <h2 className="shrink-0 text-[28px] font-extrabold leading-none tracking-[-0.04em] text-[#0B1B3B]">
-            BIBLIOGRAPHIC ROADMAP
+            ROADMAP OVERVIEW
           </h2>
           <div className="hidden h-px min-w-[280px] flex-1 bg-[#E9EDF3] md:block" />
         </div>
 
-        <button
-          type="button"
-          className="inline-flex h-9 items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-4 text-[13px] font-semibold text-[#111827] transition hover:bg-[#F8FAFC]"
-        >
-          수정하기
-        </button>
+        <div ref={dropdownRef} className="relative shrink-0">
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+            className="
+              inline-flex h-10 min-w-[132px] items-center justify-center gap-2
+              rounded-full bg-white px-4
+              text-[13px] font-semibold text-[#111827]
+              transition-all duration-200
+              hover:border-[#D9E0EA] hover:bg-[#FAFBFC]
+            "
+          >
+            내 로드맵 관리
+            <ChevronDown
+              className={`h-4 w-4 text-[#6B7280] transition-transform duration-300 ${
+                isMenuOpen ? "rotate-180" : "rotate-0"
+              }`}
+            />
+          </button>
+
+          <div
+            className={`
+              absolute right-0 top-[calc(100%+10px)] z-30 w-[102px]
+              origin-top-right overflow-hidden rounded-2xl border border-[#E8EDF5] bg-white
+              p-1.5 shadow-[0_18px_40px_rgba(15,23,42,0.12)]
+              transition-all duration-200 ease-out
+              ${
+                isMenuOpen
+                  ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
+                  : "pointer-events-none -translate-y-1 scale-[0.98] opacity-0"
+              }
+            `}
+          >
+            <button
+              type="button"
+              onClick={handleRegenerate}
+              className="
+                flex h-10 w-full items-center rounded-xl px-3
+                text-left text-[13px] font-medium text-[#111827]
+                transition-colors duration-150 hover:bg-[#F8FAFC]
+              "
+            >
+              재생성하기
+            </button>
+
+            <button
+              type="button"
+              onClick={handleEdit}
+              className="
+                flex h-10 w-full items-center rounded-xl px-3
+                text-left text-[13px] font-medium text-[#111827]
+                transition-colors duration-150 hover:bg-[#F8FAFC]
+              "
+            >
+              수정하기
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* 범례 */}
@@ -188,7 +274,7 @@ export default function RoadmapTimelineSection() {
                       <button
                         key={certificate.id}
                         type="button"
-                        className={`group inline-flex h-[40px] w-auto max-w-[320px] items-center rounded-[12px] px-3 transition-all duration-200 hover:-translate-y-[1px] ${style.wrapper}`}
+                        className={`group inline-flex h-10 max-w-[320px] items-center rounded-xl px-3 transition-all duration-200 hover:-translate-y-px ${style.wrapper}`}
                       >
                         <div className="flex min-w-0 items-center gap-2">
                           <p className="whitespace-nowrap text-[13px] font-bold leading-none">

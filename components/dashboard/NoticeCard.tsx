@@ -18,7 +18,7 @@ export default function NoticeCard({
         group block cursor-pointer rounded-3xl border border-slate-100 bg-white
         px-8 py-8
         transition-all duration-300 ease-out
-        hover:-translate-y-[3px] hover:border-slate-200
+        hover:-translate-y-0.75 hover:border-slate-200
         hover:shadow-[0_16px_36px_rgba(15,23,42,0.10)]
       "
     >
@@ -27,7 +27,7 @@ export default function NoticeCard({
       <h4
         className="
           mt-4 line-clamp-1 text-lg font-bold text-slate-900
-          transition-colors duration-300
+          transition-colors duration-200
           group-hover:text-[#4F46E5]
         "
       >
