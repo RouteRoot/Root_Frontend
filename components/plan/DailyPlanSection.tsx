@@ -180,8 +180,8 @@ export default function DailyPlanSection({
                   onClick={() => onToggleComplete?.(plan.id)}
                   className={
                     plan.isCompleted
-                      ? "ml-auto inline-flex h-[32px] items-center gap-1.5 rounded-[10px] border border-[#CFEAD8] bg-[#EAF8EF] px-3 text-[12px] font-semibold text-[#16A34A] transition hover:opacity-90"
-                      : "ml-auto inline-flex h-[32px] items-center gap-1.5 rounded-[10px] bg-[#6D5DF6] px-3 text-[12px] font-semibold text-white transition hover:opacity-90"
+                      ? "mr-3 ml-auto inline-flex h-[32px] items-center gap-1.5 rounded-[10px] border border-[#CFEAD8] bg-[#EAF8EF] px-3 text-[12px] font-semibold text-[#16A34A] transition hover:opacity-90"
+                      : "mr-3 ml-auto inline-flex h-[32px] items-center gap-1.5 rounded-[10px] bg-[#6D5DF6] px-3 text-[12px] font-semibold text-white transition hover:opacity-90"
                   }
                 >
                   <CheckCircle2 className="h-3.5 w-3.5" />
