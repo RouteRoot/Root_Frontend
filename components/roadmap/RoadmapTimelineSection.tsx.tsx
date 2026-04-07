@@ -193,12 +193,17 @@ export default function RoadmapTimelineSection() {
   const handleConfirmCreatePlan = () => {
     if (!selectedTask) return;
 
-    const params = new URLSearchParams({
-      examTaskId: String(selectedTask.taskId),
-      name: selectedTask.taskName,
-    });
+    if (hasPlanForSelected) {
+      router.push("/plan");
+    } else {
+      const params = new URLSearchParams({
+        examTaskId: String(selectedTask.taskId),
+        name: selectedTask.taskName,
+      });
 
-    router.push(`/plan/generate?${params.toString()}`);
+      router.push(`/plan/generate?${params.toString()}`);
+    }
+
     setConfirmOpen(false);
     setSelectedTask(null);
     setHasPlanForSelected(false);
@@ -473,15 +478,27 @@ export default function RoadmapTimelineSection() {
 
       <ConfirmModal
         open={confirmOpen}
-        title={hasPlanForSelected ? "플랜 재생성" : "플랜 생성"}
+        title={hasPlanForSelected ? "플랜 이동" : "플랜 생성"}
         description={
           selectedTask
             ? hasPlanForSelected
-              ? "이미 생성된 플랜입니다. 다시 생성하시겠습니까?"
-              : `${selectedTask.taskName} 플랜을 생성하러 이동할까요?`
+              ? (
+                <>
+                  이미 생성된 플랜입니다.
+                  <br />
+                  <span className="mt-2 block">
+                    플랜창으로 이동하시겠습니까?
+                  </span>
+                </>
+              )
+              : (
+                <>
+                  {selectedTask.taskName} 플랜을 <br />생성하기 위해 이동할까요?
+                </>
+              )
             : ""
         }
-        confirmText={hasPlanForSelected ? "다시 생성" : "생성하기"}
+        confirmText={hasPlanForSelected ? "이동하기" : "생성하기"}
         cancelText="취소"
         onConfirm={handleConfirmCreatePlan}
         onCancel={handleCloseModal}

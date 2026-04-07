@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { getRoadmapByToken } from "@/app/api/roadmap/roadmap";
+import { getPlanTabs } from "@/app/api/plan/plan";
+import type { PlanTab } from "@/app/api/plan/types";
 import type {
   RoadmapResponse,
   Phase,
@@ -34,6 +36,14 @@ function getErrorMessage(error: unknown): string {
   }
 
   return "로드맵을 불러오는 중 오류가 발생했습니다.";
+}
+
+function hasGeneratedPlan(taskId: number, planTabs: PlanTab[]) {
+  return planTabs.some((tab) => tab.examTaskId === taskId);
+}
+
+function getEffectiveStatus(status: TaskStatus, hasPlan: boolean): TaskStatus {
+  return hasPlan ? "IN_PROGRESS" : status;
 }
 
 function getStatusLabel(status: TaskStatus) {
@@ -92,8 +102,16 @@ function EmptyTaskCard() {
   );
 }
 
-function TaskCard({ task }: { task: Task }) {
-  const statusStyle = getStatusStyle(task.status);
+function TaskCard({
+  task,
+  planTabs,
+}: {
+  task: Task;
+  planTabs: PlanTab[];
+}) {
+  const hasPlan = hasGeneratedPlan(task.taskId, planTabs);
+  const effectiveStatus = getEffectiveStatus(task.status, hasPlan);
+  const statusStyle = getStatusStyle(effectiveStatus);
 
   return (
     <article className="group rounded-[20px] border border-[#E8EDF5] bg-white p-4 shadow-[0_6px_18px_rgba(15,23,42,0.04)] transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
@@ -114,7 +132,7 @@ function TaskCard({ task }: { task: Task }) {
         <span
           className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold leading-none ${statusStyle.chip}`}
         >
-          {getStatusLabel(task.status)}
+          {getStatusLabel(effectiveStatus)}
         </span>
       </div>
 
@@ -130,9 +148,11 @@ function TaskCard({ task }: { task: Task }) {
 function PhaseColumn({
   phase,
   index,
+  planTabs,
 }: {
   phase: Phase;
   index: number;
+  planTabs: PlanTab[];
 }) {
   return (
     <section
@@ -162,7 +182,9 @@ function PhaseColumn({
         {phase.tasks.length === 0 ? (
           <EmptyTaskCard />
         ) : (
-          phase.tasks.map((task) => <TaskCard key={task.taskId} task={task} />)
+          phase.tasks.map((task) => (
+            <TaskCard key={task.taskId} task={task} planTabs={planTabs} />
+          ))
         )}
       </div>
     </section>
@@ -171,6 +193,7 @@ function PhaseColumn({
 
 export default function RoadmapKanbanBoard() {
   const [roadmap, setRoadmap] = useState<RoadmapResponse | null>(null);
+  const [planTabs, setPlanTabs] = useState<PlanTab[]>([]);
   const [loadState, setLoadState] = useState<LoadState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -182,11 +205,15 @@ export default function RoadmapKanbanBoard() {
         setLoadState("loading");
         setErrorMessage("");
 
-        const data = await getRoadmapByToken();
+        const [roadmapData, planTabData] = await Promise.all([
+          getRoadmapByToken(),
+          getPlanTabs(),
+        ]);
 
         if (!isMounted) return;
 
-        setRoadmap(data);
+        setRoadmap(roadmapData);
+        setPlanTabs(planTabData);
         setLoadState("success");
       } catch (error: unknown) {
         if (!isMounted) return;
@@ -222,21 +249,6 @@ export default function RoadmapKanbanBoard() {
           DETAILS
         </h2>
         <div className="hidden h-px min-w-55 flex-1 bg-[#E9EDF3] md:block" />
-      </div>
-
-      <div className="mb-5 flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#94A3B8]">
-        <div className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-[#C5CCD8]" />
-          <span>시작 전</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-[#6D5DF6]" />
-          <span>진행 중</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-[#8FA3BF]" />
-          <span>완료</span>
-        </div>
       </div>
 
       <div className="overflow-hidden rounded-[28px] border border-[#E8EDF5] bg-white">
@@ -290,6 +302,7 @@ export default function RoadmapKanbanBoard() {
                   key={phase.phaseId}
                   phase={phase}
                   index={index}
+                  planTabs={planTabs}
                 />
               ))}
             </div>
