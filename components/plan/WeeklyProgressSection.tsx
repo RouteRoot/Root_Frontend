@@ -30,7 +30,7 @@ function getStatusDot(status: TaskStatus) {
     case "IN_PROGRESS":
       return "bg-[#6D5DF6]";
     case "DONE":
-      return "bg-[#8FA3BF]";
+      return "bg-[#000000]";
     case "REST":
       return "bg-[#E8DCC6]";
     default:
@@ -192,7 +192,7 @@ export default function WeeklyProgressSection({
         </div>
 
         <div className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-[#8FA3BF]" />
+          <span className="h-2 w-2 rounded-full bg-[#000000]" />
           <span>완료</span>
         </div>
 
