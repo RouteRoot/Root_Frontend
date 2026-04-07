@@ -15,7 +15,6 @@ export default function PlanTabs({
   onSelect,
   isLoading = false,
 }: PlanTabsProps) {
-  // ✅ 스켈레톤 상태
   if (isLoading) {
     return (
       <div className="w-full">
@@ -31,16 +30,14 @@ export default function PlanTabs({
     );
   }
 
-  // ✅ 데이터 없을 때
   if (!tabs.length) {
     return (
       <div className="text-sm text-[#94A3B8]">
-        생성된 플랜이 아직 없어요.
+        생성된 플랜이 아직 없어요. 로드맵 페이지에서 플랜을 생성 할 수 있습니다.
       </div>
     );
   }
 
-  // ✅ 정상 상태
   return (
     <div className="w-full">
       <div className="scrollbar-hide flex gap-2 overflow-x-auto py-2">
