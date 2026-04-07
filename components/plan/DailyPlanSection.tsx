@@ -1,6 +1,7 @@
 "use client";
 
-import { CheckCircle2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { CheckCircle2, ChevronDown } from "lucide-react";
 
 export type DailyPlanSectionItem = {
   id: number;
@@ -40,13 +41,11 @@ function getDday(examDate: string) {
 function DailyPlanSectionSkeleton() {
   return (
     <section className="w-full">
-      <div className="mb-4 w-full max-w-[505px]">
-        <div className="flex items-center gap-4">
-          <h2 className="text-[28px] font-extrabold tracking-[-0.04em] text-[#0B1B3B]">
-            DAILY PLAN
-          </h2>
-          <div className="h-px flex-1 bg-[#E9EDF3]" />
-        </div>
+      <div className="mb-4 flex items-center gap-4">
+        <h2 className="shrink-0 text-[28px] font-extrabold tracking-[-0.04em] text-[#0B1B3B]">
+          DAILY PLAN
+        </h2>
+        <div className="h-px w-[160px] bg-[#f3f3f3]" />
       </div>
 
       <div className="w-full max-w-[450px] overflow-hidden rounded-[18px] border border-[#E8EDF5] bg-white">
@@ -96,6 +95,34 @@ export default function DailyPlanSection({
   plan,
   onToggleComplete,
 }: DailyPlanSectionProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!dropdownRef.current) return;
+
+      if (!dropdownRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleRegeneratePlan = () => {
+    setIsMenuOpen(false);
+    console.log("플랜 재생성하기 클릭");
+  };
+
+  const handleDeletePlan = () => {
+    setIsMenuOpen(false);
+    console.log("플랜 삭제하기 클릭");
+  };
+
   if (!plan) {
     return <DailyPlanSectionSkeleton />;
   }
@@ -104,12 +131,71 @@ export default function DailyPlanSection({
 
   return (
     <section className="w-full">
-      <div className="mb-4 w-full max-w-[505px]">
-        <div className="flex items-center gap-4">
-          <h2 className="text-[28px] font-extrabold tracking-[-0.04em] text-[#0B1B3B]">
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <div className="flex min-w-0 flex-1 items-center gap-4">
+          <h2 className="shrink-0 text-[28px] font-extrabold tracking-[-0.04em] text-[#0B1B3B]">
             DAILY PLAN
           </h2>
-          <div className="h-px flex-1 bg-[#E9EDF3]" />
+          <div className="h-px w-[160px] bg-[#f3f3f3]" />
+        </div>
+
+        <div ref={dropdownRef} className="relative shrink-0">
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+            className="
+              inline-flex h-10 min-w-[118px] items-center justify-center gap-2
+              rounded-full bg-white px-4
+              text-[13px] font-semibold text-[#111827]
+              transition-all duration-200
+              hover:border-[#D9E0EA] hover:bg-[#FAFBFC]
+            "
+          >
+            플랜 관리하기
+            <ChevronDown
+              className={`h-4 w-4 text-[#6B7280] transition-transform duration-300 ${
+                isMenuOpen ? "rotate-180" : "rotate-0"
+              }`}
+            />
+          </button>
+
+          <div
+            className={`
+              absolute right-0 top-[calc(100%+10px)] z-30 w-[132px]
+              origin-top-right overflow-hidden rounded-2xl border border-[#E8EDF5] bg-white
+              p-1.5 shadow-[0_18px_40px_rgba(15,23,42,0.12)]
+              transition-all duration-200 ease-out
+              ${
+                isMenuOpen
+                  ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
+                  : "pointer-events-none -translate-y-1 scale-[0.98] opacity-0"
+              }
+            `}
+          >
+            <button
+              type="button"
+              onClick={handleRegeneratePlan}
+              className="
+                flex h-10 w-full items-center rounded-xl px-3
+                text-left text-[13px] font-medium text-[#111827]
+                transition-colors duration-150 hover:bg-[#F8FAFC]
+              "
+            >
+              플랜 재생성하기
+            </button>
+
+            <button
+              type="button"
+              onClick={handleDeletePlan}
+              className="
+                flex h-10 w-full items-center rounded-xl px-3
+                text-left text-[13px] font-medium text-[#111827]
+                transition-colors duration-150 hover:bg-[#F8FAFC]
+              "
+            >
+              플랜 삭제하기
+            </button>
+          </div>
         </div>
       </div>
 
