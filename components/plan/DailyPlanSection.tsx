@@ -161,7 +161,7 @@ export default function DailyPlanSection({
 
           <div
             className={`
-              absolute right-0 top-[calc(100%+10px)] z-30 w-[132px]
+              absolute right-0 top-[calc(100%+10px)] z-30 w-[102px]
               origin-top-right overflow-hidden rounded-2xl border border-[#E8EDF5] bg-white
               p-1.5 shadow-[0_18px_40px_rgba(15,23,42,0.12)]
               transition-all duration-200 ease-out
