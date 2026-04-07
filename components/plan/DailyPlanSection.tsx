@@ -37,29 +37,67 @@ function getDday(examDate: string) {
   return `D+${Math.abs(diff)}`;
 }
 
+function DailyPlanSectionSkeleton() {
+  return (
+    <section className="w-full">
+      <div className="mb-4 w-full max-w-[505px]">
+        <div className="flex items-center gap-4">
+          <h2 className="text-[32px] font-extrabold tracking-[-0.04em] text-[#0B1B3B]">
+            DAILY PLAN
+          </h2>
+          <div className="h-px flex-1 bg-[#E9EDF3]" />
+        </div>
+      </div>
+
+      <div className="w-full max-w-[450px] overflow-hidden rounded-[18px] border border-[#E8EDF5] bg-white">
+        <div className="border-b border-[#EEF2F7] bg-[#FBFCFE] px-4 py-4">
+          <div className="h-3 w-[120px] animate-pulse rounded bg-[#E9EDF3]" />
+          <div className="mt-2 h-4 w-[180px] animate-pulse rounded bg-[#E9EDF3]" />
+        </div>
+
+        <div className="px-4 py-4">
+          <div className="grid grid-cols-[110px_1fr] gap-4">
+            <div className="flex flex-col gap-3 text-[12px]">
+              <div className="rounded-[10px] border border-[#EEF2F7] bg-[#FBFCFE] px-3 py-3">
+                <div className="h-3 w-[32px] animate-pulse rounded bg-[#E9EDF3]" />
+                <div className="mt-2 h-4 w-[68px] animate-pulse rounded bg-[#E9EDF3]" />
+              </div>
+
+              <div className="rounded-[10px] border border-[#EEF2F7] bg-[#FBFCFE] px-3 py-3">
+                <div className="h-3 w-[48px] animate-pulse rounded bg-[#E9EDF3]" />
+                <div className="mt-2 h-4 w-[56px] animate-pulse rounded bg-[#E9EDF3]" />
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 animate-pulse rounded-full bg-[#E9EDF3]" />
+                <div className="h-4 w-[150px] animate-pulse rounded bg-[#E9EDF3]" />
+              </div>
+
+              <div className="mt-2 space-y-2">
+                <div className="h-3 w-full animate-pulse rounded bg-[#E9EDF3]" />
+                <div className="h-3 w-[92%] animate-pulse rounded bg-[#E9EDF3]" />
+                <div className="h-3 w-[76%] animate-pulse rounded bg-[#E9EDF3]" />
+              </div>
+
+              <div className="mt-4 flex">
+                <div className="ml-auto h-[32px] w-[72px] animate-pulse rounded-[10px] bg-[#E9EDF3]" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function DailyPlanSection({
   plan,
   onToggleComplete,
 }: DailyPlanSectionProps) {
   if (!plan) {
-    return (
-      <section className="w-full">
-        <div className="mb-4 w-full max-w-[505px]">
-          <div className="flex items-center gap-4">
-            <h2 className="text-[32px] font-extrabold tracking-[-0.04em] text-[#0B1B3B]">
-              DAILY PLAN
-            </h2>
-            <div className="h-px flex-1 bg-[#E9EDF3]" />
-          </div>
-        </div>
-
-        <div className="w-full max-w-[450px] rounded-[18px] border border-[#E8EDF5] bg-white px-4 py-6">
-          <p className="text-[13px] font-medium text-[#94A3B8]">
-            표시할 데일리 플랜이 없습니다.
-          </p>
-        </div>
-      </section>
-    );
+    return <DailyPlanSectionSkeleton />;
   }
 
   const dday = getDday(plan.examDate);
@@ -75,7 +113,7 @@ export default function DailyPlanSection({
         </div>
       </div>
 
-      <div className="w-full max-w-[450px] rounded-[18px] border border-[#E8EDF5] bg-white overflow-hidden">
+      <div className="w-full max-w-[450px] overflow-hidden rounded-[18px] border border-[#E8EDF5] bg-white">
         <div className="border-b border-[#EEF2F7] bg-[#FBFCFE] px-4 py-4">
           <p className="text-[11px] font-semibold text-[#A0AEC0]">
             시험일까지 {dday} 남았어요
@@ -138,18 +176,18 @@ export default function DailyPlanSection({
 
               <div className="mt-4 flex">
                 <button
-                    type="button"
-                    onClick={() => onToggleComplete?.(plan.id)}
-                    className={
+                  type="button"
+                  onClick={() => onToggleComplete?.(plan.id)}
+                  className={
                     plan.isCompleted
-                        ? "ml-auto inline-flex h-[32px] items-center gap-1.5 rounded-[10px] border border-[#CFEAD8] bg-[#EAF8EF] px-3 text-[12px] font-semibold text-[#16A34A] transition hover:opacity-90"
-                        : "ml-auto inline-flex h-[32px] items-center gap-1.5 rounded-[10px] bg-[#6D5DF6] px-3 text-[12px] font-semibold text-white transition hover:opacity-90"
-                    }
+                      ? "ml-auto inline-flex h-[32px] items-center gap-1.5 rounded-[10px] border border-[#CFEAD8] bg-[#EAF8EF] px-3 text-[12px] font-semibold text-[#16A34A] transition hover:opacity-90"
+                      : "ml-auto inline-flex h-[32px] items-center gap-1.5 rounded-[10px] bg-[#6D5DF6] px-3 text-[12px] font-semibold text-white transition hover:opacity-90"
+                  }
                 >
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                    {plan.isCompleted ? "완료 " : "완료"}
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  {plan.isCompleted ? "완료 취소" : "완료"}
                 </button>
-                </div>
+              </div>
             </div>
           </div>
         </div>
