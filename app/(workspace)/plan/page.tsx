@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import PlanTabs from "@/components/plan/PlanTabs";
+import DailyPlanSection from "@/components/plan/DailyPlanSection";
 import WeeklyProgressSection, {
   PlannerTask,
   TaskStatus,
@@ -199,6 +200,8 @@ export default function PlannerPage() {
             </p>
           </div>
         )}
+
+      <DailyPlanSection />
 
         {(planLoading || (hasTabs && !hasPlan)) && (
           <WeeklyProgressSection
