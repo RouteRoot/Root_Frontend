@@ -184,11 +184,11 @@ export default function GeneratePage() {
     <main className="min-h-screen bg-white px-6 -mt-4 md:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8">
-          <h1 className="text-[32px] font-extrabold tracking-[-0.05em] text-[#0B1B3B]">
+          {/* <h1 className="text-[32px] font-extrabold tracking-[-0.05em] text-[#0B1B3B]">
             나만의 로드맵 생성하기
-          </h1>
+          </h1> */}
 
-          <p className="mt-3 max-w-3xl text-[15px] leading-7 text-[#667085]">
+          <p className=" max-w-3xl text-[15px] leading-7 text-[#667085]">
             현재 상태, 목표, 학습 가능 시간을 순서대로 입력하면 BUBU가 당신에게
             맞는 현실적인 커리어 로드맵을 설계해드려요.
           </p>
