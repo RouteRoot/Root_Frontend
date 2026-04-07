@@ -119,8 +119,8 @@ function TaskCard({
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <span className={`h-2.5 w-2.5 rounded-full ${statusStyle.dot}`} />
-            <span className="text-[11px] font-semibold tracking-[0.02em] text-[#A0AEC0]">
-              TASK
+            <span className="text-[11px] font-bold tracking-[0.02em] text-[#A0AEC0]">
+              Task
             </span>
           </div>
 
