@@ -191,7 +191,7 @@ export default function RoadmapTimelineSection() {
   };
 
   const handleConfirmCreatePlan = () => {
-    if (!selectedTask) return;
+    if (!selectedTask || !roadmap) return;
 
     if (hasPlanForSelected) {
       router.push("/plan");
@@ -199,6 +199,9 @@ export default function RoadmapTimelineSection() {
       const params = new URLSearchParams({
         examTaskId: String(selectedTask.taskId),
         name: selectedTask.taskName,
+        daily: String(roadmap.daily),
+        weekly: String(roadmap.weekly),
+        mylevel: roadmap.mylevel,
       });
 
       router.push(`/plan/generate?${params.toString()}`);
@@ -208,7 +211,6 @@ export default function RoadmapTimelineSection() {
     setSelectedTask(null);
     setHasPlanForSelected(false);
   };
-
   return (
     <>
       <section className="w-full">
@@ -445,7 +447,7 @@ export default function RoadmapTimelineSection() {
                                 key={task.taskId}
                                 type="button"
                                 onClick={() => handleTaskClick(task)}
-                                className={`group inline-flex h-10 max-w-[320px] cursor-pointer items-center rounded-xl px-3 transition-all duration-200 hover:-translate-y-px hover:scale-[1.02] ${style.wrapper}`}
+                                className={`group inline-flex h-10 max-w-[620px] cursor-pointer items-center rounded-xl px-3 transition-all duration-200 hover:-translate-y-px hover:scale-[1.02] ${style.wrapper}`}
                               >
                                 <div className="flex min-w-0 items-center gap-2">
                                   <p className="whitespace-nowrap text-[13px] font-bold leading-none">
