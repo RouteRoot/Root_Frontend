@@ -374,8 +374,8 @@ export default function PlannerPage() {
               selectedWeek={selectedWeek}
               onChangeWeek={setSelectedWeek}
               isLoading={false}
-              selectedTaskId={selectedTaskId}
-              onSelectTask={setSelectedTaskId}
+            //   selectedTaskId={selectedTaskId}
+            //   onSelectTask={setSelectedTaskId}
             />
           </>
         )}
