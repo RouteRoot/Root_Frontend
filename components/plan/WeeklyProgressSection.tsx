@@ -102,27 +102,6 @@ export default function WeeklyProgressSection({
               <div className="h-10 w-[140px] animate-pulse rounded-full bg-[#EEF2F7]" />
               <div className="h-10 w-[140px] animate-pulse rounded-full bg-[#EEF2F7]" />
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="h-10 w-10 animate-pulse rounded-full bg-[#EEF2F7]" />
-              <div className="h-10 w-[120px] animate-pulse rounded-full bg-[#EEF2F7]" />
-              <div className="h-10 w-10 animate-pulse rounded-full bg-[#EEF2F7]" />
-              <div className="h-10 w-[140px] animate-pulse rounded-full bg-[#EEF2F7]" />
-              <div className="h-10 w-[140px] animate-pulse rounded-full bg-[#EEF2F7]" />
-            </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="h-10 w-10 animate-pulse rounded-full bg-[#EEF2F7]" />
-              <div className="h-10 w-[120px] animate-pulse rounded-full bg-[#EEF2F7]" />
-              <div className="h-10 w-10 animate-pulse rounded-full bg-[#EEF2F7]" />
-              <div className="h-10 w-[140px] animate-pulse rounded-full bg-[#EEF2F7]" />
-              <div className="h-10 w-[140px] animate-pulse rounded-full bg-[#EEF2F7]" />
-            </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="h-10 w-10 animate-pulse rounded-full bg-[#EEF2F7]" />
-              <div className="h-10 w-[120px] animate-pulse rounded-full bg-[#EEF2F7]" />
-              <div className="h-10 w-10 animate-pulse rounded-full bg-[#EEF2F7]" />
-              <div className="h-10 w-[140px] animate-pulse rounded-full bg-[#EEF2F7]" />
-              <div className="h-10 w-[140px] animate-pulse rounded-full bg-[#EEF2F7]" />
-            </div>
           </div>
 
           <div
