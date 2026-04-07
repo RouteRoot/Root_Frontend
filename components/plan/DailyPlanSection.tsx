@@ -181,7 +181,7 @@ export default function DailyPlanSection({
                 transition-colors duration-150 hover:bg-[#F8FAFC]
               "
             >
-              플랜 재생성하기
+              재생성하기
             </button>
 
             <button
@@ -193,7 +193,7 @@ export default function DailyPlanSection({
                 transition-colors duration-150 hover:bg-[#F8FAFC]
               "
             >
-              플랜 삭제하기
+              삭제하기
             </button>
           </div>
         </div>
