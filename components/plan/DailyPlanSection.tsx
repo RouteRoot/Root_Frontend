@@ -57,7 +57,7 @@ export default function DailyPlanSection() {
       </div>
 
       {/* 카드 */}
-      <div className="w-full max-w-[500px] rounded-[18px] border border-[#E8EDF5] bg-white">
+      <div className="w-full max-w-[450px] rounded-[18px] border border-[#E8EDF5] bg-white">
         {/* 헤더 */}
         <div className="border-b border-[#EEF2F7] bg-[#FBFCFE] px-4 py-4">
           <p className="text-[11px] font-semibold text-[#A0AEC0]">
@@ -71,7 +71,7 @@ export default function DailyPlanSection() {
 
         {/* 본문 */}
         <div className="px-4 py-4">
-          <div className="grid grid-cols-[140px_1fr] gap-4">
+          <div className="grid grid-cols-[110px_1fr] gap-4">
             
             {/* 왼쪽 */}
             <div className="flex flex-col gap-3 text-[12px]">
@@ -94,7 +94,6 @@ export default function DailyPlanSection() {
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 
-                {/* ✨ 반짝 dot */}
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#6D5DF6] opacity-30" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-[#6D5DF6]" />
