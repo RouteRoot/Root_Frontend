@@ -317,7 +317,7 @@ export default function PlannerPage() {
   };
 
   return (
-    <main className="min-h-screen bg-white px-4 pb-14 pt-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-white pb-14 sm:px-6 lg:px-0">
       <div className="mx-auto max-w-[1600px]">
         <section className="mb-8">
           <PlanTabs
