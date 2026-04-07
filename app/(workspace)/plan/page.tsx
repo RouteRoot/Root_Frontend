@@ -2,12 +2,19 @@
 
 import { useEffect, useMemo, useState } from "react";
 import PlanTabs from "@/components/plan/PlanTabs";
-import DailyPlanSection from "@/components/plan/DailyPlanSection";
 import WeeklyProgressSection, {
   PlannerTask,
   TaskStatus,
 } from "@/components/plan/WeeklyProgressSection";
-import { getPlanTabs, getPlanByExamTaskId } from "@/app/api/plan/plan";
+import DailyPlanSection, {
+  DailyPlanSectionItem,
+} from "@/components/plan/DailyPlanSection";
+import ConfirmModal from "@/components/common/ConfirmModal";
+import {
+  getPlanTabs,
+  getPlanByExamTaskId,
+  checkDailyPlan,
+} from "@/app/api/plan/plan";
 import type { PlanResponse, PlanTab } from "@/app/api/plan/types";
 
 function getTodayInSeoulString(): string {
@@ -106,6 +113,42 @@ function mapPlanToPlannerTasks(plan: PlanResponse | null): PlannerTask[] {
     });
 }
 
+function getExamDateFromPlan(plan: PlanResponse | null): string {
+  if (!plan) return "2026.04.22";
+
+  const allDates = plan.weeklyPlans
+    .flatMap((weeklyPlan) => weeklyPlan.dailyPlans)
+    .map((dailyPlan) => formatStudyDate(dailyPlan.studyDate))
+    .filter((date) => date !== "-")
+    .sort();
+
+  return allDates[allDates.length - 1] ?? "2026.04.22";
+}
+
+function mapTaskToDailyPlanItem(
+  task: PlannerTask | null,
+  plan: PlanResponse | null,
+  examDate: string
+): DailyPlanSectionItem | null {
+  if (!task) return null;
+
+  const matchedDailyPlan = plan?.weeklyPlans
+    .flatMap((weeklyPlan) => weeklyPlan.dailyPlans)
+    .find((dailyPlan) => dailyPlan.dailyPlanId === task.id);
+
+  return {
+    id: task.id,
+    week: task.week,
+    day: task.day,
+    title: task.title,
+    description: task.description,
+    date: task.date,
+    hours: task.hours,
+    examDate,
+    isCompleted: matchedDailyPlan?.isCompleted ?? false,
+  };
+}
+
 export default function PlannerPage() {
   const [tabs, setTabs] = useState<PlanTab[]>([]);
   const [selectedExamTaskId, setSelectedExamTaskId] = useState<number | null>(
@@ -113,10 +156,17 @@ export default function PlannerPage() {
   );
   const [plan, setPlan] = useState<PlanResponse | null>(null);
   const [selectedWeek, setSelectedWeek] = useState<number>(1);
+  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
 
   const [tabsLoading, setTabsLoading] = useState(true);
   const [planLoading, setPlanLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingDailyPlanId, setPendingDailyPlanId] = useState<number | null>(
+    null
+  );
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   useEffect(() => {
     const fetchTabs = async () => {
@@ -132,6 +182,7 @@ export default function PlannerPage() {
         } else {
           setSelectedExamTaskId(null);
           setPlan(null);
+          setSelectedTaskId(null);
         }
       } catch (error) {
         console.error("플랜 탭 조회 실패:", error);
@@ -154,11 +205,25 @@ export default function PlannerPage() {
 
         const data = await getPlanByExamTaskId(selectedExamTaskId);
         setPlan(data);
-        setSelectedWeek(findWeekContainingToday(data));
+
+        const todayWeek = findWeekContainingToday(data);
+        setSelectedWeek(todayWeek);
+
+        const mappedTasks = mapPlanToPlannerTasks(data);
+        const todayInSeoul = getTodayInSeoulString();
+
+        const todayTask =
+          mappedTasks.find((task) => task.date === todayInSeoul) ??
+          mappedTasks.find((task) => task.week === todayWeek) ??
+          mappedTasks[0] ??
+          null;
+
+        setSelectedTaskId(todayTask?.id ?? null);
       } catch (error) {
         console.error("플랜 상세 조회 실패:", error);
         setError("플랜 정보를 불러오지 못했습니다.");
         setPlan(null);
+        setSelectedTaskId(null);
       } finally {
         setPlanLoading(false);
       }
@@ -168,9 +233,88 @@ export default function PlannerPage() {
   }, [selectedExamTaskId]);
 
   const plannerTasks = useMemo(() => mapPlanToPlannerTasks(plan), [plan]);
+  const examDate = useMemo(() => getExamDateFromPlan(plan), [plan]);
+
+  const selectedDailyPlan = useMemo(() => {
+    const task =
+      plannerTasks.find((item) => item.id === selectedTaskId) ??
+      plannerTasks.find((item) => item.week === selectedWeek) ??
+      plannerTasks[0] ??
+      null;
+
+    return mapTaskToDailyPlanItem(task, plan, examDate);
+  }, [plannerTasks, selectedTaskId, selectedWeek, plan, examDate]);
+
+  const pendingTask = useMemo(() => {
+    if (pendingDailyPlanId == null) return null;
+    return plannerTasks.find((task) => task.id === pendingDailyPlanId) ?? null;
+  }, [plannerTasks, pendingDailyPlanId]);
+
+  const pendingDailyPlan = useMemo(() => {
+    if (pendingDailyPlanId == null || !plan) return null;
+
+    return (
+      plan.weeklyPlans
+        .flatMap((weeklyPlan) => weeklyPlan.dailyPlans)
+        .find((dailyPlan) => dailyPlan.dailyPlanId === pendingDailyPlanId) ??
+      null
+    );
+  }, [plan, pendingDailyPlanId]);
 
   const hasTabs = tabs.length > 0;
   const hasPlan = !!plan;
+
+  const openCompleteModal = (dailyPlanId: number) => {
+    setPendingDailyPlanId(dailyPlanId);
+    setConfirmOpen(true);
+  };
+
+  const closeCompleteModal = () => {
+    if (confirmLoading) return;
+    setConfirmOpen(false);
+    setPendingDailyPlanId(null);
+  };
+
+  const handleConfirmComplete = async () => {
+    if (pendingDailyPlanId == null) return;
+
+    try {
+      setConfirmLoading(true);
+
+      const res = await checkDailyPlan(pendingDailyPlanId);
+
+      setPlan((prev) => {
+        if (!prev) return prev;
+
+        return {
+          ...prev,
+          weeklyPlans: prev.weeklyPlans.map((week) => ({
+            ...week,
+            dailyPlans: week.dailyPlans.map((day) =>
+              day.dailyPlanId === pendingDailyPlanId
+                ? {
+                    ...day,
+                    isCompleted: res.isCompleted,
+                  }
+                : day
+            ),
+          })),
+        };
+      });
+
+      setConfirmOpen(false);
+      setPendingDailyPlanId(null);
+
+      window.alert(
+        res.isCompleted ? "완료 처리되었습니다." : "완료가 해제되었습니다."
+      );
+    } catch (e) {
+      console.error("완료 처리 실패", e);
+      window.alert("완료 처리 중 오류가 발생했습니다.");
+    } finally {
+      setConfirmLoading(false);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-white px-4 pb-14 pt-4 sm:px-6 lg:px-8">
@@ -201,26 +345,62 @@ export default function PlannerPage() {
           </div>
         )}
 
-      <DailyPlanSection />
-
         {(planLoading || (hasTabs && !hasPlan)) && (
-          <WeeklyProgressSection
-            tasks={[]}
-            selectedWeek={selectedWeek}
-            onChangeWeek={setSelectedWeek}
-            isLoading={true}
-          />
+          <>
+            <section className="mb-10">
+              <DailyPlanSection plan={null} />
+            </section>
+
+            <WeeklyProgressSection
+              tasks={[]}
+              selectedWeek={selectedWeek}
+              onChangeWeek={setSelectedWeek}
+              isLoading={true}
+            />
+          </>
         )}
 
         {!planLoading && hasPlan && (
-          <WeeklyProgressSection
-            tasks={plannerTasks}
-            selectedWeek={selectedWeek}
-            onChangeWeek={setSelectedWeek}
-            isLoading={false}
-          />
+          <>
+            <section className="mb-10">
+              <DailyPlanSection
+                plan={selectedDailyPlan}
+                onToggleComplete={openCompleteModal}
+              />
+            </section>
+
+            <WeeklyProgressSection
+              tasks={plannerTasks}
+              selectedWeek={selectedWeek}
+              onChangeWeek={setSelectedWeek}
+              isLoading={false}
+              selectedTaskId={selectedTaskId}
+              onSelectTask={setSelectedTaskId}
+            />
+          </>
         )}
       </div>
+
+      <ConfirmModal
+        open={confirmOpen}
+        title={
+          pendingDailyPlan?.isCompleted ? "학습 완료 해제" : "학습 완료 처리"
+        }
+        description={
+          pendingTask
+            ? `Week ${pendingTask.week} / Day ${pendingTask.day} 학습을 ${
+                pendingDailyPlan?.isCompleted ? "완료 해제" : "완료 처리"
+              }할까요?`
+            : pendingDailyPlan?.isCompleted
+            ? "이 계획의 완료 상태를 해제할까요?"
+            : "이 계획을 완료 처리할까요?"
+        }
+        confirmText={pendingDailyPlan?.isCompleted ? "해제하기" : "완료하기"}
+        cancelText="취소"
+        loading={confirmLoading}
+        onConfirm={handleConfirmComplete}
+        onCancel={closeCompleteModal}
+      />
     </main>
   );
 }
