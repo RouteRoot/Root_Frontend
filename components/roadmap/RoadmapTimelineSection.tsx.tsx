@@ -417,7 +417,7 @@ export default function RoadmapTimelineSection() {
 
                 <div>
                   <div className="flex h-[50px] items-center bg-[#FBFCFE] px-6 text-[11px] font-semibold text-[#A0AEC0]">
-                    단계별 자격증 로드맵
+                    단계별 자격증
                   </div>
 
                   {phases.map((phase, index) => (
