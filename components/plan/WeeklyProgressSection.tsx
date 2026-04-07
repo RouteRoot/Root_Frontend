@@ -292,10 +292,10 @@ export default function WeeklyProgressSection({
             <div className="grid h-[48px] grid-cols-[minmax(0,1fr)_148px_96px] bg-[#FBFCFE] text-[11px] font-semibold text-[#A0AEC0]">
               <div className="flex items-center px-6">선택한 주차 학습 계획</div>
               <div className="flex items-center justify-center border-l border-[#EEF2F7]">
-                날짜
+                예정 학습일
               </div>
               <div className="flex items-center justify-center border-l border-[#EEF2F7]">
-                시간
+                할당 된 시간
               </div>
             </div>
 
