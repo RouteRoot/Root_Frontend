@@ -211,6 +211,7 @@ export default function RoadmapTimelineSection() {
     setSelectedTask(null);
     setHasPlanForSelected(false);
   };
+
   return (
     <>
       <section className="w-full">
@@ -302,7 +303,6 @@ export default function RoadmapTimelineSection() {
 
           <div className="mr-3 flex items-center gap-1.5 text-[11px] font-medium text-[#94A3B8]">
             <span>자격증 항목을 클릭하면 플랜을 생성할 수 있어요.</span>
-            {/* <CircleHelp className="h-3.5 w-3.5 text-[#A0AEC0]" /> */}
           </div>
         </div>
 
@@ -390,9 +390,7 @@ export default function RoadmapTimelineSection() {
                     <div
                       key={phase.phaseId}
                       className={`flex min-h-[65px] items-center px-6 py-4 ${
-                        index !== phases.length - 1
-                          ? "border-t border-[#EEF2F7]"
-                          : ""
+                        index !== 0 ? "border-t border-[#EEF2F7]" : ""
                       }`}
                     >
                       <div className="min-w-0">
@@ -424,9 +422,7 @@ export default function RoadmapTimelineSection() {
                     <div
                       key={phase.phaseId}
                       className={`flex min-h-[65px] items-center px-6 py-3 ${
-                        index !== phases.length - 1
-                          ? "border-t border-[#EEF2F7]"
-                          : ""
+                        index !== 0 ? "border-t border-[#EEF2F7]" : ""
                       }`}
                     >
                       <div className="flex flex-wrap items-center gap-3">
@@ -485,19 +481,20 @@ export default function RoadmapTimelineSection() {
           selectedTask
             ? hasPlanForSelected
               ? (
-                <>
-                  이미 생성된 플랜입니다.
-                  <br />
-                  <span className="mt-2 block">
-                    플랜창으로 이동하시겠습니까?
-                  </span>
-                </>
-              )
+                  <>
+                    이미 생성된 플랜입니다.
+                    <br />
+                    <span className="mt-2 block">
+                      플랜창으로 이동하시겠습니까?
+                    </span>
+                  </>
+                )
               : (
-                <>
-                  {selectedTask.taskName} 플랜을 <br />생성하기 위해 이동할까요?
-                </>
-              )
+                  <>
+                    {selectedTask.taskName} 플랜을 <br />
+                    생성하기 위해 이동할까요?
+                  </>
+                )
             : ""
         }
         confirmText={hasPlanForSelected ? "이동하기" : "생성하기"}
