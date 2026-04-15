@@ -14,6 +14,7 @@ import {
   getPlanTabs,
   getPlanByExamTaskId,
   checkDailyPlan,
+  deletePlan,
 } from "@/app/api/plan/plan";
 import type { PlanResponse, PlanTab } from "@/app/api/plan/types";
 
@@ -269,12 +270,14 @@ export default function PlannerPage() {
     setConfirmOpen(true);
   };
 
+  //모달 닫기
   const closeCompleteModal = () => {
     if (confirmLoading) return;
     setConfirmOpen(false);
     setPendingDailyPlanId(null);
   };
 
+  //완료 처리 핸들러
   const handleConfirmComplete = async () => {
     if (pendingDailyPlanId == null) return;
 
@@ -316,16 +319,43 @@ export default function PlannerPage() {
     }
   };
 
+    const handleDeletePlan = async (examTaskId: number) => {
+    try {
+        await deletePlan(examTaskId);
+        const updatedTabs = await getPlanTabs();
+        setTabs(updatedTabs);
+
+        if (updatedTabs.length > 0) {
+        const nextId = updatedTabs[0].examTaskId;
+        setSelectedExamTaskId(nextId);
+
+        const nextPlan = await getPlanByExamTaskId(nextId);
+        setPlan(nextPlan);
+        } else {
+        setSelectedExamTaskId(null);
+        setPlan(null);
+        }
+    } catch (error) {
+        console.error("플랜 삭제 실패:", error);
+    }
+    };
+
+    const handleRegeneratePlan = async (examTaskId: number) => {
+    console.log("재생성 클릭:", examTaskId);
+    };
+
   return (
     <main className="min-h-screen bg-white pb-14 sm:px-6 lg:px-0">
       <div className="mx-auto max-w-[1600px]">
         <section className="mb-8">
-          <PlanTabs
+            <PlanTabs
             tabs={tabs}
             selectedExamTaskId={selectedExamTaskId}
             onSelect={setSelectedExamTaskId}
+            onDeletePlan={handleDeletePlan}
+            onRegeneratePlan={handleRegeneratePlan}
             isLoading={tabsLoading}
-          />
+            />
         </section>
 
         {error && (

@@ -42,3 +42,8 @@ export interface PlanTab {
   examTaskId: number;
   taskName: string;
 }
+
+export interface PlanDeleteResponse {
+  examTaskId: number;
+  message: string;
+}

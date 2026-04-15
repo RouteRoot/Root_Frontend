@@ -4,6 +4,7 @@ import type {
   PlanResponse,
   PlanCheckResponse,
   PlanTab,
+  PlanDeleteResponse,
 } from "./types";
 
 // 플랜 생성
@@ -40,5 +41,16 @@ export async function checkDailyPlan(
     `/plans/daily/${dailyPlanId}/check`
   );
 
+  return response.data;
+}
+
+// 플랜 삭제
+export async function deletePlan(
+  examTaskId: number
+): Promise<PlanDeleteResponse> {
+  console.log("planApi deletePlan examTaskId:", examTaskId);
+  console.log("axios baseURL:", axiosInstance.defaults.baseURL);
+
+  const response = await axiosInstance.delete(`/plans/tasks/${examTaskId}`);
   return response.data;
 }
