@@ -14,7 +14,7 @@ type UserCardProps = {
 };
 
 const mockUser = {
-  name: "민서12ㅂ234",
+  name: "권민서",
   description: "프론트엔드 취업 준비",
   profileImage: "/bubu11.png",
   postCount: 2,
