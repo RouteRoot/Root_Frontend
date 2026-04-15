@@ -59,12 +59,12 @@ export default function PlanTabs({
             {[1, 2, 3, 4].map((item) => (
               <div
                 key={item}
-                className="h-[36px] w-[120px] shrink-0 animate-pulse rounded-full bg-[#EEF2F7]"
+                className="h-[36px] w-[120px] shrink-0 animate-pulse rounded-[10px] bg-[#EEF2F7]"
               />
             ))}
           </div>
 
-          <div className="h-10 w-[118px] shrink-0 animate-pulse rounded-full bg-[#EEF2F7]" />
+          <div className="h-10 w-[118px] shrink-0 animate-pulse rounded-[10px] bg-[#EEF2F7]" />
         </div>
       </div>
     );
@@ -108,7 +108,7 @@ export default function PlanTabs({
             onClick={() => setIsMenuOpen((prev) => !prev)}
             className="
               inline-flex h-10 min-w-[118px] items-center justify-center gap-2
-              rounded-full bg-white px-4
+              rounded-[10px] bg-white px-4
               text-[13px] font-semibold text-[#111827]
               transition-all duration-200
               hover:border-[#D9E0EA] hover:bg-[#FAFBFC]
@@ -125,7 +125,7 @@ export default function PlanTabs({
           <div
             className={`
               absolute right-0 top-[calc(100%+10px)] z-30 w-[102px]
-              origin-top-right overflow-hidden rounded-2xl border border-[#E8EDF5] bg-white
+              origin-top-right overflow-hidden rounded-[10px] border border-[#E8EDF5] bg-white
               p-1.5 shadow-[0_18px_40px_rgba(15,23,42,0.12)]
               transition-all duration-200 ease-out
               ${
@@ -139,7 +139,7 @@ export default function PlanTabs({
               type="button"
               onClick={handleRegeneratePlan}
               className="
-                flex h-10 w-full items-center rounded-xl px-3
+                flex h-10 w-full items-center rounded-[10px] px-3
                 text-left text-[13px] font-medium text-[#111827]
                 transition-colors duration-150 hover:bg-[#F8FAFC]
               "
@@ -151,7 +151,7 @@ export default function PlanTabs({
               type="button"
               onClick={handleDeletePlan}
               className="
-                flex h-10 w-full items-center rounded-xl px-3
+                flex h-10 w-full items-center rounded-[10px] px-3
                 text-left text-[13px] font-medium text-[#111827]
                 transition-colors duration-150 hover:bg-[#F8FAFC]
               "

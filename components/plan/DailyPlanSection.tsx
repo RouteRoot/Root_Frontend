@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CheckCircle2, ChevronDown } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 
 export type DailyPlanSectionItem = {
   id: number;
@@ -95,34 +95,6 @@ export default function DailyPlanSection({
   plan,
   onToggleComplete,
 }: DailyPlanSectionProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (!dropdownRef.current) return;
-
-      if (!dropdownRef.current.contains(event.target as Node)) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const handleRegeneratePlan = () => {
-    setIsMenuOpen(false);
-    console.log("플랜 재생성하기 클릭");
-  };
-
-  const handleDeletePlan = () => {
-    setIsMenuOpen(false);
-    console.log("플랜 삭제하기 클릭");
-  };
-
   if (!plan) {
     return <DailyPlanSectionSkeleton />;
   }
@@ -169,7 +141,8 @@ export default function DailyPlanSection({
               </div>
             </div>
 
-            <div className="flex flex-col">
+            {/* 🔥 오른쪽 영역 */}
+            <div className="relative flex flex-col pb-10">
               <div className="flex items-center gap-2">
                 <span className="relative flex h-3 w-3">
                   {!plan.isCompleted && (
@@ -201,20 +174,17 @@ export default function DailyPlanSection({
                 {plan.description}
               </p>
 
-              <div className="mt-4 flex">
-                <button
-                  type="button"
-                  onClick={() => onToggleComplete?.(plan.id)}
-                  className={
-                    plan.isCompleted
-                      ? "mr-3 ml-auto inline-flex h-[32px] items-center gap-1.5 rounded-[10px] border border-[#CFEAD8] bg-[#EAF8EF] px-3 text-[12px] font-semibold text-[#16A34A] transition hover:opacity-90"
-                      : "mr-3 ml-auto inline-flex h-[32px] items-center gap-1.5 rounded-[10px] bg-[#6D5DF6] px-3 text-[12px] font-semibold text-white transition hover:opacity-90"
-                  }
-                >
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                  {plan.isCompleted ? "학습 완료" : "완료"}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => onToggleComplete?.(plan.id)}
+                className={
+                  plan.isCompleted
+                    ? "absolute bottom-0 right-0 inline-flex h-[32px] items-center gap-1.5 rounded-[10px] border border-[#CFEAD8] bg-[#EAF8EF] px-4 text-[12px] font-semibold text-[#16A34A] transition hover:opacity-90"
+                    : "absolute bottom-0 right-0 inline-flex h-[32px] items-center gap-1.5 rounded-[10px] bg-[#6D5DF6] px-4 text-[12px] font-semibold text-white transition hover:opacity-90"
+                }
+              >
+                {plan.isCompleted ? "학습 완료" : "완료"}
+              </button>
             </div>
           </div>
         </div>
