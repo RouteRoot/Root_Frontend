@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import RoadmapKanbanBoard from "@/components/roadmap/RoadmapKanbanboard";
-import RoadmapTimelineSection from "@/components/roadmap/RoadmapTimelineSection.tsx";
 import { getRoadmapByToken } from "@/app/api/roadmap/roadmap";
 import type { RoadmapResponse } from "@/app/api/roadmap/types";
+import RoadmapKanbanBoard from "@/components/roadmap/RoadmapKanbanboard";
+import RoadmapTimelineSection from "@/components/roadmap/RoadmapTimelineSection.tsx";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Page() {
   const [hasRoadmap, setHasRoadmap] = useState<boolean | null>(null);
@@ -30,10 +30,8 @@ export default function Page() {
     fetchRoadmap();
   }, []);
 
-  // 🔹 로딩 중 → 아무것도 안 보여줌 (컴포넌트 내부에서 스켈레톤 처리)
   if (hasRoadmap === null) return null;
 
-  // 🔹 로드맵 없음
   if (!hasRoadmap) {
     return (
       <div className="mt-40 flex flex-col items-center justify-center gap-6">
@@ -59,10 +57,16 @@ export default function Page() {
     );
   }
 
-  // 🔹 로드맵 있음
   return (
     <div className="flex flex-col gap-10">
       <RoadmapTimelineSection />
+           {/* <Image
+        src="/Group-10.png"
+        alt="커뮤니티 이미지"
+        width={1600}
+        height={500}
+        className="h-auto w-full rounded-[24px] object-cover"
+      /> */}
       <RoadmapKanbanBoard />
     </div>
   );

@@ -51,7 +51,7 @@ function getCardStyle(status: TaskStatus, hasPlan: boolean) {
     case "IN_PROGRESS":
       return {
         wrapper:
-          "border border-[#3266eb] bg-[#4876EF] text-white shadow-[0_8px_20px_rgba(109,93,246,0.18)] hover:shadow-[0_12px_28px_rgba(109,93,246,0.24)]",
+          "border border-[#32a7eb] bg-[#5885ff] text-white shadow-[0_8px_20px_rgba(109,93,246,0.18)] hover:shadow-[0_12px_28px_rgba(109,93,246,0.24)]",
         badge: "bg-white/18 text-white",
       };
     case "COMPLETED":
@@ -217,7 +217,7 @@ export default function RoadmapTimelineSection() {
       <section className="w-full">
         <div className="mb-4 flex items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-5">
-            <h2 className="shrink-0 text-[28px] font-extrabold leading-none tracking-[-0.04em] text-[#0B1B3B]">
+            <h2 className="shrink-0 text-[26px] font-extrabold leading-none tracking-[-0.04em] text-[#0B1B3B]">
               ROADMAP OVERVIEW
             </h2>
             <div className="hidden h-px min-w-[280px] flex-1 bg-[#E9EDF3] md:block" />

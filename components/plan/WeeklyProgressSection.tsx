@@ -254,7 +254,7 @@ export default function WeeklyProgressSection({
               현재 {selectedWeek}주차 / 전체 {totalWeeks.length}주
             </div>
 
-            <div className="rounded-full bg-[#f4f2ff] px-4 py-2 text-[12px] font-semibold text-[#4876EF]">
+            <div className="rounded-full bg-[#f2f7ff] px-4 py-2 text-[12px] font-semibold text-[#4876EF] border border-[#E7EBF2]">
               전체 과정 진행률 {totalProgress}%
             </div>
           </div>

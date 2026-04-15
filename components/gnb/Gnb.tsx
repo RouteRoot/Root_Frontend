@@ -1,17 +1,10 @@
 "use client";
 
+import { getMe } from "@/app/api/service/user";
+import { Bell, LogOut, Search, Settings, User } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import {
-  Search,
-  Bell,
-  User,
-  Settings,
-  LogOut,
-} from "lucide-react";
-import { getMe } from "@/app/api/service/user";
 
 const navItems = [
   { label: "플래너", href: "/plan" },
@@ -85,8 +78,7 @@ export default function Gnb() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-[#e9edf3] bg-white">
-      <div className="mx-auto flex h-[80px] w-full max-w-[1640px] items-center justify-between px-1">
-        
+      <div className="mx-auto flex h-[80px] w-full max-w-[1640px] items-center justify-between px-45">
         {/* 로고 */}
         <Link
           href="/dashboard"
@@ -98,14 +90,13 @@ export default function Gnb() {
             textShadow: isDashboard ? "0 0 0.2px #4876EF" : "none",
           }}
         >
-          <span className="text-[24px] font-black italic tracking-[-0.04em]">
+          <span className="text-[24px] font-black text-[#3067f1] italic tracking-[-0.04em]">
             BBURI
           </span>
-          <span className="ml-[8px] text-[24px] font-black">.</span>
+          <span className="ml-[8px] text-[24px] font-black text-[#3067f1]">.</span>
         </Link>
 
         <div className="flex items-center gap-2">
-
           {/* 검색 */}
           <Link
             href="/certificate"
@@ -138,7 +129,7 @@ export default function Gnb() {
             <Bell className="h-[20px] w-[20px]" />
           </Link>
 
-          <nav className="flex items-center gap-1 rounded-full bg-white p-1">
+          <nav className="flex items-center rounded-full bg-white p-1">
             {navItems.map((item) => {
               const isActive = pathname.startsWith(item.href);
 
@@ -146,13 +137,14 @@ export default function Gnb() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  //border transition-all duration-200 active:scale-95
+
                   className={`
-                    rounded-[10px] px-4 py-[10px] text-[13px] font-bold
-                    transition-all duration-200 active:scale-95
+                    rounded-[10px] px-4 py-[8px] text-[13px] font-bold
                     ${
                       isActive
-                        ? "bg-[#4876EF] text-white shadow-sm"
-                        : "text-[#94a3b8] hover:bg-[#f7f9fc] hover:text-[#4876EF]"
+                        ? "bg-[#4876EF] text-white border-[#4876EF] shadow-sm"
+                        : "text-[#94a3b8] border-[#d1d1d1] hover:bg-[#f7f9fc] hover:text-[#4876EF] hover:border-[#4876EF]"
                     }
                   `}
                 >
@@ -198,9 +190,7 @@ export default function Gnb() {
               `}
             >
               <div className="px-5 pb-3 pt-5">
-                <p className="text-[9px] font-bold text-[#c8d0dc]">
-                  ACCOUNT
-                </p>
+                <p className="text-[9px] font-bold text-[#c8d0dc]">ACCOUNT</p>
                 <p className="text-[16px] font-extrabold text-[#1f2937]">
                   {userName || "Guest"}
                 </p>
@@ -212,8 +202,7 @@ export default function Gnb() {
                   onClick={() => setIsUserMenuOpen(false)}
                   className="flex items-center gap-3 rounded-[12px] px-3 py-3 text-[14px] font-semibold text-[#475467] hover:bg-[#f8fafc]"
                 >
-                  <User className="h-[16px] w-[16px]" />
-                  내 프로필
+                  <User className="h-[16px] w-[16px]" />내 프로필
                 </Link>
 
                 <Link
@@ -238,7 +227,6 @@ export default function Gnb() {
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </header>

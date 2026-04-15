@@ -16,7 +16,7 @@ export default function WorkspaceLayout({
     <div className="min-h-screen bg-white">
       {isCommunity ? <CommunityGnb /> : <Gnb />}
 
-      <main className="mx-auto w-full max-w-[1610px] px- pt-32 pb-40">
+      <main className="mx-auto w-full max-w-[1610px] px-40 pt-32 pb-40">
         {children}
       </main>
     </div>

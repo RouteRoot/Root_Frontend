@@ -7,8 +7,7 @@ import Image from "next/image";
 
 export default function Page() {
   return (
-    <div className="mx-auto px-40 pb-24">
-      {/* 히어로 배너 */}
+    <div className="mx-auto pb-24">
       <Image
         src="/com-1.png"
         alt="커뮤니티 이미지"
@@ -17,9 +16,7 @@ export default function Page() {
         className="h-auto w-full rounded-[24px] object-cover"
       />
 
-      {/* 메인 2컬럼 */}
       <div className="mt-16 grid grid-cols-[minmax(0,1fr)_310px] gap-10">
-        {/* 왼쪽 */}
         <div className="min-w-0 space-y-14">
           <RecommendedPostsSection />
 
@@ -28,7 +25,6 @@ export default function Page() {
           </section>
         </div>
 
-        {/* 오른쪽 */}
         <aside className="space-y-4">
           <div className="mb-20">
             <UserCard />

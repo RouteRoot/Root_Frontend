@@ -248,13 +248,13 @@ export default function RoadmapKanbanBoard() {
   return (
     <section className="mt-8 w-full">
       <div className="mb-4 flex items-center gap-5">
-        <h2 className="shrink-0 text-[28px] font-extrabold leading-none tracking-[-0.04em] text-[#0B1B3B]">
+        <h2 className="shrink-0 text-[26px] font-extrabold leading-none tracking-[-0.04em] text-[#0B1B3B]">
           DETAILS
         </h2>
         <div className="hidden h-px min-w-55 flex-1 bg-[#E9EDF3] md:block" />
       </div>
 
-      <div className="overflow-hidden rounded-[28px] border border-[#E8EDF5] bg-white">
+      <div className="overflow-hidden rounded-[28px] bg-white">
         {loadState === "loading" && (
           <div className="px-6 py-10">
             <div className="grid gap-4 lg:grid-cols-3">
@@ -298,7 +298,7 @@ export default function RoadmapKanbanBoard() {
         )}
 
         {loadState === "success" && phases.length > 0 && (
-          <div className="overflow-x-auto px-6 py-6">
+          <div className="overflow-x-auto py-6">
             <div className="grid min-w-245 gap-4 lg:grid-cols-3">
               {phases.map((phase, index) => (
                 <PhaseColumn

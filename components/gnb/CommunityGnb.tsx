@@ -78,7 +78,7 @@ export default function Gnb() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-[#e9edf3] bg-white">
-      <div className="mx-auto flex h-[80px] w-full max-w-[1640px] items-center justify-between px-47">
+      <div className="mx-auto flex h-[80px] w-full max-w-[1640px] items-center justify-between px-45">
         {/* 로고 */}
         <Link
           href="/dashboard"
@@ -90,10 +90,10 @@ export default function Gnb() {
             textShadow: isDashboard ? "0 0 0.2px #4876EF" : "none",
           }}
         >
-          <span className="text-[24px] font-black italic tracking-[-0.04em]">
+          <span className="text-[24px] font-black text-[#3067f1] italic tracking-[-0.04em]">
             BBURI
           </span>
-          <span className="ml-[8px] text-[24px] font-black">.</span>
+          <span className="ml-[8px] text-[24px] font-black text-[#3067f1]">.</span>
         </Link>
 
         <div className="flex items-center gap-2">
