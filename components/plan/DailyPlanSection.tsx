@@ -42,7 +42,7 @@ function DailyPlanSectionSkeleton() {
   return (
     <section className="w-full">
       <div className="mb-4 flex items-center gap-4">
-        <h2 className="shrink-0 text-[28px] font-extrabold tracking-[-0.04em] text-[#0B1B3B]">
+        <h2 className="shrink-0 text-[26px] font-extrabold tracking-[-0.04em] text-[#0B1B3B]">
           DAILY PLAN
         </h2>
         <div className="h-px w-[160px] bg-[#f3f3f3]" />
@@ -105,7 +105,7 @@ export default function DailyPlanSection({
     <section className="w-full">
       <div className="mb-4 flex items-center justify-between gap-4">
         <div className="flex min-w-0 flex-1 items-center gap-4">
-          <h2 className="shrink-0 text-[28px] font-extrabold tracking-[-0.04em] text-[#0B1B3B]">
+          <h2 className="shrink-0 text-[26px] font-extrabold tracking-[-0.04em] text-[#0B1B3B]">
             DAILY PLAN
           </h2>
           <div className="h-px w-[160px] bg-[#f3f3f3]" />

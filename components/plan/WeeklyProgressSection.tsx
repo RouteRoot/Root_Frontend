@@ -174,7 +174,7 @@ export default function WeeklyProgressSection({
   return (
     <section className="mt-16 w-full">
       <div className="mb-4 flex items-center gap-5">
-        <h2 className="shrink-0 text-[28px] font-extrabold leading-none tracking-[-0.04em] text-[#0B1B3B] sm:text-[28px]">
+        <h2 className="shrink-0 text-[26px] font-extrabold leading-none tracking-[-0.04em] text-[#0B1B3B] sm:text-[26px]">
           WEEKLY PROGRESS
         </h2>
         <div className="hidden h-px min-w-[160px] flex-1 bg-[#E9EDF3] md:block" />
