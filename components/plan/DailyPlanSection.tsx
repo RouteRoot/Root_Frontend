@@ -150,7 +150,7 @@ export default function DailyPlanSection({
                   )}
                   <span
                     className={`relative inline-flex h-3 w-3 rounded-full ${
-                      plan.isCompleted ? "bg-[#16A34A]" : "bg-[#6D5DF6]"
+                      plan.isCompleted ? "bg-[#16A34A]" : "bg-[#4876EF]"
                     }`}
                   />
                 </span>
@@ -180,7 +180,7 @@ export default function DailyPlanSection({
                 className={
                   plan.isCompleted
                     ? "absolute bottom-0 right-0 inline-flex h-[32px] items-center gap-1.5 rounded-[10px] border border-[#CFEAD8] bg-[#EAF8EF] px-4 text-[12px] font-semibold text-[#16A34A] transition hover:opacity-90"
-                    : "absolute bottom-0 right-0 inline-flex h-[32px] items-center gap-1.5 rounded-[10px] bg-[#6D5DF6] px-4 text-[12px] font-semibold text-white transition hover:opacity-90"
+                    : "absolute bottom-0 right-0 inline-flex h-[32px] items-center gap-1.5 rounded-[10px] bg-[#4876EF] px-4 text-[12px] font-semibold text-white transition hover:opacity-90"
                 }
               >
                 {plan.isCompleted ? "학습 완료" : "완료"}

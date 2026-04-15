@@ -68,8 +68,8 @@ function getStatusStyle(status: TaskStatus) {
       };
     case "IN_PROGRESS":
       return {
-        chip: "border border-[#DDD8FF] bg-[#F5F2FF] text-[#6558E8]",
-        dot: "bg-[#6D5DF6]",
+        chip: "border border-[#DDD8FF] bg-[#d3e4ff] text-[#3870ff]",
+        dot: "bg-[#4876EF]",
       };
     case "COMPLETED":
       return {
@@ -168,7 +168,7 @@ function PhaseColumn({
           </h3>
 
           {phase.phaseNumber !== null && (
-            <span className="rounded-full bg-[#F1EEFF] px-2 py-1 text-[10px] font-semibold leading-none text-[#6D5DF6]">
+            <span className="rounded-full bg-[#eef0ff] px-2 py-1 text-[10px] font-semibold leading-none text-[#4876EF]">
               Phase {phase.phaseNumber}
             </span>
           )}

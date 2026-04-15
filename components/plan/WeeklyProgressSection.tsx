@@ -28,7 +28,7 @@ function getStatusDot(status: TaskStatus) {
     case "TODO":
       return "bg-[#C9D2E3]";
     case "IN_PROGRESS":
-      return "bg-[#6D5DF6]";
+      return "bg-[#4876EF]";
     case "DONE":
       return "bg-[#000000]";
     case "REST":
@@ -187,7 +187,7 @@ export default function WeeklyProgressSection({
         </div>
 
         <div className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-[#6D5DF6]" />
+          <span className="h-2 w-2 rounded-full bg-[#4876EF]" />
           <span>진행 중</span>
         </div>
 
@@ -230,7 +230,7 @@ export default function WeeklyProgressSection({
               <select
                 value={selectedWeek}
                 onChange={(e) => onChangeWeek(Number(e.target.value))}
-                className="h-10 appearance-none rounded-full border border-[#E7EBF2] bg-white pl-4 pr-10 text-[13px] font-semibold text-[#111827] outline-none transition focus:border-[#6D5DF6]"
+                className="h-10 appearance-none rounded-full border border-[#E7EBF2] bg-white pl-4 pr-10 text-[13px] font-semibold text-[#111827] outline-none transition focus:border-[#4876EF]"
               >
                 {totalWeeks.map((week) => (
                   <option key={week} value={week}>
@@ -254,7 +254,7 @@ export default function WeeklyProgressSection({
               현재 {selectedWeek}주차 / 전체 {totalWeeks.length}주
             </div>
 
-            <div className="rounded-full bg-[#F5F2FF] px-4 py-2 text-[12px] font-semibold text-[#6D5DF6]">
+            <div className="rounded-full bg-[#f4f2ff] px-4 py-2 text-[12px] font-semibold text-[#4876EF]">
               전체 과정 진행률 {totalProgress}%
             </div>
           </div>

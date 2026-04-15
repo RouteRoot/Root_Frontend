@@ -81,7 +81,7 @@ export default function PlanTabs({
   return (
     <div className="w-full">
       <div className="flex items-center justify-between gap-3">
-        <div className="scrollbar-hide flex min-w-0 flex-1 gap-2 overflow-x-auto py-2">
+        <div className="scrollbar-hide flex min-w-0 flex-1 overflow-x-auto gap-2 py-2">
           {tabs.map((tab) => {
             const isActive = selectedExamTaskId === tab.examTaskId;
 
@@ -90,10 +90,10 @@ export default function PlanTabs({
                 key={tab.examTaskId}
                 type="button"
                 onClick={() => onSelect(tab.examTaskId)}
-                className={`shrink-0 rounded-full px-4 py-2 text-[13px] font-semibold transition-all duration-200 sm:px-5 sm:text-[14px] ${
+                className={`shrink-0 rounded-[10px] px-4 py-2 text-[13px] font-semibold transition-all duration-200 sm:px-5 sm:text-[14px] ${
                   isActive
-                    ? "bg-[#6D5DF6] text-white"
-                    : "bg-[#ffffff] text-[#667085] hover:bg-[#EEF2F7]"
+                    ? "bg-[#4876EF] text-white"
+                    : "bg-[#ffffff] text-[#667085] hover:bg-[#EEF2F7] border border-[#c4c4c4] hover:text-[#4876EF]"
                 }`}
               >
                 {tab.taskName}

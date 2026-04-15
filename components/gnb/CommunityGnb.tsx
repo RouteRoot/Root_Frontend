@@ -78,25 +78,18 @@ export default function Gnb() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-[#e9edf3] bg-white">
-      <div className="mx-auto flex h-[80px] w-full max-w-[1640px] items-center justify-between px-55">
+      <div className="mx-auto flex h-[80px] w-full max-w-[1640px] items-center justify-between px-47">
+        {/* 로고 */}
         <Link
           href="/dashboard"
           className={`flex items-center transition-colors duration-300 ${
-            isDashboard ? "text-[#4F46E5]" : "text-[#1f2937]"
+            isDashboard ? "text-[#4876EF]" : "text-[#1f2937]"
           }`}
           style={{
             fontFamily: "Arial, Helvetica, sans-serif",
-            textShadow: isDashboard ? "0 0 0.2px #4F46E5" : "none",
+            textShadow: isDashboard ? "0 0 0.2px #4876EF" : "none",
           }}
         >
-          {/* <Image
-            src="/bubu.svg"
-            alt="bubu"
-            width={24}
-            height={24}
-            className="object-contain mt-0.5 mr-2"
-            priority
-          /> */}
           <span className="text-[24px] font-black italic tracking-[-0.04em]">
             BBURI
           </span>
@@ -104,6 +97,7 @@ export default function Gnb() {
         </Link>
 
         <div className="flex items-center gap-2">
+          {/* 검색 */}
           <Link
             href="/certificate"
             className={`
@@ -111,15 +105,15 @@ export default function Gnb() {
               transition-all duration-200 active:scale-95
               ${
                 pathname.startsWith("/certificate")
-                  ? "bg-[#4F46E5] text-white"
-                  : "text-[#94a3b8] hover:bg-[#f7f9fc] hover:text-[#4F46E5]"
+                  ? "bg-[#4876EF] text-white"
+                  : "text-[#94a3b8] hover:bg-[#f7f9fc] hover:text-[#4876EF]"
               }
             `}
-            aria-label="자격증"
           >
             <Search className="h-[20px] w-[20px]" />
           </Link>
 
+          {/* 알림 */}
           <Link
             href="/notification"
             className={`
@@ -127,16 +121,15 @@ export default function Gnb() {
               transition-all duration-200 active:scale-95
               ${
                 pathname.startsWith("/notification")
-                  ? "bg-[#4F46E5] text-white"
-                  : "text-[#94a3b8] hover:bg-[#f7f9fc] hover:text-[#4F46E5]"
+                  ? "bg-[#4876EF] text-white"
+                  : "text-[#94a3b8] hover:bg-[#f7f9fc] hover:text-[#4876EF]"
               }
             `}
-            aria-label="알림"
           >
             <Bell className="h-[20px] w-[20px]" />
           </Link>
 
-          <nav className="flex items-center gap-1 rounded-full bg-white p-1">
+          <nav className="flex items-center rounded-full bg-white p-1">
             {navItems.map((item) => {
               const isActive = pathname.startsWith(item.href);
 
@@ -144,13 +137,14 @@ export default function Gnb() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  //border transition-all duration-200 active:scale-95
+
                   className={`
-                    rounded-full px-4 py-[10px] text-[13px] font-bold
-                    transition-all duration-200 active:scale-95
+                    rounded-[10px] px-4 py-[8px] text-[13px] font-bold
                     ${
                       isActive
-                        ? "bg-[#4F46E5] text-white shadow-sm"
-                        : "text-[#94a3b8] hover:bg-[#f7f9fc] hover:text-[#4F46E5]"
+                        ? "bg-[#4876EF] text-white border-[#4876EF] shadow-sm"
+                        : "text-[#94a3b8] border-[#d1d1d1] hover:bg-[#f7f9fc] hover:text-[#4876EF] hover:border-[#4876EF]"
                     }
                   `}
                 >
@@ -160,6 +154,7 @@ export default function Gnb() {
             })}
           </nav>
 
+          {/* 유저 */}
           <div ref={userMenuRef} className="relative ml-2">
             <button
               type="button"
@@ -167,7 +162,7 @@ export default function Gnb() {
               className="flex h-[44px] items-center gap-3 rounded-full border border-[#e7ebf2] bg-white px-4 transition-all duration-200 hover:bg-[#f7f9fc]"
             >
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#eef2ff]">
-                <User className="h-[15px] w-[15px] text-[#4F46E5]" />
+                <User className="h-[15px] w-[15px] text-[#4876EF]" />
               </span>
 
               <div className="flex flex-col leading-none">
@@ -180,6 +175,7 @@ export default function Gnb() {
               </div>
             </button>
 
+            {/* 드롭다운 */}
             <div
               className={`
                 absolute right-0 top-[54px] w-[220px] origin-top-right
@@ -223,7 +219,7 @@ export default function Gnb() {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="flex w-full items-center gap-3 rounded-[12px] px-3 py-3 text-[14px] font-semibold text-[#ff4d4f] transition-colors duration-150 hover:bg-[#fff5f5]"
+                  className="flex w-full items-center gap-3 rounded-[12px] px-3 py-3 text-[14px] font-semibold text-[#ff4d4f] hover:bg-[#fff5f5]"
                 >
                   <LogOut className="h-[16px] w-[16px]" />
                   로그아웃

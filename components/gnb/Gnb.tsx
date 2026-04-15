@@ -16,7 +16,7 @@ import { getMe } from "@/app/api/service/user";
 const navItems = [
   { label: "플래너", href: "/plan" },
   { label: "로드맵", href: "/roadmap" },
-  { label: "커뮤니티", href: "/community" }, // 👉 이거만 새창
+  { label: "커뮤니티", href: "/community" },
 ];
 
 export default function Gnb() {
@@ -85,16 +85,17 @@ export default function Gnb() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-[#e9edf3] bg-white">
-      <div className="mx-auto flex h-[80px] w-full max-w-[1640px] items-center justify-between px-14">
+      <div className="mx-auto flex h-[80px] w-full max-w-[1640px] items-center justify-between px-1">
+        
         {/* 로고 */}
         <Link
           href="/dashboard"
           className={`flex items-center transition-colors duration-300 ${
-            isDashboard ? "text-[#4F46E5]" : "text-[#1f2937]"
+            isDashboard ? "text-[#4876EF]" : "text-[#1f2937]"
           }`}
           style={{
             fontFamily: "Arial, Helvetica, sans-serif",
-            textShadow: isDashboard ? "0 0 0.2px #4F46E5" : "none",
+            textShadow: isDashboard ? "0 0 0.2px #4876EF" : "none",
           }}
         >
           <span className="text-[24px] font-black italic tracking-[-0.04em]">
@@ -103,8 +104,8 @@ export default function Gnb() {
           <span className="ml-[8px] text-[24px] font-black">.</span>
         </Link>
 
-        {/* 우측 영역 */}
         <div className="flex items-center gap-2">
+
           {/* 검색 */}
           <Link
             href="/certificate"
@@ -113,8 +114,8 @@ export default function Gnb() {
               transition-all duration-200 active:scale-95
               ${
                 pathname.startsWith("/certificate")
-                  ? "bg-[#4F46E5] text-white"
-                  : "text-[#94a3b8] hover:bg-[#f7f9fc] hover:text-[#4F46E5]"
+                  ? "bg-[#4876EF] text-white"
+                  : "text-[#94a3b8] hover:bg-[#f7f9fc] hover:text-[#4876EF]"
               }
             `}
           >
@@ -129,54 +130,29 @@ export default function Gnb() {
               transition-all duration-200 active:scale-95
               ${
                 pathname.startsWith("/notification")
-                  ? "bg-[#4F46E5] text-white"
-                  : "text-[#94a3b8] hover:bg-[#f7f9fc] hover:text-[#4F46E5]"
+                  ? "bg-[#4876EF] text-white"
+                  : "text-[#94a3b8] hover:bg-[#f7f9fc] hover:text-[#4876EF]"
               }
             `}
           >
             <Bell className="h-[20px] w-[20px]" />
           </Link>
 
-          {/* 네비 */}
           <nav className="flex items-center gap-1 rounded-full bg-white p-1">
             {navItems.map((item) => {
               const isActive = pathname.startsWith(item.href);
 
-              // 👉 커뮤니티만 새창
-              if (item.href === "/community") {
-                return (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`
-                      rounded-full px-4 py-[10px] text-[13px] font-bold
-                      transition-all duration-200 active:scale-95
-                      ${
-                        isActive
-                          ? "bg-[#4F46E5] text-white shadow-sm"
-                          : "text-[#94a3b8] hover:bg-[#f7f9fc] hover:text-[#4F46E5]"
-                      }
-                    `}
-                  >
-                    {item.label}
-                  </a>
-                );
-              }
-
-              // 👉 나머지
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={`
-                    rounded-full px-4 py-[10px] text-[13px] font-bold
+                    rounded-[10px] px-4 py-[10px] text-[13px] font-bold
                     transition-all duration-200 active:scale-95
                     ${
                       isActive
-                        ? "bg-[#4F46E5] text-white shadow-sm"
-                        : "text-[#94a3b8] hover:bg-[#f7f9fc] hover:text-[#4F46E5]"
+                        ? "bg-[#4876EF] text-white shadow-sm"
+                        : "text-[#94a3b8] hover:bg-[#f7f9fc] hover:text-[#4876EF]"
                     }
                   `}
                 >
@@ -189,11 +165,12 @@ export default function Gnb() {
           {/* 유저 */}
           <div ref={userMenuRef} className="relative ml-2">
             <button
+              type="button"
               onClick={() => setIsUserMenuOpen((prev) => !prev)}
-              className="flex h-[44px] items-center gap-3 rounded-full border border-[#e7ebf2] bg-white px-4 hover:bg-[#f7f9fc]"
+              className="flex h-[44px] items-center gap-3 rounded-full border border-[#e7ebf2] bg-white px-4 transition-all duration-200 hover:bg-[#f7f9fc]"
             >
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#eef2ff]">
-                <User className="h-[15px] w-[15px] text-[#4F46E5]" />
+                <User className="h-[15px] w-[15px] text-[#4876EF]" />
               </span>
 
               <div className="flex flex-col leading-none">
@@ -206,23 +183,62 @@ export default function Gnb() {
               </div>
             </button>
 
-            {isUserMenuOpen && (
-              <div className="absolute right-0 top-[54px] w-[220px] rounded-[18px] border bg-white shadow-lg">
-                <Link href="/mypage" className="block px-4 py-2">
+            {/* 드롭다운 */}
+            <div
+              className={`
+                absolute right-0 top-[54px] w-[220px] origin-top-right
+                rounded-[18px] border border-[#e7ebf2] bg-white
+                shadow-[0_12px_30px_rgba(15,23,42,0.08)]
+                transition-all duration-200
+                ${
+                  isUserMenuOpen
+                    ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
+                    : "pointer-events-none -translate-y-1 scale-[0.98] opacity-0"
+                }
+              `}
+            >
+              <div className="px-5 pb-3 pt-5">
+                <p className="text-[9px] font-bold text-[#c8d0dc]">
+                  ACCOUNT
+                </p>
+                <p className="text-[16px] font-extrabold text-[#1f2937]">
+                  {userName || "Guest"}
+                </p>
+              </div>
+
+              <div className="px-2 pb-2">
+                <Link
+                  href="/mypage"
+                  onClick={() => setIsUserMenuOpen(false)}
+                  className="flex items-center gap-3 rounded-[12px] px-3 py-3 text-[14px] font-semibold text-[#475467] hover:bg-[#f8fafc]"
+                >
+                  <User className="h-[16px] w-[16px]" />
                   내 프로필
                 </Link>
-                <Link href="/settings" className="block px-4 py-2">
+
+                <Link
+                  href="/settings"
+                  onClick={() => setIsUserMenuOpen(false)}
+                  className="mt-1 flex items-center gap-3 rounded-[12px] px-3 py-3 text-[14px] font-semibold text-[#475467] hover:bg-[#f8fafc]"
+                >
+                  <Settings className="h-[16px] w-[16px]" />
                   계정 설정
                 </Link>
+              </div>
+
+              <div className="border-t border-[#eef2f6] px-2 py-2">
                 <button
+                  type="button"
                   onClick={handleLogout}
-                  className="block w-full px-4 py-2 text-left text-red-500"
+                  className="flex w-full items-center gap-3 rounded-[12px] px-3 py-3 text-[14px] font-semibold text-[#ff4d4f] hover:bg-[#fff5f5]"
                 >
+                  <LogOut className="h-[16px] w-[16px]" />
                   로그아웃
                 </button>
               </div>
-            )}
+            </div>
           </div>
+
         </div>
       </div>
     </header>
