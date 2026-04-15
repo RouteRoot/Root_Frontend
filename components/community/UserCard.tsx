@@ -75,10 +75,10 @@ export default function UserCard({ user = mockUser }: UserCardProps) {
         <div className="mt-4 -mx-6 h-px bg-[#E8EDF5]" />
 
         {/* 통계 */}
-        <div className="pt-4 flex flex-col gap-4">
+        <div className="pt-4 flex flex-col gap-2 -mb-1">
           <Link
             href="/community/my-posts"
-            className="flex items-center justify-between px-1 py-[4px] rounded-[8px] transition-colors hover:bg-[#F8FAFD]"
+            className="flex items-center justify-between px-1 rounded-[8px] transition-colors hover:bg-[#F8FAFD]"
           >
             <span className="text-[13px] text-[#6B768B]">내가 쓴 글</span>
             <span className="ml-14 text-[13px] font-bold text-[#1F2D4A]">
