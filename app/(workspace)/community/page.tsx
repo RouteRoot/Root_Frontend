@@ -10,7 +10,7 @@ export default function Page() {
     <div className="mx-auto px-40 pb-24">
       {/* 히어로 배너 */}
       <Image
-        src="/community-hero.png"
+        src="/com-1.png"
         alt="커뮤니티 이미지"
         width={1600}
         height={500}
