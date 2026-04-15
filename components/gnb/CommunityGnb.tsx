@@ -1,17 +1,10 @@
 "use client";
 
+import { getMe } from "@/app/api/service/user";
+import { Bell, LogOut, Search, Settings, User } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import {
-  Search,
-  Bell,
-  User,
-  Settings,
-  LogOut,
-} from "lucide-react";
-import { getMe } from "@/app/api/service/user";
 
 const navItems = [
   { label: "플래너", href: "/plan" },
@@ -201,9 +194,7 @@ export default function Gnb() {
               `}
             >
               <div className="px-5 pb-3 pt-5">
-                <p className="text-[9px] font-bold text-[#c8d0dc]">
-                  ACCOUNT
-                </p>
+                <p className="text-[9px] font-bold text-[#c8d0dc]">ACCOUNT</p>
                 <p className="text-[16px] font-extrabold text-[#1f2937]">
                   {userName || "Guest"}
                 </p>
@@ -215,8 +206,7 @@ export default function Gnb() {
                   onClick={() => setIsUserMenuOpen(false)}
                   className="flex items-center gap-3 rounded-[12px] px-3 py-3 text-[14px] font-semibold text-[#475467] hover:bg-[#f8fafc]"
                 >
-                  <User className="h-[16px] w-[16px]" />
-                  내 프로필
+                  <User className="h-[16px] w-[16px]" />내 프로필
                 </Link>
 
                 <Link

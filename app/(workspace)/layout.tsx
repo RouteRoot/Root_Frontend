@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import Gnb from '@/components/gnb/Gnb';
-import CommunityGnb from '@/components/gnb/CommunityGnd';
+import CommunityGnb from '@/components/gnb/CommunityGnb';
 
 export default function WorkspaceLayout({
   children,

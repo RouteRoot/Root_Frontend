@@ -119,14 +119,17 @@ function TaskCard({
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <span className={`h-2.5 w-2.5 rounded-full ${statusStyle.dot}`} />
-            <span className="text-[11px] font-bold tracking-[0.02em] text-[#A0AEC0]">
+            {/* <span className="text-[11px] font-bold tracking-[0.02em] text-[#A0AEC0]">
               Task
-            </span>
-          </div>
-
-          <h4 className="mt-2 text-[15px] font-bold leading-6 tracking-[-0.02em] text-[#0F172A]">
+            </span> */}
+            <h4 className="mt-1 text-[15px] font-bold leading-6 tracking-[-0.02em] text-[#0F172A]">
             {task.taskName}
           </h4>
+          </div>
+
+          {/* <h4 className="mt-2 text-[15px] font-bold leading-6 tracking-[-0.02em] text-[#0F172A]">
+            {task.taskName}
+          </h4> */}
         </div>
 
         <span
