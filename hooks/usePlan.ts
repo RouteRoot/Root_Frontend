@@ -5,7 +5,7 @@
 //   checkDailyPlan,
 //   generatePlan,
 //   getPlanByExamTaskId,
-// } from "@/app/api/service/plan";
+// } from "@/features/plan/api/plan";
 // import {
 //   PlanDetailResponse,
 //   PlanGenerateRequest,

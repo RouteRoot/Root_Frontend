@@ -1,22 +1,22 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import PlanTabs from "@/components/plan/PlanTabs";
+import PlanTabs from "@/features/plan/components/PlanTabs";
 import WeeklyProgressSection, {
   PlannerTask,
   TaskStatus,
-} from "@/components/plan/WeeklyProgressSection";
+} from "@/features/plan/components/WeeklyProgressSection";
 import DailyPlanSection, {
   DailyPlanSectionItem,
-} from "@/components/plan/DailyPlanSection";
-import ConfirmModal from "@/components/common/ConfirmModal";
+} from "@/features/plan/components/DailyPlanSection";
+import ConfirmModal from "@/shared/components/common/ConfirmModal";
 import {
   getPlanTabs,
   getPlanByExamTaskId,
   checkDailyPlan,
   deletePlan,
-} from "@/app/api/plan/plan";
-import type { PlanResponse, PlanTab } from "@/app/api/plan/types";
+} from "@/features/plan/api/plan";
+import type { PlanResponse, PlanTab } from "@/features/plan/types";
 
 function getTodayInSeoulString(): string {
   const formatter = new Intl.DateTimeFormat("sv-SE", {
@@ -92,12 +92,10 @@ function mapPlanToPlannerTasks(plan: PlanResponse | null): PlannerTask[] {
           id: dailyPlan.dailyPlanId,
           week: weeklyPlan.weekNumber,
           day: dailyPlan.dayNumber,
-          title: dailyPlan.topic || (dailyPlan.isRest ? "휴식일" : plan.taskName),
+          title: dailyPlan.topic || (dailyPlan.isRest ? "Rest" : plan.taskName),
           description:
             dailyPlan.description ||
-            (dailyPlan.isRest
-              ? "가볍게 쉬어가며 학습 리듬을 정리하는 날입니다."
-              : ""),
+            (dailyPlan.isRest ? "Rest day" : ""),
           hours: dailyPlan.estimatedHours,
           date: formattedDate,
           status: mapDailyPlanStatus(
@@ -186,8 +184,8 @@ export default function PlannerPage() {
           setSelectedTaskId(null);
         }
       } catch (error) {
-        console.error("플랜 탭 조회 실패:", error);
-        setError("플랜 탭을 불러오지 못했습니다.");
+        console.error("Failed to load plan tabs:", error);
+        setError("Failed to load plans.");
       } finally {
         setTabsLoading(false);
       }
@@ -221,8 +219,8 @@ export default function PlannerPage() {
 
         setSelectedTaskId(todayTask?.id ?? null);
       } catch (error) {
-        console.error("플랜 상세 조회 실패:", error);
-        setError("플랜 정보를 불러오지 못했습니다.");
+        console.error("Failed to load plan detail:", error);
+        setError("Failed to load plan detail.");
         setPlan(null);
         setSelectedTaskId(null);
       } finally {
@@ -270,14 +268,12 @@ export default function PlannerPage() {
     setConfirmOpen(true);
   };
 
-  //모달 닫기
   const closeCompleteModal = () => {
     if (confirmLoading) return;
     setConfirmOpen(false);
     setPendingDailyPlanId(null);
   };
 
-  //완료 처리 핸들러
   const handleConfirmComplete = async () => {
     if (pendingDailyPlanId == null) return;
 
@@ -307,130 +303,112 @@ export default function PlannerPage() {
 
       setConfirmOpen(false);
       setPendingDailyPlanId(null);
-
-      window.alert(
-        res.isCompleted ? "완료 처리되었습니다." : "완료가 해제되었습니다."
-      );
+      window.alert(res.isCompleted ? "Completed" : "Completion removed");
     } catch (e) {
-      console.error("완료 처리 실패", e);
-      window.alert("완료 처리 중 오류가 발생했습니다.");
+      console.error("Failed to toggle completion", e);
+      window.alert("Failed to toggle completion.");
     } finally {
       setConfirmLoading(false);
     }
   };
 
-    const handleDeletePlan = async (examTaskId: number) => {
+  const handleDeletePlan = async (examTaskId: number) => {
     try {
-        await deletePlan(examTaskId);
-        const updatedTabs = await getPlanTabs();
-        setTabs(updatedTabs);
+      await deletePlan(examTaskId);
+      const updatedTabs = await getPlanTabs();
+      setTabs(updatedTabs);
 
-        if (updatedTabs.length > 0) {
+      if (updatedTabs.length > 0) {
         const nextId = updatedTabs[0].examTaskId;
         setSelectedExamTaskId(nextId);
 
         const nextPlan = await getPlanByExamTaskId(nextId);
         setPlan(nextPlan);
-        } else {
+      } else {
         setSelectedExamTaskId(null);
         setPlan(null);
-        }
+      }
     } catch (error) {
-        console.error("플랜 삭제 실패:", error);
+      console.error("Failed to delete plan:", error);
     }
-    };
+  };
 
-    const handleRegeneratePlan = async (examTaskId: number) => {
-    console.log("재생성 클릭:", examTaskId);
-    };
+  const handleRegeneratePlan = async (examTaskId: number) => {
+    console.log("Regenerate clicked:", examTaskId);
+  };
 
   return (
-    <main className="min-h-screen bg-white pb-14 sm:px-6 lg:px-0">
-      <div className="mx-auto max-w-[1600px]">
-        <section className="mb-8">
-            <PlanTabs
-            tabs={tabs}
-            selectedExamTaskId={selectedExamTaskId}
-            onSelect={setSelectedExamTaskId}
-            onDeletePlan={handleDeletePlan}
-            onRegeneratePlan={handleRegeneratePlan}
-            isLoading={tabsLoading}
-            />
-        </section>
-
-        {error && (
-          <div className="mb-6 rounded-[20px] border border-[#F2D6DA] bg-[#FFF8F8] px-5 py-4 text-[14px] font-medium text-[#B42318]">
-            {error}
-          </div>
-        )}
-
-        {!tabsLoading && !hasTabs && (
-          <div className="rounded-[28px] border border-[#E8EDF5] bg-white px-8 py-12 text-center">
-            <p className="text-[18px] font-bold text-[#0B1B3B]">
-              아직 생성된 플랜이 없습니다.
-            </p>
-            <p className="mt-2 text-[14px] text-[#94A3B8]">
-              로드맵에서 자격증 플랜을 먼저 생성해 주세요.
-            </p>
-          </div>
-        )}
-
-        {(planLoading || (hasTabs && !hasPlan)) && (
-          <>
-            <section className="mb-10">
-              <DailyPlanSection plan={null} />
-            </section>
-
-            <WeeklyProgressSection
-              tasks={[]}
-              selectedWeek={selectedWeek}
-              onChangeWeek={setSelectedWeek}
-              isLoading={true}
-            />
-          </>
-        )}
-
-        {!planLoading && hasPlan && (
-          <>
-            <section className="mb-10">
-              <DailyPlanSection
-                plan={selectedDailyPlan}
-                onToggleComplete={openCompleteModal}
-              />
-            </section>
-
-            <WeeklyProgressSection
-              tasks={plannerTasks}
-              selectedWeek={selectedWeek}
-              onChangeWeek={setSelectedWeek}
-              isLoading={false}
-            //   selectedTaskId={selectedTaskId}
-            //   onSelectTask={setSelectedTaskId}
-            />
-          </>
-        )}
-      </div>
-
+    <>
+      <PlanTabs
+        tabs={tabs}
+        selectedExamTaskId={selectedExamTaskId}
+        onSelect={setSelectedExamTaskId}
+        onDeletePlan={handleDeletePlan}
+        onRegeneratePlan={handleRegeneratePlan}
+        isLoading={tabsLoading}
+      />
+      {error && <p>{error}</p>}
+      {!tabsLoading && !hasTabs && <p>No plans</p>}
+      {(planLoading || (hasTabs && !hasPlan)) && (
+        <>
+          <DailyPlanSection plan={null} />
+          <WeeklyProgressSection
+            tasks={[]}
+            selectedWeek={selectedWeek}
+            onChangeWeek={setSelectedWeek}
+            isLoading={true}
+          />
+        </>
+      )}
+      {!planLoading && hasPlan && (
+        <>
+          <DailyPlanSection
+            plan={selectedDailyPlan}
+            onToggleComplete={openCompleteModal}
+          />
+          <WeeklyProgressSection
+            tasks={plannerTasks}
+            selectedWeek={selectedWeek}
+            onChangeWeek={setSelectedWeek}
+            isLoading={false}
+          />
+        </>
+      )}
       <ConfirmModal
         open={confirmOpen}
-        title={
-          pendingDailyPlan?.isCompleted ? "학습 완료 해제" : "학습 완료 처리"
-        }
+        title={pendingDailyPlan?.isCompleted ? "Undo complete" : "Complete"}
         description={
           pendingTask
-            ? `Week ${pendingTask.week} / Day ${pendingTask.day} 학습을 ${
-                pendingDailyPlan?.isCompleted ? "완료 해제" : "완료 처리"
-              }할까요?`
-            : pendingDailyPlan?.isCompleted
-            ? "이 계획의 완료 상태를 해제할까요?"
-            : "이 계획을 완료 처리할까요?"
+            ? `Week ${pendingTask.week} / Day ${pendingTask.day}`
+            : "Confirm"
         }
-        confirmText={pendingDailyPlan?.isCompleted ? "해제하기" : "완료하기"}
-        cancelText="취소"
+        confirmText={pendingDailyPlan?.isCompleted ? "Undo" : "Complete"}
+        cancelText="Cancel"
         loading={confirmLoading}
         onConfirm={handleConfirmComplete}
         onCancel={closeCompleteModal}
       />
-    </main>
+      <pre>
+        {JSON.stringify(
+          {
+            tabs,
+            selectedExamTaskId,
+            plan,
+            selectedWeek,
+            selectedTaskId,
+            tabsLoading,
+            planLoading,
+            error,
+            confirmOpen,
+            pendingDailyPlanId,
+            confirmLoading,
+            plannerTasks,
+            selectedDailyPlan,
+          },
+          null,
+          2
+        )}
+      </pre>
+    </>
   );
 }

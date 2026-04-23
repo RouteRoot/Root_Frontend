@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { usePathname } from 'next/navigation';
-import Gnb from '@/components/gnb/Gnb';
-import CommunityGnb from '@/components/gnb/CommunityGnb';
+import { usePathname } from "next/navigation";
+import Gnb from "@/shared/components/layout/Gnb";
+import CommunityGnb from "@/shared/components/layout/CommunityGnb";
 
 export default function WorkspaceLayout({
   children,
@@ -10,15 +10,12 @@ export default function WorkspaceLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isCommunity = pathname.startsWith('/community');
+  const isCommunity = pathname.startsWith("/community");
 
   return (
-    <div className="min-h-screen bg-white">
+    <>
       {isCommunity ? <CommunityGnb /> : <Gnb />}
-
-      <main className="mx-auto w-full max-w-[1610px] px-40 pt-32 pb-40">
-        {children}
-      </main>
-    </div>
+      {children}
+    </>
   );
 }

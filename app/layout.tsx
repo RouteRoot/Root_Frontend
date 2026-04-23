@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import ClientLayout from "@/components/layout/ClientLayout";
+import ClientLayout from "@/shared/components/layout/ClientLayout";
 
 export const metadata: Metadata = {
   title: "BBuri",
@@ -14,7 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className="font-[Arial,Helvetica,sans-serif] antialiased">
+      <body>
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
