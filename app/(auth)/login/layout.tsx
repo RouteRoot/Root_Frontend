@@ -1,13 +1,10 @@
 import React from "react";
+import ClientLayout from "@/components/layout/ClientLayout";
 
 export default function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div>
-      {children}
-    </div>
-  );
+  return <ClientLayout>{children}</ClientLayout>;
 }
