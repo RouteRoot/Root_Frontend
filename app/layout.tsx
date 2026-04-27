@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "@/components/layout/ClientLayout";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "BBuri",
@@ -14,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className="font-[Arial,Helvetica,sans-serif] antialiased">
+      <body className={`${inter.className} antialiased`}>
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

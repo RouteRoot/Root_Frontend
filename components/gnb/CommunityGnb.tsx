@@ -89,7 +89,6 @@ export default function Gnb() {
             isDashboard ? "text-[#4876EF]" : "text-[#1f2937]"
           }`}
           style={{
-            fontFamily: "Arial, Helvetica, sans-serif",
             textShadow: isDashboard ? "0 0 0.2px #4876EF" : "none",
           }}
         >
