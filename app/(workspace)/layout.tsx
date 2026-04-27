@@ -2,7 +2,6 @@
 
 import { usePathname } from 'next/navigation';
 import Gnb from '@/components/gnb/Gnb';
-import CommunityGnb from '@/components/gnb/CommunityGnb';
 
 export default function WorkspaceLayout({
   children,
@@ -14,10 +13,9 @@ export default function WorkspaceLayout({
 
   return (
     <div className="min-h-screen bg-white">
-      {isCommunity ? <CommunityGnb /> : <Gnb />}
-
+      <Gnb />
       <main
-        className="mx-auto w-full max-w-[1610px] px-40 pb-40"
+        className="mx-auto w-full max-w-[1390px] px-40 pb-40 bg"
         style={{ paddingTop: "calc(8rem + var(--global-banner-height))" }}
       >
         {children}
