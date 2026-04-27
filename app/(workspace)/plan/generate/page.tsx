@@ -5,6 +5,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { CalendarDays, Sparkles } from "lucide-react";
 import { generatePlan } from "@/app/api/plan/plan";
 
+const levelMap: Record<string, string> = {
+  하: "하",
+  중: "중",
+  상: "상",
+  BEGINNER: "하",
+  INTERMEDIATE: "중",
+  ADVANCED: "상",
+};
+
 export default function PlanGeneratePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -13,11 +22,26 @@ export default function PlanGeneratePage() {
   const certificationName = searchParams.get("name") ?? "";
   const daily = Number(searchParams.get("daily") ?? "0");
   const weekly = Number(searchParams.get("weekly") ?? "0");
-  const skillLevel = searchParams.get("mylevel") ?? "";
+
+  const rawSkillLevel = searchParams.get("mylevel") ?? "";
+  const skillLevel = levelMap[rawSkillLevel] ?? rawSkillLevel;
 
   const [examDate, setExamDate] = useState("");
+  const [personalStory, setPersonalStory] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const weeklySchedule = useMemo(() => {
+    return {
+      MON: daily,
+      TUE: daily,
+      WED: daily,
+      THU: daily,
+      FRI: daily,
+      SAT: daily,
+      SUN: daily,
+    };
+  }, [daily]);
 
   const isValid = useMemo(() => {
     return (
@@ -31,7 +55,22 @@ export default function PlanGeneratePage() {
   }, [examTaskId, certificationName, daily, weekly, skillLevel, examDate]);
 
   const handleGenerate = async () => {
-    if (!isValid) {
+    if (!examTaskId) {
+      setError("자격증 정보가 없습니다.");
+      return;
+    }
+
+    if (!certificationName.trim()) {
+      setError("자격증 이름이 없습니다.");
+      return;
+    }
+
+    if (!daily || !weekly || !skillLevel.trim()) {
+      setError("로드맵 학습 정보가 부족합니다.");
+      return;
+    }
+
+    if (!examDate.trim()) {
       setError("시험일을 입력해주세요.");
       return;
     }
@@ -44,9 +83,9 @@ export default function PlanGeneratePage() {
         examTaskId,
         examDate,
         certificationName,
-        daily,
-        weekly,
+        weeklySchedule,
         skillLevel,
+        personalStory,
       });
 
       router.push("/plan");
@@ -62,8 +101,6 @@ export default function PlanGeneratePage() {
     <main className="mt-13 overflow-hidden bg-white flex items-center justify-center">
       <div className="w-full max-w-[920px] px-6">
         <section className="overflow-hidden rounded-[30px] border border-[#ECEAF3] bg-white shadow-[0_12px_40px_rgba(39,29,79,0.06)]">
-          
-          {/* 상단 */}
           <div className="border-b border-[#F1EFF7] bg-[linear-gradient(180deg,#FAF8FF_0%,#FFFFFF_100%)] px-6 py-7 md:px-8">
             <div className="flex flex-col gap-4">
               <div className="inline-flex w-fit items-center gap-2 rounded-full border border-[#E7E0FF] bg-[#F7F3FF] px-3 py-1 text-[12px] font-semibold text-[#7C3AED]">
@@ -81,10 +118,7 @@ export default function PlanGeneratePage() {
             </div>
           </div>
 
-          {/* 본문 */}
           <div className="grid gap-6 px-6 py-8 md:grid-cols-[1.2fr_0.8fr] md:px-8">
-            
-            {/* 왼쪽 */}
             <div>
               <div className="rounded-[24px] border border-[#EFECF6] bg-[#FCFBFE] p-5">
                 <div className="mb-5 flex items-center gap-2">
@@ -110,6 +144,24 @@ export default function PlanGeneratePage() {
                 </p>
               </div>
 
+              <div className="mt-4 rounded-[24px] border border-[#EFECF6] bg-white p-5">
+                <h3 className="mb-3 text-[17px] font-semibold text-[#1F2937]">
+                  나의 학습 상황
+                </h3>
+
+                <textarea
+                  value={personalStory}
+                  onChange={(e) => setPersonalStory(e.target.value)}
+                  placeholder="예: 평일에는 시간이 부족하고 주말에 집중해서 공부하고 싶어요."
+                  className="
+                    min-h-[110px] w-full resize-none rounded-2xl border border-[#E5E7EB]
+                    bg-white px-4 py-3 text-[14px] leading-6 text-[#111827]
+                    outline-none transition placeholder:text-[#9CA3AF]
+                    focus:border-[#7C3AED] focus:ring-4 focus:ring-[#7C3AED]/10
+                  "
+                />
+              </div>
+
               {error && (
                 <div className="mt-4 rounded-2xl border border-[#F3D9E6] bg-[#FFF7FA] px-4 py-3 text-[14px] text-[#C2416C]">
                   {error}
@@ -119,7 +171,7 @@ export default function PlanGeneratePage() {
               <button
                 type="button"
                 onClick={handleGenerate}
-                disabled={loading}
+                disabled={loading || !isValid}
                 className="
                   mt-6 inline-flex h-[56px] w-full items-center justify-center
                   rounded-2xl bg-[#7C3AED] px-6 text-[15px] font-semibold text-white
@@ -131,7 +183,6 @@ export default function PlanGeneratePage() {
               </button>
             </div>
 
-            {/* 오른쪽 */}
             <div>
               <div className="rounded-[24px] border border-[#EFECF6] bg-white p-5">
                 <h3 className="mb-4 text-[17px] font-semibold text-[#1F2937]">
@@ -142,7 +193,7 @@ export default function PlanGeneratePage() {
                   <InfoRow label="자격증" value={certificationName || "-"} />
                   <InfoRow label="하루 학습 시간" value={`${daily}시간`} />
                   <InfoRow label="주간 학습 시간" value={`${weekly}시간`} />
-                  <InfoRow label="현재 수준" value={skillLevel} />
+                  <InfoRow label="현재 수준" value={rawSkillLevel || "-"} />
                 </div>
               </div>
             </div>
@@ -153,13 +204,7 @@ export default function PlanGeneratePage() {
   );
 }
 
-function InfoRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
+function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4 rounded-2xl border border-[#F3F1F8] bg-[#FCFCFD] px-4 py-3">
       <span className="text-[14px] text-[#6B7280]">{label}</span>

@@ -12,7 +12,7 @@ export type PlannerTask = {
   title: string;
   description: string;
   hours: number;
-  date: string; // 예: 2026.04.03
+  date: string;
   status: TaskStatus;
 };
 
@@ -45,10 +45,9 @@ export default function WeeklyProgressSection({
   isLoading = false,
 }: WeeklyProgressSectionProps) {
   const totalWeeks = useMemo(() => {
-    const weeks = Array.from(new Set(tasks.map((task) => task.week))).sort(
+    return Array.from(new Set(tasks.map((task) => task.week))).sort(
       (a, b) => a - b
     );
-    return weeks;
   }, [tasks]);
 
   const weeklyTasks = useMemo(
@@ -80,92 +79,8 @@ export default function WeeklyProgressSection({
           <div className="hidden h-px flex-1 bg-[#EEF2F7] md:block" />
         </div>
 
-        <div className="mb-4 flex flex-wrap items-center gap-5">
-          <div className="h-4 w-[56px] animate-pulse rounded bg-[#EEF2F7]" />
-          <div className="h-4 w-[56px] animate-pulse rounded bg-[#EEF2F7]" />
-          <div className="h-4 w-[56px] animate-pulse rounded bg-[#EEF2F7]" />
-          <div className="h-4 w-[56px] animate-pulse rounded bg-[#EEF2F7]" />
-        </div>
-
         <div className="overflow-hidden rounded-[30px] border border-[#E8EDF5] bg-white">
-          <div className="flex flex-col gap-4 border-b border-[#EEF2F7] bg-[#FBFCFE] px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
-            <div className="space-y-2">
-              <div className="h-3 w-[120px] animate-pulse rounded bg-[#EEF2F7]" />
-              <div className="h-5 w-[160px] animate-pulse rounded bg-[#EEF2F7]" />
-              <div className="h-4 w-[220px] animate-pulse rounded bg-[#EEF2F7]" />
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="h-10 w-10 animate-pulse rounded-full bg-[#EEF2F7]" />
-              <div className="h-10 w-[120px] animate-pulse rounded-full bg-[#EEF2F7]" />
-              <div className="h-10 w-10 animate-pulse rounded-full bg-[#EEF2F7]" />
-              <div className="h-10 w-[140px] animate-pulse rounded-full bg-[#EEF2F7]" />
-              <div className="h-10 w-[140px] animate-pulse rounded-full bg-[#EEF2F7]" />
-            </div>
-          </div>
-
-          <div
-            className="grid min-w-[1120px]"
-            style={{ gridTemplateColumns: "180px 1fr" }}
-          >
-            <div className="border-r border-[#EEF2F7] bg-[#FBFCFE]">
-              <div className="flex h-[48px] items-center px-6">
-                <div className="h-3 w-[70px] animate-pulse rounded bg-[#EEF2F7]" />
-              </div>
-
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className={`flex min-h-[74px] items-center px-6 py-3 ${
-                    i !== 1 ? "border-t border-[#EEF2F7]" : ""
-                  }`}
-                >
-                  <div className="space-y-2">
-                    <div className="h-4 w-[60px] animate-pulse rounded bg-[#EEF2F7]" />
-                    <div className="h-3 w-[50px] animate-pulse rounded bg-[#EEF2F7]" />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div>
-              <div className="grid h-[48px] grid-cols-[minmax(0,1fr)_148px_96px] bg-[#FBFCFE]">
-                <div className="flex items-center px-6">
-                  <div className="h-3 w-[120px] animate-pulse rounded bg-[#EEF2F7]" />
-                </div>
-                <div className="flex items-center justify-center border-l border-[#EEF2F7]">
-                  <div className="h-3 w-[30px] animate-pulse rounded bg-[#EEF2F7]" />
-                </div>
-                <div className="flex items-center justify-center border-l border-[#EEF2F7]">
-                  <div className="h-3 w-[30px] animate-pulse rounded bg-[#EEF2F7]" />
-                </div>
-              </div>
-
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className={`grid min-h-[74px] grid-cols-[minmax(0,1fr)_148px_96px] ${
-                    i !== 1 ? "border-t border-[#EEF2F7]" : ""
-                  }`}
-                >
-                  <div className="flex items-center px-6 py-3">
-                    <div className="w-full space-y-2">
-                      <div className="h-4 w-[220px] animate-pulse rounded bg-[#EEF2F7]" />
-                      <div className="h-3 w-[320px] animate-pulse rounded bg-[#EEF2F7]" />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-center border-l border-[#EEF2F7]">
-                    <div className="h-4 w-[90px] animate-pulse rounded bg-[#EEF2F7]" />
-                  </div>
-
-                  <div className="flex items-center justify-center border-l border-[#EEF2F7]">
-                    <div className="h-4 w-[40px] animate-pulse rounded bg-[#EEF2F7]" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <div className="h-[180px] animate-pulse bg-[#FBFCFE]" />
         </div>
       </section>
     );
@@ -174,7 +89,7 @@ export default function WeeklyProgressSection({
   return (
     <section className="mt-16 w-full">
       <div className="mb-4 flex items-center gap-5">
-        <h2 className="shrink-0 text-[26px] font-extrabold leading-none tracking-[-0.04em] text-[#0B1B3B] sm:text-[26px]">
+        <h2 className="shrink-0 text-[26px] font-extrabold leading-none tracking-[-0.04em] text-[#0B1B3B]">
           WEEKLY PROGRESS
         </h2>
         <div className="hidden h-px min-w-[160px] flex-1 bg-[#E9EDF3] md:block" />
@@ -185,17 +100,14 @@ export default function WeeklyProgressSection({
           <span className="h-2 w-2 rounded-full bg-[#C9D2E3]" />
           <span>시작 전</span>
         </div>
-
         <div className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-[#4876EF]" />
           <span>진행 중</span>
         </div>
-
         <div className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-[#000000]" />
           <span>완료</span>
         </div>
-
         <div className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-[#E8DCC6]" />
           <span>휴식일</span>
@@ -254,82 +166,80 @@ export default function WeeklyProgressSection({
               현재 {selectedWeek}주차 / 전체 {totalWeeks.length}주
             </div>
 
-            <div className="rounded-full bg-[#f2f7ff] px-4 py-2 text-[12px] font-semibold text-[#4876EF] border border-[#E7EBF2]">
+            <div className="rounded-full border border-[#E7EBF2] bg-[#f2f7ff] px-4 py-2 text-[12px] font-semibold text-[#4876EF]">
               전체 과정 진행률 {totalProgress}%
             </div>
           </div>
         </div>
 
-        <div
-          className="grid min-w-[1120px]"
-          style={{ gridTemplateColumns: "180px 1fr" }}
-        >
-          <div className="border-r border-[#EEF2F7] bg-[#FBFCFE]">
-            <div className="flex h-[48px] items-center px-6 text-[11px] font-semibold text-[#A0AEC0]">
-              주차 / Day
-            </div>
-
-            {weeklyTasks.map((task, index) => (
-              <div
-                key={task.id}
-                className={`flex min-h-[74px] items-center px-6 py-3 ${
-                  index !== 0 ? "border-t border-[#EEF2F7]" : ""
-                }`}
-              >
-                <div>
-                  <p className="text-[14px] font-bold text-[#0F172A]">
-                    Day {task.day}
-                  </p>
-                  <p className="mt-1 text-[12px] text-[#94A3B8]">
-                    Week {task.week}
-                  </p>
-                </div>
+        <div className="w-full overflow-x-auto">
+          <div className="min-w-[980px]">
+            {/* 헤더 */}
+            <div className="grid grid-cols-[170px_minmax(0,1fr)_136px_86px] bg-[#FBFCFE] text-[11px] font-semibold text-[#A0AEC0]">
+              <div className="flex h-[48px] items-center border-r border-[#EEF2F7] px-6">
+                주차 / Day
               </div>
-            ))}
-          </div>
-
-          <div>
-            <div className="grid h-[48px] grid-cols-[minmax(0,1fr)_148px_96px] bg-[#FBFCFE] text-[11px] font-semibold text-[#A0AEC0]">
-              <div className="flex items-center px-6">선택한 주차 학습 계획</div>
-              <div className="flex items-center justify-center border-l border-[#EEF2F7]">
+              <div className="flex h-[48px] items-center px-6">
+                선택한 주차 학습 계획
+              </div>
+              <div className="flex h-[48px] items-center justify-center border-l border-[#EEF2F7]">
                 예정 학습일
               </div>
-              <div className="flex items-center justify-center border-l border-[#EEF2F7]">
-                할당 된 시간
+              <div className="flex h-[48px] items-center justify-center border-l border-[#EEF2F7]">
+                시간
               </div>
             </div>
 
+            {/* 행 */}
             {weeklyTasks.map((task, index) => (
               <div
                 key={task.id}
-                className={`grid min-h-[74px] grid-cols-[minmax(0,1fr)_148px_96px] ${
+                className={`grid grid-cols-[170px_minmax(0,1fr)_136px_86px] ${
                   index !== 0 ? "border-t border-[#EEF2F7]" : ""
                 }`}
               >
-                <div className="flex min-w-0 items-center px-6 py-3">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`h-2.5 w-2.5 rounded-full ${getStatusDot(
-                          task.status
-                        )}`}
-                      />
-                      <p className="truncate text-[15px] font-bold text-[#0F172A]">
-                        {task.title}
-                      </p>
-                    </div>
-
-                    <p className="mt-1 truncate text-[13px] text-[#7B8798]">
-                      {task.description}
+                {/* Day */}
+                <div className="flex min-h-[116px] items-center border-r border-[#EEF2F7] bg-[#FBFCFE] px-6 py-5">
+                  <div>
+                    <p className="text-[14px] font-bold text-[#0F172A]">
+                      Day {task.day}
+                    </p>
+                    <p className="mt-1 text-[12px] text-[#94A3B8]">
+                      Week {task.week}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-center border-l border-[#EEF2F7] px-4 py-3 text-[13px] font-medium text-[#7C8BA1]">
+                {/* 설명 */}
+                <div className="flex min-h-[116px] min-w-0 items-center px-6 py-5">
+                  <div className="min-w-0">
+                    <div className="flex items-start gap-2">
+                      <span
+                        className={`mt-[6px] h-2.5 w-2.5 shrink-0 rounded-full ${getStatusDot(
+                          task.status
+                        )}`}
+                      />
+
+                      <div className="min-w-0">
+                        <p className="text-[15px] font-bold leading-[1.45] text-[#0F172A] break-keep">
+                          {task.title}
+                        </p>
+
+                        <p className="mt-2 text-[13px] leading-[1.7] text-[#7B8798] break-keep">
+                          {task.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 날짜 */}
+                <div className="flex min-h-[116px] items-center justify-center border-l border-[#EEF2F7] px-3 py-5 text-[13px] font-medium text-[#7C8BA1]">
                   {task.date}
                 </div>
 
-                <div className="flex items-center justify-center border-l border-[#EEF2F7] px-4 py-3 text-[13px] font-medium text-[#7C8BA1]">
+                {/* 시간 */}
+                <div className="flex min-h-[116px] items-center justify-center border-l border-[#EEF2F7] px-3 py-5 text-[13px] font-medium text-[#7C8BA1]">
                   {task.status === "REST" ? "-" : `${task.hours}시간`}
                 </div>
               </div>

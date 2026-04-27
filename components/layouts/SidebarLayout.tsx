@@ -7,11 +7,36 @@ export default function SidebarLayout({
 }) {
   return (
     <div
-      className="mx-auto flex w-full max-w-[1390px] gap-8 px-40 pb-40"
       style={{ paddingTop: "calc(8rem + var(--global-banner-height))" }}
+      className="pb-40"
     >
-      <aside className="w-[240px] flex-none">{sidebar}</aside>
-      <main className="min-w-0 flex-1">{children}</main>
+      <div className="mx-auto w-full max-w-[1375px] px-40">
+        {/* relative wrapper — sidebar anchors to this, content keeps StandardLayout alignment */}
+        <div className="relative">
+          {/* Sidebar: centered in the full left gutter */}
+          <div
+            className="absolute top-0 h-full flex justify-center"
+            style={{
+              right: "100%",
+              width: "calc((100vw - 1375px) / 2 + 160px)",
+            }}
+          >
+            <div
+              className="w-55"
+              style={{
+                position: "sticky",
+                top: "calc(129px + var(--global-banner-height))",
+                alignSelf: "flex-start",
+              }}
+            >
+              {sidebar}
+            </div>
+          </div>
+
+          {/* Content: exact same alignment as StandardLayout */}
+          {children}
+        </div>
+      </div>
     </div>
   );
 }

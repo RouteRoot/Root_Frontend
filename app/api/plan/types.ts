@@ -27,9 +27,9 @@ export interface PlanGenerateRequest {
   examTaskId: number;
   examDate: string;
   certificationName: string;
-  daily: number;
-  weekly: number;
+  weeklySchedule: Record<string, number>;
   skillLevel: string;
+  personalStory: string;
 }
 
 export interface PlanCheckResponse {
