@@ -16,7 +16,10 @@ export default function WorkspaceLayout({
     <div className="min-h-screen bg-white">
       {isCommunity ? <CommunityGnb /> : <Gnb />}
 
-      <main className="mx-auto w-full max-w-[1610px] px-40 pt-32 pb-40">
+      <main
+        className="mx-auto w-full max-w-[1610px] px-40 pb-40"
+        style={{ paddingTop: "calc(8rem + var(--global-banner-height))" }}
+      >
         {children}
       </main>
     </div>

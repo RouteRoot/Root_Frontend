@@ -77,7 +77,10 @@ export default function Gnb() {
   };
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-[#e9edf3] bg-white">
+    <header
+      className="fixed inset-x-0 z-50 border-b border-[#e9edf3] bg-white"
+      style={{ top: "var(--global-banner-height)" }}
+    >
       <div className="mx-auto flex h-[80px] w-full max-w-[1640px] items-center justify-between px-45">
         {/* 로고 */}
         <Link

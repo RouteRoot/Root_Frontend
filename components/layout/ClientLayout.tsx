@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import GlobalBannerPopup from "@/components/common/GlobalBannerPopup";
 
 export default function ClientLayout({
   children,
@@ -38,5 +39,10 @@ export default function ClientLayout({
 
   if (!checked) return null;
 
-  return <>{children}</>;
+  return (
+    <>
+      <GlobalBannerPopup />
+      {children}
+    </>
+  );
 }
