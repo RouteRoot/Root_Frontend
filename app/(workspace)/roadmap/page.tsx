@@ -59,13 +59,13 @@ export default function Page() {
 
   return (
     <div className="flex flex-col gap-10">
-                 <Image
+                 {/* <Image
         src="/Group 13.png"
         alt="커뮤니티 이미지"
         width={1600}
         height={500}
         className="h-auto w-full rounded-[24px] object-cover"
-      />
+      /> */}
       <RoadmapTimelineSection />
       <RoadmapKanbanBoard />
     </div>

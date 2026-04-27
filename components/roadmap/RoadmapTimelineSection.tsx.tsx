@@ -214,13 +214,13 @@ export default function RoadmapTimelineSection() {
 
   return (
     <>
-      <section className="w-full">
+      <section className="w-full mt-7">
         <div className="mb-4 flex items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-5">
-            <h2 className="shrink-0 text-[26px] font-extrabold leading-none tracking-[-0.04em] text-[#0B1B3B]">
-              ROADMAP OVERVIEW
+            <h2 className="shrink-0 text-[19px] font-semibold leading-none tracking-[-0.04em] text-[#323438]">
+              내 로드맵 관리
             </h2>
-            <div className="hidden h-px min-w-[280px] flex-1 bg-[#E9EDF3] md:block" />
+            {/* <div className="hidden h-px min-w-[280px] flex-1 bg-[#E9EDF3] md:block" /> */}
           </div>
 
           <div ref={dropdownRef} className="relative shrink-0">

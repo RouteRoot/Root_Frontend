@@ -246,12 +246,11 @@ export default function RoadmapKanbanBoard() {
   const isEmpty = loadState === "success" && phases.length === 0;
 
   return (
-    <section className="mt-8 w-full">
+    <section className="mt-12 w-full">
       <div className="mb-4 flex items-center gap-5">
-        <h2 className="shrink-0 text-[26px] font-extrabold leading-none tracking-[-0.04em] text-[#0B1B3B]">
-          DETAILS
+        <h2 className="shrink-0 text-[19px] font-semibold leading-none tracking-[-0.04em] text-[#323438]">
+          세부 로드맵 항목
         </h2>
-        <div className="hidden h-px min-w-55 flex-1 bg-[#E9EDF3] md:block" />
       </div>
 
       <div className="overflow-hidden rounded-[28px] bg-white">
