@@ -26,15 +26,15 @@ type WeeklyProgressSectionProps = {
 function getStatusDot(status: TaskStatus) {
   switch (status) {
     case "TODO":
-      return "bg-[#C9D2E3]";
+      return "bg-black/70";
     case "IN_PROGRESS":
       return "bg-[#0075c3]/80";
     case "DONE":
-      return "bg-[#000000]";
+      return "bg-[#C9D2E3]";
     case "REST":
       return "bg-[#E8DCC6]";
     default:
-      return "bg-[#C9D2E3]";
+      return "bg-[#000000]";
   }
 }
 
@@ -96,16 +96,16 @@ export default function WeeklyProgressSection({
 
       <div className="mb-4 flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#94A3B8]">
         <div className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-[#C9D2E3]" />
-          <span>시작 전</span>
+          <span className="h-2 w-2 rounded-full bg-black/70" />
+          <span>진행 예정</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-[#4876EF]" />
           <span>진행 중</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-[#000000]" />
-          <span>완료</span>
+          <span className="h-2 w-2 rounded-full bg-[#C9D2E3]" />
+          <span>학습 완료</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-[#E8DCC6]" />
@@ -220,7 +220,7 @@ export default function WeeklyProgressSection({
                       />
 
                       <div className="min-w-0">
-                        <p className="text-[15px] font-bold leading-[1.45] text-[#0F172A] break-keep">
+                        <p className={`text-[15px] font-bold leading-[1.45] break-keep ${task.status === "DONE" ? "text-[#C9D2E3]" : "text-black/70"}`}>
                           {task.title}
                         </p>
 

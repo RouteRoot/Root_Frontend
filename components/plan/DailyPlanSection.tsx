@@ -148,7 +148,7 @@ export default function DailyPlanSection({
                   )}
                   <span
                     className={`relative inline-flex h-3 w-3 rounded-full ${
-                      plan.isCompleted ? "bg-[#16A34A]" : "bg-[#4876EF]"
+                      plan.isCompleted ? "bg-[#CBD5E1]" : "bg-[#4876EF]"
                     }`}
                   />
                 </span>
@@ -156,7 +156,7 @@ export default function DailyPlanSection({
                 <h3
                   className={`text-[14px] font-bold ${
                     plan.isCompleted
-                      ? "text-[#94A3B8] line-through"
+                      ? "text-[#94A3B8]"
                       : "text-[#0F172A]"
                   }`}
                 >
@@ -177,7 +177,7 @@ export default function DailyPlanSection({
                 onClick={() => onToggleComplete?.(plan.id)}
                 className={
                   plan.isCompleted
-                    ? "absolute bottom-0 right-0 inline-flex h-[32px] items-center gap-1.5 rounded-[10px] border border-[#CFEAD8] bg-[#EAF8EF] px-4 text-[12px] font-semibold text-[#16A34A] transition hover:opacity-90"
+                    ? "absolute bottom-0 right-0 inline-flex h-[32px] items-center gap-1.5 rounded-[10px] border border-[#D1D5DB] bg-[#F3F4F6] px-4 text-[12px] font-semibold text-[#9CA3AF] transition hover:opacity-90"
                     : "absolute bottom-0 right-0 inline-flex h-[32px] items-center gap-1.5 rounded-[10px] bg-[#0075c3]/80 px-4 text-[12px] font-semibold text-white transition hover:opacity-90"
                 }
               >

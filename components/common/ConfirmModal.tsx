@@ -78,7 +78,7 @@ export default function ConfirmModal({
               type="button"
               onClick={onConfirm}
               disabled={loading}
-              className="inline-flex h-[40px] items-center justify-center rounded-[12px] bg-[#0075c3] px-4 text-[13px] font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex h-[40px] items-center justify-center rounded-[12px] bg-[#0075c3]/80 px-4 text-[13px] font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? "처리 중..." : confirmText}
             </button>
