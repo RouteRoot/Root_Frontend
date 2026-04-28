@@ -51,7 +51,7 @@ function getCardStyle(status: TaskStatus, hasPlan: boolean) {
     case "IN_PROGRESS":
       return {
         wrapper:
-          "border border-[#32a7eb] bg-[#5885ff] text-white shadow-[0_8px_20px_rgba(109,93,246,0.18)] hover:shadow-[0_12px_28px_rgba(109,93,246,0.24)]",
+          "border border-[#32a7eb] bg-[#0075c3] text-white shadow-[0_8px_20px_rgba(109,93,246,0.18)] hover:shadow-[0_12px_28px_rgba(109,93,246,0.24)]",
         badge: "bg-white/18 text-white",
       };
     case "COMPLETED":
@@ -286,7 +286,7 @@ export default function RoadmapTimelineSection() {
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#94A3B8]">
             <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-[#4876EF]" />
+              <span className="h-2 w-2 rounded-full bg-[#0075c3]" />
               <span>진행 중</span>
             </div>
 
@@ -399,7 +399,7 @@ export default function RoadmapTimelineSection() {
                             {phase.phaseTitle}
                           </h3>
                           {phase.phaseNumber !== null && (
-                            <span className="rounded-full bg-[#eef0ff] px-2 py-[3px] text-[10px] font-semibold leading-none text-[#4876EF]">
+                            <span className="rounded-full bg-[#e3f0f3] px-2 py-[3px] text-[10px] font-semibold leading-none text-[#61b5d6]">
                               Phase {phase.phaseNumber}
                             </span>
                           )}

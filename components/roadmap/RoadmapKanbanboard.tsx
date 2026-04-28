@@ -69,7 +69,7 @@ function getStatusStyle(status: TaskStatus) {
     case "IN_PROGRESS":
       return {
         chip: "border border-[#DDD8FF] bg-[#eeeeee] text-[#555555]",
-        dot: "bg-[#4e99f0]",
+        dot: "bg-[#0075c3]",
       };
     case "COMPLETED":
       return {

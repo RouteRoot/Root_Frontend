@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { getMe } from "@/app/api/service/user";
 import { Bell } from "lucide-react";
@@ -48,7 +48,7 @@ export default function Gnb() {
         <div className="flex h-full min-w-0 flex-1 items-center">
           <Link
             href="/dashboard"
-            className="flex h-full w-[158px] items-center px-4 text-[28px] font-bold leading-none tracking-[-0.04em] text-[#0FA9CC]"
+            className="flex h-full w-[158px] items-center px-4 text-[28px] font-bold leading-none tracking-[-0.04em] text-[#0075c3]"
           >
             BBuri
           </Link>

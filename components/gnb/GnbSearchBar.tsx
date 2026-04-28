@@ -84,8 +84,8 @@ export default function GnbSearchBar() {
         <div
           className={`flex h-[50px] w-full items-center bg-white px-4 transition-shadow ${
             isOpen
-              ? "rounded-t-[7px] border border-b-0 border-[#0FA9CC]"
-              : "rounded-[7px] border border-[#0FA9CC] hover:shadow-[0_0_0_3px_rgba(15,169,204,0.08)]"
+              ? "rounded-t-[7px] border border-b-0 border-[#0075c3]"
+              : "rounded-[7px] border border-[#0075c3] hover:shadow-[0_0_0_3px_rgba(15,169,204,0.08)]"
           }`}
         >
           {isOpen ? (
@@ -100,7 +100,7 @@ export default function GnbSearchBar() {
               />
               <button
                 type="submit"
-                className="flex h-8 w-8 flex-none items-center justify-center rounded-[6px] bg-[#0FA9CC] transition-colors hover:bg-[#0d96b5]"
+                className="flex h-8 w-8 flex-none items-center justify-center rounded-[6px] bg-[#0075c3] transition-colors hover:bg-[#0d96b5]"
               >
                 <Search className="h-[16px] w-[16px] text-white" strokeWidth={2.6} />
               </button>
@@ -117,7 +117,7 @@ export default function GnbSearchBar() {
                 원하는 자격증, 분야 검색
               </span>
               <span className="flex w-[304px] flex-none items-center">
-                <Search className="h-[20px] w-[20px] flex-none text-[#0FA9CC]" strokeWidth={2.6} />
+                <Search className="h-[20px] w-[20px] flex-none text-[#0075c3]" strokeWidth={2.6} />
                 <span className="mx-4 h-7 w-px flex-none bg-[#e5e8eb]" />
                 <span className="relative h-6 w-5 flex-none overflow-hidden">
                   {previousTrend && previousTrendIndex !== null && (
