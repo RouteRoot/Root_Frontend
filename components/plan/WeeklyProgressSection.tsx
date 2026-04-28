@@ -28,7 +28,7 @@ function getStatusDot(status: TaskStatus) {
     case "TODO":
       return "bg-[#C9D2E3]";
     case "IN_PROGRESS":
-      return "bg-[#4876EF]";
+      return "bg-[#0075c3]/80";
     case "DONE":
       return "bg-[#000000]";
     case "REST":
@@ -89,10 +89,9 @@ export default function WeeklyProgressSection({
   return (
     <section className="mt-16 w-full">
       <div className="mb-4 flex items-center gap-5">
-        <h2 className="shrink-0 text-[26px] font-extrabold leading-none tracking-[-0.04em] text-[#0B1B3B]">
-          WEEKLY PROGRESS
+        <h2 className="shrink-0 text-[19px] font-semibold leading-none tracking-[-0.04em] text-[#0B1B3B] mb-4">
+          주간 플랜
         </h2>
-        <div className="hidden h-px min-w-[160px] flex-1 bg-[#E9EDF3] md:block" />
       </div>
 
       <div className="mb-4 flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#94A3B8]">
@@ -166,7 +165,7 @@ export default function WeeklyProgressSection({
               현재 {selectedWeek}주차 / 전체 {totalWeeks.length}주
             </div>
 
-            <div className="rounded-full border border-[#E7EBF2] bg-[#f2f7ff] px-4 py-2 text-[12px] font-semibold text-[#4876EF]">
+            <div className="rounded-full border border-[#E7EBF2] bg-[#f2f7ff] px-4 py-2 text-[12px] font-semibold text-[#0075c3]">
               전체 과정 진행률 {totalProgress}%
             </div>
           </div>

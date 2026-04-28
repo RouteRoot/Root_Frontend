@@ -10,6 +10,7 @@ type PlanTabsProps = {
   onSelect: (examTaskId: number) => void;
   onDeletePlan?: (examTaskId: number) => void | Promise<void>;
   onRegeneratePlan?: (examTaskId: number) => void | Promise<void>;
+  onCompleteTask?: (examTaskId: number) => void | Promise<void>;
   isLoading?: boolean;
 };
 
@@ -19,6 +20,7 @@ export default function PlanTabs({
   onSelect,
   onDeletePlan,
   onRegeneratePlan,
+  onCompleteTask,
   isLoading = false,
 }: PlanTabsProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -43,6 +45,12 @@ export default function PlanTabs({
     if (!selectedExamTaskId) return;
     setIsMenuOpen(false);
     await onRegeneratePlan?.(selectedExamTaskId);
+  };
+
+  const handleCompleteTask = async () => {
+    if (!selectedExamTaskId) return;
+    setIsMenuOpen(false);
+    await onCompleteTask?.(selectedExamTaskId);
   };
 
   const handleDeletePlan = async () => {
@@ -79,7 +87,7 @@ export default function PlanTabs({
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full mt-8">
       <div className="flex items-center justify-between gap-3">
         <div className="scrollbar-hide flex min-w-0 flex-1 overflow-x-auto gap-2 py-2">
           {tabs.map((tab) => {
@@ -92,7 +100,7 @@ export default function PlanTabs({
                 onClick={() => onSelect(tab.examTaskId)}
                 className={`shrink-0 rounded-[10px] px-4 py-2 text-[13px] font-semibold transition-all duration-200 sm:px-5 sm:text-[14px] ${
                   isActive
-                    ? "bg-[#4876EF] text-white"
+                    ? "bg-[#0075c3]/80 text-white"
                     : "bg-[#ffffff] text-[#667085] hover:bg-[#EEF2F7] border border-[#c4c4c4] hover:text-[#4876EF]"
                 }`}
               >
@@ -124,7 +132,7 @@ export default function PlanTabs({
 
           <div
             className={`
-              absolute right-0 top-[calc(100%+10px)] z-30 w-[102px]
+              absolute right-0 top-[calc(100%+10px)] z-30 w-30
               origin-top-right overflow-hidden rounded-[10px] border border-[#E8EDF5] bg-white
               p-1.5 shadow-[0_18px_40px_rgba(15,23,42,0.12)]
               transition-all duration-200 ease-out
@@ -149,11 +157,23 @@ export default function PlanTabs({
 
             <button
               type="button"
-              onClick={handleDeletePlan}
+              onClick={handleCompleteTask}
               className="
                 flex h-10 w-full items-center rounded-[10px] px-3
                 text-left text-[13px] font-medium text-[#111827]
                 transition-colors duration-150 hover:bg-[#F8FAFC]
+              "
+            >
+              완료하기
+            </button>
+
+            <button
+              type="button"
+              onClick={handleDeletePlan}
+              className="
+                flex h-10 w-full items-center rounded-[10px] px-3
+                text-left text-[13px] font-medium text-[#B42318]
+                transition-colors duration-150 hover:bg-[#FFF8F8]
               "
             >
               삭제하기

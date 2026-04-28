@@ -51,7 +51,7 @@ function getCardStyle(status: TaskStatus, hasPlan: boolean) {
     case "IN_PROGRESS":
       return {
         wrapper:
-          "border border-[#32a7eb] bg-[#0075c3] text-white shadow-[0_8px_20px_rgba(109,93,246,0.18)] hover:shadow-[0_12px_28px_rgba(109,93,246,0.24)]",
+          "border border-[#0075c3] bg-[#0075c3]/70 text-white shadow-[0_8px_20px_rgba(109,93,246,0.18)] hover:shadow-[0_12px_28px_rgba(109,93,246,0.24)]",
         badge: "bg-white/18 text-white",
       };
     case "COMPLETED":

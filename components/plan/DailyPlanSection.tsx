@@ -42,8 +42,8 @@ function DailyPlanSectionSkeleton() {
   return (
     <section className="w-full">
       <div className="mb-4 flex items-center gap-4">
-        <h2 className="shrink-0 text-[26px] font-extrabold tracking-[-0.04em] text-[#0B1B3B]">
-          DAILY PLAN
+        <h2 className="shrink-0 text-[19px] font-extrabold tracking-[-0.04em] text-[#0B1B3B]">
+          오늘의 플랜
         </h2>
         <div className="h-px w-[160px] bg-[#f3f3f3]" />
       </div>
@@ -105,10 +105,9 @@ export default function DailyPlanSection({
     <section className="w-full">
       <div className="mb-4 flex items-center justify-between gap-4">
         <div className="flex min-w-0 flex-1 items-center gap-4">
-          <h2 className="shrink-0 text-[26px] font-extrabold tracking-[-0.04em] text-[#0B1B3B]">
-            DAILY PLAN
+          <h2 className="shrink-0 text-[19px] font-semibold tracking-[-0.04em] text-[#0B1B3B] mb-4">
+            오늘의 플랜
           </h2>
-          <div className="h-px w-[160px] bg-[#f3f3f3]" />
         </div>
       </div>
 
@@ -141,7 +140,6 @@ export default function DailyPlanSection({
               </div>
             </div>
 
-            {/* 🔥 오른쪽 영역 */}
             <div className="relative flex flex-col pb-10">
               <div className="flex items-center gap-2">
                 <span className="relative flex h-3 w-3">
@@ -180,7 +178,7 @@ export default function DailyPlanSection({
                 className={
                   plan.isCompleted
                     ? "absolute bottom-0 right-0 inline-flex h-[32px] items-center gap-1.5 rounded-[10px] border border-[#CFEAD8] bg-[#EAF8EF] px-4 text-[12px] font-semibold text-[#16A34A] transition hover:opacity-90"
-                    : "absolute bottom-0 right-0 inline-flex h-[32px] items-center gap-1.5 rounded-[10px] bg-[#4876EF] px-4 text-[12px] font-semibold text-white transition hover:opacity-90"
+                    : "absolute bottom-0 right-0 inline-flex h-[32px] items-center gap-1.5 rounded-[10px] bg-[#0075c3]/80 px-4 text-[12px] font-semibold text-white transition hover:opacity-90"
                 }
               >
                 {plan.isCompleted ? "학습 완료" : "완료"}

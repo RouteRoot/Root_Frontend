@@ -16,6 +16,7 @@ import {
   checkDailyPlan,
   deletePlan,
 } from "@/app/api/plan/plan";
+import { completeTask } from "@/app/api/roadmap/roadmap";
 import type { PlanResponse, PlanTab } from "@/app/api/plan/types";
 
 function getTodayInSeoulString(): string {
@@ -344,6 +345,29 @@ export default function PlannerPage() {
     console.log("재생성 클릭:", examTaskId);
     };
 
+  const handleCompleteTask = async (examTaskId: number) => {
+    try {
+      await completeTask(examTaskId);
+      const updatedTabs = await getPlanTabs();
+      setTabs(updatedTabs);
+
+      if (updatedTabs.length > 0) {
+        const nextId = updatedTabs[0].examTaskId;
+        setSelectedExamTaskId(nextId);
+        const nextPlan = await getPlanByExamTaskId(nextId);
+        setPlan(nextPlan);
+      } else {
+        setSelectedExamTaskId(null);
+        setPlan(null);
+      }
+
+      window.alert("자격증 취득 완료 처리되었습니다.");
+    } catch (error) {
+      console.error("자격증 완료 처리 실패:", error);
+      window.alert("완료 처리 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <main className="min-h-screen bg-white pb-14 sm:px-6 lg:px-0">
       <div className="mx-auto max-w-[1600px]">
@@ -354,6 +378,7 @@ export default function PlannerPage() {
             onSelect={setSelectedExamTaskId}
             onDeletePlan={handleDeletePlan}
             onRegeneratePlan={handleRegeneratePlan}
+            onCompleteTask={handleCompleteTask}
             isLoading={tabsLoading}
             />
         </section>

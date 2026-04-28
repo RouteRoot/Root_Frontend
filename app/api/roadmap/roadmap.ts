@@ -12,6 +12,11 @@ export const getRoadmapByToken = async (): Promise<RoadmapResponse> => {
   return res.data;
 };
 
+// 자격증 완료 처리
+export const completeTask = async (examTaskId: number): Promise<void> => {
+  await axiosInstance.patch(`/roadmaps/tasks/${examTaskId}/complete`);
+};
+
 // 생성
 export const generateRoadmap = async (
   data: RoadmapGenerateRequest,
