@@ -13,7 +13,11 @@ function TrendStatus({ isNew }: { isNew: boolean }) {
   return <span className="h-px w-2.5 rounded-full bg-[#9aa3af]" />;
 }
 
-export default function GnbSearchBar() {
+type GnbSearchBarProps = {
+  compact?: boolean;
+};
+
+export default function GnbSearchBar({ compact = false }: GnbSearchBarProps) {
   const router = useRouter();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -78,9 +82,8 @@ export default function GnbSearchBar() {
     }
   };
 
-  return (
-    <div className="relative flex h-[64px] items-center justify-center border-b border-[#e5e8eb] bg-white px-6">
-      <div ref={containerRef} className="relative w-full max-w-[1062px]">
+  const inner = (
+    <div ref={containerRef} className="relative w-full max-w-[1062px]">
         <div
           className={`flex h-[50px] w-full items-center bg-white px-4 transition-shadow ${
             isOpen
@@ -236,6 +239,13 @@ export default function GnbSearchBar() {
           </div>
         )}
       </div>
+  );
+
+  if (compact) return inner;
+
+  return (
+    <div className="relative flex h-[64px] items-center justify-center border-b border-[#e5e8eb] bg-white px-6">
+      {inner}
     </div>
   );
 }
