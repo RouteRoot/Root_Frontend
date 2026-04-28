@@ -61,7 +61,7 @@ export default function PlanTabs({
 
   if (isLoading) {
     return (
-      <div className="w-full">
+      <div className="w-full mt-8">
         <div className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto py-2">
             {[1, 2, 3, 4].map((item) => (

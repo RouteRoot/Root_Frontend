@@ -10,6 +10,7 @@ import DailyPlanSection, {
   DailyPlanSectionItem,
 } from "@/components/plan/DailyPlanSection";
 import ConfirmModal from "@/components/common/ConfirmModal";
+import { ToastContainer, useToast } from "@/components/common/Toast";
 import {
   getPlanTabs,
   getPlanByExamTaskId,
@@ -164,6 +165,8 @@ export default function PlannerPage() {
   const [planLoading, setPlanLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const { show: showToast } = useToast();
+
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingDailyPlanId, setPendingDailyPlanId] = useState<number | null>(
     null
@@ -309,12 +312,10 @@ export default function PlannerPage() {
       setConfirmOpen(false);
       setPendingDailyPlanId(null);
 
-      window.alert(
-        res.isCompleted ? "완료 처리되었습니다." : "완료가 해제되었습니다."
-      );
+      showToast(res.isCompleted ? "완료 처리되었습니다." : "완료가 해제되었습니다.");
     } catch (e) {
       console.error("완료 처리 실패", e);
-      window.alert("완료 처리 중 오류가 발생했습니다.");
+      showToast("완료 처리 중 오류가 발생했습니다.", "error");
     } finally {
       setConfirmLoading(false);
     }
@@ -361,10 +362,10 @@ export default function PlannerPage() {
         setPlan(null);
       }
 
-      window.alert("자격증 취득 완료 처리되었습니다.");
+      showToast("자격증 취득 완료 처리되었습니다.");
     } catch (error) {
       console.error("자격증 완료 처리 실패:", error);
-      window.alert("완료 처리 중 오류가 발생했습니다.");
+      showToast("완료 처리 중 오류가 발생했습니다.", "error");
     }
   };
 
@@ -456,6 +457,8 @@ export default function PlannerPage() {
         onConfirm={handleConfirmComplete}
         onCancel={closeCompleteModal}
       />
+
+      <ToastContainer />
     </main>
   );
 }
