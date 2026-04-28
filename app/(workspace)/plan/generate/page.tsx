@@ -29,7 +29,6 @@ export default function PlanGeneratePage() {
   const [examDate, setExamDate] = useState("");
   const [personalStory, setPersonalStory] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const weeklySchedule = useMemo(() => {
     return {
@@ -55,29 +54,8 @@ export default function PlanGeneratePage() {
   }, [examTaskId, certificationName, daily, weekly, skillLevel, examDate]);
 
   const handleGenerate = async () => {
-    if (!examTaskId) {
-      setError("자격증 정보가 없습니다.");
-      return;
-    }
-
-    if (!certificationName.trim()) {
-      setError("자격증 이름이 없습니다.");
-      return;
-    }
-
-    if (!daily || !weekly || !skillLevel.trim()) {
-      setError("로드맵 학습 정보가 부족합니다.");
-      return;
-    }
-
-    if (!examDate.trim()) {
-      setError("시험일을 입력해주세요.");
-      return;
-    }
-
     try {
       setLoading(true);
-      setError("");
 
       await generatePlan({
         examTaskId,
@@ -91,7 +69,7 @@ export default function PlanGeneratePage() {
       router.push("/plan");
     } catch (err) {
       console.error("플래너 생성 실패:", err);
-      setError("플래너 생성에 실패했습니다.");
+      router.push("/plan");
     } finally {
       setLoading(false);
     }
@@ -161,12 +139,6 @@ export default function PlanGeneratePage() {
                   "
                 />
               </div>
-
-              {error && (
-                <div className="mt-4 rounded-2xl border border-[#F3D9E6] bg-[#FFF7FA] px-4 py-3 text-[14px] text-[#C2416C]">
-                  {error}
-                </div>
-              )}
 
               <button
                 type="button"
