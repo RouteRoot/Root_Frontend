@@ -69,7 +69,7 @@ function getCardStyle(status: TaskStatus, hasPlan: boolean) {
     default:
       return {
         wrapper:
-          "border border-[#6D5DF6] bg-[#6d61da] text-white shadow-[0_8px_20px_rgba(109,93,246,0.18)] hover:shadow-[0_12px_28px_rgba(109,93,246,0.24)]",
+          "border border-[#0075c3] bg-[#0075c3]/70 text-white shadow-[0_8px_20px_rgba(0,117,195,0.18)] hover:shadow-[0_12px_28px_rgba(0,117,195,0.24)]",
         badge: "bg-white/18 text-white",
       };
   }

@@ -5,10 +5,10 @@ export type RoadmapFormData = {
   hope: string;
   isMajorRelated: boolean;
   career: number;
-  daily: number;
-  weekly: number;
+  acquired: string[];
   mylevel: string;
   target: string;
+  personalStory: string;
 };
 
 export type RoadmapGenerateRequest = RoadmapFormData;
