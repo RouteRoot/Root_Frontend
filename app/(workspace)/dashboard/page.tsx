@@ -1,69 +1,51 @@
-import SectionHeader from "@/components/dashboard/SectionHeader";
-import NoticeCard from "@/components/dashboard/NoticeCard";
-import RoadmapBar from "@/components/dashboard/RoadmapBar";
-import BubuBounce from "@/components/dashboard/BubuBounce";
-import TodayPlanCard from "@/components/dashboard/TodayPlanCard";
-
 import Image from "next/image";
-
-const noticeMock = [
-  {
-    id: 1,
-    date: "2026.02.01",
-    title: "SQLD 자격증 한번에 따는 방법",
-    description:
-      "안녕하세요. 강사K입니다 오늘은 SQLD 자격증을 취득하는 방법에 대해 설명드리겠습니다 먼저 이 자격증은 왜 따야하냐면....",
-  },
-  {
-    id: 2,
-    date: "2026.01.01",
-    title: "피그마 자격증에 대해",
-    description:
-      "안녕하세요. 오늘은 피그마에 대해서 알아 볼겁니다. 피그마 자격증이란 먼저 어떤거냐면 피그마 자격증이란...",
-  },
-];
+import ProgressCard from "@/components/dashboard/ProgressCard";
+import DashboardCommunitySection from "@/components/dashboard/DashboardCommunitySection";
 
 export default function Page() {
   return (
-    <div className="grid grid-cols-[minmax(0,2fr)_500px] gap-x-3 gap-y-10">
-      {/* 위쪽: 왼쪽 묶음 */}
-      <div className="flex flex-col gap-10">
-        {/* NOTICE */}
-        <div>
-          <SectionHeader title="NOTICE" />
-          <div className="mt-4 grid max-w-255 gap-4 sm:grid-cols-2 lg:grid-cols-2">
-            {noticeMock.map((notice) => (
-              <NoticeCard key={notice.id} {...notice} />
-            ))}
+    <div className="flex flex-col gap-6">
+      {/* 오늘의 추천 */}
+      <section>
+        <p className="mb-8 font-semibold text-[22px] font-black tracking-tight text-[#333333] mt-14">
+          오늘의 추천
+        </p>
+
+        {/* 3-column grid */}
+        <div className="grid grid-cols-3 grid-rows-2 gap-4 w-full">
+          {/* 메인 카드 — col 1-2, row 1 */}
+          <div className="col-span-2 overflow-hidden rounded-3xl">
+            <Image
+              src="/Group 22.svg"
+              alt="오늘의 추천 메인"
+              width={698}
+              height={200}
+              className="block h-auto w-full"
+              priority
+            />
           </div>
-        </div>
 
-        {/* ROADMAP */}
-        <div className="max-w-255">
-          <RoadmapBar />
-        </div>
-      </div>
+          {/* 우측 카드 — col 3, row 1-2 */}
+          <div className="row-span-2 h-full min-h-0">
+            <ProgressCard />
+          </div>
 
-      {/* 위쪽: 오른쪽 PLAN */}
-      <div>
-        <SectionHeader title="PLAN" />
-        <div className="mt-20">
-          <BubuBounce className="ml-10" />
+          {/* 하단 카드 1 — col 1, row 2 */}
+          <div
+            className="overflow-hidden rounded-3xl"
+            style={{ aspectRatio: "349 / 200", backgroundColor: "#FBCFE8" }}
+          />
 
-          <TodayPlanCard
-            subtitle="현재 진행 중"
-            certificateName="정보처리기사"
-            currentDay={2}
-            totalDay={39}
-            href="/plan"
+          {/* 하단 카드 2 — col 2, row 2 */}
+          <div
+            className="overflow-hidden rounded-3xl"
+            style={{ aspectRatio: "349 / 200", backgroundColor: "#BAE6FD" }}
           />
         </div>
-      </div>
+      </section>
 
-      {/* 아래 한 줄 전체 */}
-      <div className="col-span-2">
-        <SectionHeader title="FEATURES" />
-        
+      <div className="mt-5">
+      <DashboardCommunitySection />
       </div>
     </div>
   );

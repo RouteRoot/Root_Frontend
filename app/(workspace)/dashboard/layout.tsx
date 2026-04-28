@@ -5,5 +5,9 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <StandardLayout>{children}</StandardLayout>;
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: "#F3F3F4" }}>
+      <StandardLayout>{children}</StandardLayout>
+    </div>
+  );
 }

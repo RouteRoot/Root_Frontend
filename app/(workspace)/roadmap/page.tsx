@@ -36,7 +36,7 @@ export default function Page() {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 py-20">
         <Image
-          src="/bubu.svg"
+          src="/image 62.png"
           alt="bubu"
           width={72}
           height={72}
