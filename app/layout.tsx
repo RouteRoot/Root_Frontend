@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "BBuri",
-  description: "BBuri",
+  title: "자격증에 대한 모든것 | 뿌리",
+  description: "자격증에 대한 모든것 | 뿌리",
 };
 
 export default function RootLayout({
