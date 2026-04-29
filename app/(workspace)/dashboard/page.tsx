@@ -1,6 +1,8 @@
 import Image from "next/image";
 import ProgressCard from "@/components/dashboard/ProgressCard";
 import DashboardCommunitySection from "@/components/dashboard/DashboardCommunitySection";
+import DashboardCertificateSection from "@/components/dashboard/DashboardCertificateSection";
+import DashboardCertificateReviewSection from "@/components/dashboard/DashboardCertificateReviewSection";
 
 export default function Page() {
   return (
@@ -48,8 +50,12 @@ export default function Page() {
       </section>
 
       <div className="mt-5">
-      <DashboardCommunitySection />
+        <DashboardCommunitySection />
       </div>
+
+      <DashboardCertificateSection />
+
+      <DashboardCertificateReviewSection />
     </div>
   );
 }
