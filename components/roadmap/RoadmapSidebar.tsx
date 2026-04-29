@@ -86,7 +86,7 @@ export default function RoadmapSidebar() {
             {isLoading ? (
               <StatSkeleton />
             ) : (
-              <span className="text-[14px] font-bold text-[#000000]">
+              <span className="text-[14px] font-bold text-[#333333]">
                 {completedCount}개
               </span>
             )}

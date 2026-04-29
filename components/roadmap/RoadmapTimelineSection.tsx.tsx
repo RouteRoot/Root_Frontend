@@ -230,7 +230,7 @@ export default function RoadmapTimelineSection() {
               className="
                 inline-flex h-10 min-w-[132px] items-center justify-center gap-2
                 rounded-full bg-white px-4
-                text-[13px] font-semibold text-[#111827]
+                text-[13px] font-semibold text-[#333333]
                 transition-all duration-200
                 hover:border-[#D9E0EA] hover:bg-[#FAFBFC]
               "
@@ -261,7 +261,7 @@ export default function RoadmapTimelineSection() {
                 onClick={handleRegenerate}
                 className="
                   flex h-10 w-full items-center rounded-xl px-3
-                  text-left text-[13px] font-medium text-[#111827]
+                  text-left text-[13px] font-medium text-[#333333]
                   transition-colors duration-150 hover:bg-[#F8FAFC]
                 "
               >
@@ -273,7 +273,7 @@ export default function RoadmapTimelineSection() {
                 onClick={handleEdit}
                 className="
                   flex h-10 w-full items-center rounded-xl px-3
-                  text-left text-[13px] font-medium text-[#111827]
+                  text-left text-[13px] font-medium text-[#333333]
                   transition-colors duration-150 hover:bg-[#F8FAFC]
                 "
               >
@@ -395,7 +395,7 @@ export default function RoadmapTimelineSection() {
                     >
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <h3 className="text-[13px] font-bold leading-none tracking-[-0.03em] text-[#0F172A]">
+                          <h3 className="text-[13px] font-bold leading-none tracking-[-0.03em] text-[#333333]">
                             {phase.phaseTitle}
                           </h3>
                           {phase.phaseNumber !== null && (

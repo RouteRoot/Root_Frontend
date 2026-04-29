@@ -43,7 +43,7 @@ export default function Page() {
           className="mb-6 opacity-90"
         />
 
-        <h2 className="text-center text-[22px] font-bold tracking-[-0.04em] text-[#0B1B3B]">
+        <h2 className="text-center text-[22px] font-bold tracking-[-0.04em] text-[#333333]">
           AI가 나만의 커리어 로드맵을 설계해드려요
         </h2>
         <p className="mt-2 max-w-[400px] text-center text-[14px] leading-6 text-[#94A3B8]">
@@ -61,7 +61,7 @@ export default function Page() {
               key={title}
               className="flex flex-col gap-1.5 rounded-[14px] border border-[#E8EDF5] bg-[#FAFCFF] px-4 py-4"
             >
-              <p className="text-[13px] font-semibold text-[#0B1B3B]">{title}</p>
+              <p className="text-[13px] font-semibold text-[#333333]">{title}</p>
               <p className="whitespace-pre-line text-[12px] leading-5 text-[#94A3B8]">{desc}</p>
             </div>
           ))}

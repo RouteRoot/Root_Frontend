@@ -30,9 +30,9 @@ export const SKILL_LEVELS = [
 ] as const;
 
 export const inputClass =
-  "h-[46px] w-full rounded-[10px] border border-[#E8EDF5] bg-white px-4 text-[14px] text-[#0B1B3B] outline-none transition placeholder:text-[#C5CFDA] focus:border-[#0FA9CC]";
+  "h-[46px] w-full rounded-[10px] border border-[#E8EDF5] bg-white px-4 text-[14px] text-[#333333] outline-none transition placeholder:text-[#C5CFDA] focus:border-[#0FA9CC]";
 
 export const selectClass = `${inputClass} appearance-none pr-11`;
 
 export const labelClass =
-  "mb-2.5 text-[15px] font-semibold tracking-[-0.02em] text-[#0B1B3B]";
+  "mb-2.5 text-[15px] font-semibold tracking-[-0.02em] text-[#333333]";

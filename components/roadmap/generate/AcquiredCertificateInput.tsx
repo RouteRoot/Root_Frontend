@@ -53,7 +53,7 @@ export default function AcquiredCertificateInput({
           items.map((item) => (
             <span
               key={item}
-              className="inline-flex items-center gap-1 rounded-full bg-[#F3F6FA] px-3 py-1.5 text-[13px] font-medium text-[#0B1B3B]"
+              className="inline-flex items-center gap-1 rounded-full bg-[#F3F6FA] px-3 py-1.5 text-[13px] font-medium text-[#333333]"
             >
               {item}
               <button

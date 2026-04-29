@@ -42,7 +42,7 @@ function DailyPlanSectionSkeleton() {
   return (
     <section className="w-full">
       <div className="mb-4 flex items-center gap-4">
-        <h2 className="shrink-0 text-[19px] font-extrabold tracking-[-0.04em] text-[#0B1B3B]">
+        <h2 className="shrink-0 text-[19px] font-extrabold tracking-[-0.04em] text-[#333333]">
           오늘의 플랜
         </h2>
         <div className="h-px w-[160px] bg-[#f3f3f3]" />
@@ -105,7 +105,7 @@ export default function DailyPlanSection({
     <section className="w-full">
       <div className="mb-4 flex items-center justify-between gap-4">
         <div className="flex min-w-0 flex-1 items-center gap-4">
-          <h2 className="shrink-0 text-[19px] font-semibold tracking-[-0.04em] text-[#0B1B3B] mb-4">
+          <h2 className="shrink-0 text-[19px] font-semibold tracking-[-0.04em] text-[#333333] mb-4">
             오늘의 플랜
           </h2>
         </div>
@@ -117,7 +117,7 @@ export default function DailyPlanSection({
             시험일까지 {dday} 남았어요
           </p>
 
-          <p className="mt-1 text-[14px] font-bold text-[#0B1B3B]">
+          <p className="mt-1 text-[14px] font-bold text-[#333333]">
             Week {plan.week} / Day {plan.day} 상세 계획
           </p>
         </div>
@@ -127,14 +127,14 @@ export default function DailyPlanSection({
             <div className="flex flex-col gap-3 text-[12px]">
               <div className="rounded-[10px] border border-[#EEF2F7] bg-[#FBFCFE] px-3 py-3">
                 <p className="text-[11px] text-[#98A2B3]">날짜</p>
-                <p className="mt-1 font-semibold text-[#0F172A]">
+                <p className="mt-1 font-semibold text-[#333333]">
                   {plan.date}
                 </p>
               </div>
 
               <div className="rounded-[10px] border border-[#EEF2F7] bg-[#FBFCFE] px-3 py-3">
                 <p className="text-[11px] text-[#98A2B3]">예상 시간</p>
-                <p className="mt-1 font-semibold text-[#0F172A]">
+                <p className="mt-1 font-semibold text-[#333333]">
                   {plan.hours}시간
                 </p>
               </div>
@@ -157,7 +157,7 @@ export default function DailyPlanSection({
                   className={`text-[14px] font-bold ${
                     plan.isCompleted
                       ? "text-[#94A3B8]"
-                      : "text-[#0F172A]"
+                      : "text-[#333333]"
                   }`}
                 >
                   {plan.title}

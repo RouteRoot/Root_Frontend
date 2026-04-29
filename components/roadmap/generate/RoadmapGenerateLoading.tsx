@@ -11,7 +11,7 @@ export default function RoadmapGenerateLoading() {
         ))}
       </div>
       <div className="text-center">
-        <p className="text-[16px] font-semibold text-[#0B1B3B]">
+        <p className="text-[16px] font-semibold text-[#333333]">
           AI가 맞춤 로드맵을 만들고 있어요
         </p>
         <p className="mt-1 text-[13px] text-[#94A3B8]">

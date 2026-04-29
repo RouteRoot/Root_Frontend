@@ -43,7 +43,7 @@ export default function RoadmapGeneratePage() {
         <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1fr_344px] lg:gap-12">
           <section>
             <div className="mb-5">
-              <h1 className="text-[24px] font-bold tracking-[-0.04em] text-[#0B1B3B]">
+              <h1 className="text-[24px] font-bold tracking-[-0.04em] text-[#333333]">
                 목표 직무까지 필요한 자격증 로드맵을 만들어요
               </h1>
               <p className="mt-1.5 text-[14px] leading-6 text-[#94A3B8]">
@@ -171,7 +171,7 @@ export default function RoadmapGeneratePage() {
                 value={form.personalStory}
                 onChange={handleChange}
                 placeholder="예: 비전공자라 어떤 자격증부터 시작해야 할지 모르겠어요."
-                className="min-h-[96px] w-full resize-none rounded-[10px] border border-[#E8EDF5] bg-white px-4 py-3 text-[14px] leading-6 text-[#0B1B3B] outline-none transition placeholder:text-[#C5CFDA] focus:border-[#0FA9CC]"
+                className="min-h-[96px] w-full resize-none rounded-[10px] border border-[#E8EDF5] bg-white px-4 py-3 text-[14px] leading-6 text-[#333333] outline-none transition placeholder:text-[#C5CFDA] focus:border-[#0FA9CC]"
               />
             </section>
 

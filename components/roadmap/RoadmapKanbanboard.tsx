@@ -122,12 +122,12 @@ function TaskCard({
             {/* <span className="text-[11px] font-bold tracking-[0.02em] text-[#A0AEC0]">
               Task
             </span> */}
-            <h4 className="mt-1 text-[15px] font-bold leading-6 tracking-[-0.02em] text-[#0F172A]">
+            <h4 className="mt-1 text-[15px] font-bold leading-6 tracking-[-0.02em] text-[#333333]">
             {task.taskName}
           </h4>
           </div>
 
-          {/* <h4 className="mt-2 text-[15px] font-bold leading-6 tracking-[-0.02em] text-[#0F172A]">
+          {/* <h4 className="mt-2 text-[15px] font-bold leading-6 tracking-[-0.02em] text-[#333333]">
             {task.taskName}
           </h4> */}
         </div>
@@ -163,7 +163,7 @@ function PhaseColumn({
     >
       <div className="border-b border-[#EEF2F7] px-5 py-4">
         <div className="flex items-center gap-2">
-          <h3 className="text-[17px] font-bold tracking-[-0.02em] text-[#0F172A]">
+          <h3 className="text-[17px] font-bold tracking-[-0.02em] text-[#333333]">
             {phase.phaseTitle}
           </h3>
 

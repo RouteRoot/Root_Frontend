@@ -117,7 +117,7 @@ export default function PlanTabs({
             className="
               inline-flex h-10 min-w-[118px] items-center justify-center gap-2
               rounded-[10px] bg-white px-4
-              text-[13px] font-semibold text-[#111827]
+              text-[13px] font-semibold text-[#333333]
               transition-all duration-200
               hover:border-[#D9E0EA] hover:bg-[#FAFBFC]
             "
@@ -148,7 +148,7 @@ export default function PlanTabs({
               onClick={handleRegeneratePlan}
               className="
                 flex h-10 w-full items-center rounded-[10px] px-3
-                text-left text-[13px] font-medium text-[#111827]
+                text-left text-[13px] font-medium text-[#333333]
                 transition-colors duration-150 hover:bg-[#F8FAFC]
               "
             >
@@ -160,7 +160,7 @@ export default function PlanTabs({
               onClick={handleCompleteTask}
               className="
                 flex h-10 w-full items-center rounded-[10px] px-3
-                text-left text-[13px] font-medium text-[#111827]
+                text-left text-[13px] font-medium text-[#333333]
                 transition-colors duration-150 hover:bg-[#F8FAFC]
               "
             >

@@ -98,7 +98,7 @@ export default function PlanGeneratePage() {
             ))}
           </div>
           <div className="text-center">
-            <p className="text-[16px] font-semibold text-[#0B1B3B]">
+            <p className="text-[16px] font-semibold text-[#333333]">
               AI가 맞춤 플랜을 만들고 있어요
             </p>
             <p className="mt-1 text-[13px] text-[#94A3B8]">
@@ -120,7 +120,7 @@ export default function PlanGeneratePage() {
           {/* 왼쪽: 타이틀 + 요일별 학습 시간 */}
           <section>
             <div className="mb-6">
-              <h1 className="text-[24px] font-bold tracking-[-0.04em] text-[#0B1B3B]">
+              <h1 className="text-[24px] font-bold tracking-[-0.04em] text-[#333333]">
                 {certificationName || "플랜 생성"}
               </h1>
               <p className="mt-1.5 text-[14px] leading-6 text-[#94A3B8]">
@@ -131,14 +131,14 @@ export default function PlanGeneratePage() {
 
             {/* 시험일 */}
             <section className="mb-7">
-              <h2 className="mb-3 text-[15px] font-semibold tracking-[-0.02em] text-[#0B1B3B]">
+              <h2 className="mb-3 text-[15px] font-semibold tracking-[-0.02em] text-[#333333]">
                 시험일
               </h2>
               <input
                 type="date"
                 value={examDate}
                 onChange={(e) => setExamDate(e.target.value)}
-                className="h-[46px] w-full rounded-[10px] border border-[#E8EDF5] bg-white px-4 text-[14px] text-[#0B1B3B] outline-none transition focus:border-[#0075c3]"
+                className="h-[46px] w-full rounded-[10px] border border-[#E8EDF5] bg-white px-4 text-[14px] text-[#333333] outline-none transition focus:border-[#0075c3]"
               />
               {dday && (
                 <p
@@ -152,12 +152,12 @@ export default function PlanGeneratePage() {
             </section>
 
             <div className="mb-1 flex items-baseline justify-between">
-              <h2 className="text-[15px] font-semibold tracking-[-0.02em] text-[#0B1B3B]">
+              <h2 className="text-[15px] font-semibold tracking-[-0.02em] text-[#333333]">
                 요일별 학습 시간
               </h2>
               <span className="text-[13px] text-[#7B8798]">
                 주 총{" "}
-                <strong className="font-semibold text-[#0B1B3B]">
+                <strong className="font-semibold text-[#333333]">
                   {totalWeeklyHours}시간
                 </strong>
               </span>
@@ -199,7 +199,7 @@ export default function PlanGeneratePage() {
                         setDayHours(key, Math.floor(Number(e.target.value)))
                       }
                       className={`w-10 bg-transparent text-center text-[22px] font-bold leading-none outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${
-                        isRest ? "text-[#D6DDE6]" : "text-[#0B1B3B]"
+                        isRest ? "text-[#D6DDE6]" : "text-[#333333]"
                       }`}
                     />
 
@@ -232,7 +232,7 @@ export default function PlanGeneratePage() {
           <div className="flex flex-col gap-6">
             {/* 현재 수준 */}
             <section>
-              <h2 className="mb-3 text-[15px] font-semibold tracking-[-0.02em] text-[#0B1B3B]">
+              <h2 className="mb-3 text-[15px] font-semibold tracking-[-0.02em] text-[#333333]">
                 현재 수준
               </h2>
               <div className="grid grid-cols-3 gap-2">
@@ -266,7 +266,7 @@ export default function PlanGeneratePage() {
 
             {/* 학습 상황 */}
             <section>
-              <h2 className="mb-1 text-[15px] font-semibold tracking-[-0.02em] text-[#0B1B3B]">
+              <h2 className="mb-1 text-[15px] font-semibold tracking-[-0.02em] text-[#333333]">
                 학습 상황{" "}
                 <span className="text-[13px] font-normal text-[#94A3B8]">
                   (선택)
@@ -279,7 +279,7 @@ export default function PlanGeneratePage() {
                 value={personalStory}
                 onChange={(e) => setPersonalStory(e.target.value)}
                 placeholder="예: 평일에는 시간이 부족하고 주말에 집중해서 공부하고 싶어요."
-                className="min-h-[100px] w-full resize-none rounded-[10px] border border-[#E8EDF5] bg-white px-4 py-3 text-[14px] leading-6 text-[#0B1B3B] outline-none transition placeholder:text-[#C5CFDA] focus:border-[#0075c3]"
+                className="min-h-[100px] w-full resize-none rounded-[10px] border border-[#E8EDF5] bg-white px-4 py-3 text-[14px] leading-6 text-[#333333] outline-none transition placeholder:text-[#C5CFDA] focus:border-[#0075c3]"
               />
             </section>
 

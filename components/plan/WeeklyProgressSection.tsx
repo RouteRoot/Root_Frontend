@@ -89,7 +89,7 @@ export default function WeeklyProgressSection({
   return (
     <section className="mt-16 w-full">
       <div className="mb-4 flex items-center gap-5">
-        <h2 className="shrink-0 text-[19px] font-semibold leading-none tracking-[-0.04em] text-[#0B1B3B] mb-4">
+        <h2 className="shrink-0 text-[19px] font-semibold leading-none tracking-[-0.04em] text-[#333333] mb-4">
           주간 플랜
         </h2>
       </div>
@@ -119,7 +119,7 @@ export default function WeeklyProgressSection({
             <p className="text-[11px] font-semibold text-[#A0AEC0]">
               현재 주차 학습 흐름
             </p>
-            <p className="mt-2 text-[15px] font-bold text-[#0B1B3B]">
+            <p className="mt-2 text-[15px] font-bold text-[#333333]">
               {selectedWeek}주차 진행 현황
             </p>
             <p className="mt-1 text-[13px] text-[#94A3B8]">
@@ -132,7 +132,7 @@ export default function WeeklyProgressSection({
               type="button"
               onClick={handlePrevWeek}
               disabled={selectedWeek === 1}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#E7EBF2] bg-white text-[#111827] transition hover:bg-[#F8FAFC] disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#E7EBF2] bg-white text-[#333333] transition hover:bg-[#F8FAFC] disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -141,7 +141,7 @@ export default function WeeklyProgressSection({
               <select
                 value={selectedWeek}
                 onChange={(e) => onChangeWeek(Number(e.target.value))}
-                className="h-10 appearance-none rounded-full border border-[#E7EBF2] bg-white pl-4 pr-10 text-[13px] font-semibold text-[#111827] outline-none transition focus:border-[#4876EF]"
+                className="h-10 appearance-none rounded-full border border-[#E7EBF2] bg-white pl-4 pr-10 text-[13px] font-semibold text-[#333333] outline-none transition focus:border-[#4876EF]"
               >
                 {totalWeeks.map((week) => (
                   <option key={week} value={week}>
@@ -156,7 +156,7 @@ export default function WeeklyProgressSection({
               type="button"
               onClick={handleNextWeek}
               disabled={selectedWeek === totalWeeks.length}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#E7EBF2] bg-white text-[#111827] transition hover:bg-[#F8FAFC] disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#E7EBF2] bg-white text-[#333333] transition hover:bg-[#F8FAFC] disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -200,7 +200,7 @@ export default function WeeklyProgressSection({
                 {/* Day */}
                 <div className="flex min-h-[116px] items-center border-r border-[#EEF2F7] bg-[#FBFCFE] px-6 py-5">
                   <div>
-                    <p className="text-[14px] font-bold text-[#0F172A]">
+                    <p className="text-[14px] font-bold text-[#333333]">
                       Day {task.day}
                     </p>
                     <p className="mt-1 text-[12px] text-[#94A3B8]">
@@ -220,7 +220,7 @@ export default function WeeklyProgressSection({
                       />
 
                       <div className="min-w-0">
-                        <p className={`text-[15px] font-bold leading-[1.45] break-keep ${task.status === "DONE" ? "text-[#C9D2E3]" : "text-black/70"}`}>
+                        <p className={`text-[15px] font-bold leading-[1.45] break-keep ${task.status === "DONE" ? "text-[#C9D2E3]" : "text-[#333333]"}`}>
                           {task.title}
                         </p>
 

@@ -392,7 +392,7 @@ export default function PlannerPage() {
 
         {!tabsLoading && !hasTabs && (
           <div className="rounded-[28px] border border-[#E8EDF5] bg-white px-8 py-12 text-center">
-            <p className="text-[18px] font-bold text-[#0B1B3B]">
+            <p className="text-[18px] font-bold text-[#333333]">
               아직 생성된 플랜이 없습니다.
             </p>
             <p className="mt-2 text-[14px] text-[#94A3B8]">
