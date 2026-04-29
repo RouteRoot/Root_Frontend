@@ -64,7 +64,7 @@ function getStatusStyle(status: TaskStatus) {
     case "NOT_STARTED":
       return {
         chip: "border border-[#D7DCE5] bg-white text-[#7C8798]",
-        dot: "bg-[#C5CCD8]",
+        dot: "border border-[#D7DCE5] bg-white",
       };
     case "IN_PROGRESS":
       return {
@@ -79,7 +79,7 @@ function getStatusStyle(status: TaskStatus) {
     default:
       return {
         chip: "border border-[#D7DCE5] bg-white text-[#7C8798]",
-        dot: "bg-[#C5CCD8]",
+        dot: "border border-[#D7DCE5] bg-white",
       };
   }
 }

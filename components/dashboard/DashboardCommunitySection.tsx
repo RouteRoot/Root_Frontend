@@ -68,7 +68,7 @@ const MOCK_POSTS: CommunityPost[] = [
 function PostCard({ post }: { post: CommunityPost }) {
   return (
     <Link href={`/community/${post.id}`} className="group block h-full">
-      <article className="flex h-full flex-col rounded-2xl border border-[#EBEBEB] bg-white px-5 py-5 transition-colors duration-150 hover:border-[#D0D7E3]">
+      <article className="flex h-full flex-col rounded-[9px] border border-[#EBEBEB] bg-white px-5 py-5 transition-colors duration-150 hover:border-[#D0D7E3]">
 
         {/* 본문 영역 */}
         <div className="flex-1">

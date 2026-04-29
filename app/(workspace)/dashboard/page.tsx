@@ -12,15 +12,18 @@ export default function Page() {
         </p>
 
         {/* 3-column grid */}
-        <div className="grid grid-cols-3 grid-rows-2 gap-4 w-full">
+        <div
+          className="grid w-full grid-cols-3 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] gap-4"
+          style={{ aspectRatio: "1079 / 416" }}
+        >
           {/* 메인 카드 — col 1-2, row 1 */}
-          <div className="col-span-2 overflow-hidden rounded-3xl">
+          <div className="col-span-2 h-full overflow-hidden rounded-3xl">
             <Image
               src="/Group 22.svg"
               alt="오늘의 추천 메인"
               width={698}
               height={200}
-              className="block h-auto w-full"
+              className="block h-full w-full object-cover"
               priority
             />
           </div>
@@ -32,14 +35,14 @@ export default function Page() {
 
           {/* 하단 카드 1 — col 1, row 2 */}
           <div
-            className="overflow-hidden rounded-3xl"
-            style={{ aspectRatio: "349 / 200", backgroundColor: "#FBCFE8" }}
+            className="h-full overflow-hidden rounded-3xl"
+            style={{ backgroundColor: "#FBCFE8" }}
           />
 
           {/* 하단 카드 2 — col 2, row 2 */}
           <div
-            className="overflow-hidden rounded-3xl"
-            style={{ aspectRatio: "349 / 200", backgroundColor: "#BAE6FD" }}
+            className="h-full overflow-hidden rounded-3xl"
+            style={{ backgroundColor: "#BAE6FD" }}
           />
         </div>
       </section>
