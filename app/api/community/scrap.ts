@@ -1,12 +1,15 @@
 import {axiosInstance} from "../axios/axiosInstance";
+import type { Post } from "./types";
 
-// 스크랩 등록
-export const scrapPost = async (userId: number, postId: number): Promise<string> => {
+// 스크랩 토글
+export const toggleScrap = async (postId: number): Promise<string> => {
   const response = await axiosInstance.post("/scraps", null, {
-    params: { userId, postId },
+    params: { postId },
   });
   return response.data;
 };
+
+export const scrapPost = toggleScrap;
 
 // 스크랩 수 조회
 export const getScrapCount = async (postId: number): Promise<number> => {
@@ -17,17 +20,15 @@ export const getScrapCount = async (postId: number): Promise<number> => {
 };
 
 // 스크랩 여부 확인
-export const checkScrapped = async (userId: number, postId: number): Promise<boolean> => {
+export const checkScrapped = async (postId: number): Promise<boolean> => {
   const response = await axiosInstance.get("/scraps/check", {
-    params: { userId, postId },
+    params: { postId },
   });
   return response.data;
 };
 
 // 내 스크랩 목록 조회
-export const getMyScraps = async (userId: number): Promise<number[]> => {
-  const response = await axiosInstance.get("/scraps", {
-    params: { userId },
-  });
+export const getMyScraps = async (): Promise<Post[]> => {
+  const response = await axiosInstance.get("/scraps");
   return response.data;
 };

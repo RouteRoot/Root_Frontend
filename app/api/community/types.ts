@@ -2,6 +2,8 @@ export type BoardType = "FREE" | "STUDY";
 
 export type StudyStatus = "RECRUITING" | "CLOSED" | null;
 
+export type PostSort = "latest" | "popular" | string;
+
 export interface Post {
   postId: number;
   author: string;
@@ -12,12 +14,13 @@ export interface Post {
   studyStatus: StudyStatus;
   createdAt: string;
   viewCount: number;
+  likeCount: number;
+  commentCount: number;
 }
 
 export interface CreatePostRequest {
   title: string;
   content: string;
-  userId: number;
   boardType: BoardType;
   category: string;
   studyStatus: StudyStatus;
@@ -26,10 +29,20 @@ export interface CreatePostRequest {
 export interface UpdatePostRequest {
   title: string;
   content: string;
-  userId: number;
   boardType: BoardType;
   category: string;
   studyStatus: StudyStatus;
+}
+
+export interface PostPage {
+  content: Post[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
 }
 
 export interface Comment {
@@ -42,12 +55,10 @@ export interface Comment {
 
 export interface CreateCommentRequest {
   content: string;
-  userId: number;
   postId: number;
 }
 
 export interface UpdateCommentRequest {
   content: string;
-  userId: number;
   postId: number;
 }
