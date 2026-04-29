@@ -124,13 +124,13 @@ export default function GnbSearchBar({ compact = false }: GnbSearchBarProps) {
                 <span className="mx-4 h-7 w-px flex-none bg-[#e5e8eb]" />
                 <span className="relative h-6 w-5 flex-none overflow-hidden">
                   {previousTrend && previousTrendIndex !== null && (
-                    <span className="gnb-trend-exit absolute inset-x-0 top-0 block h-full text-center text-[15px] font-extrabold leading-6 text-[#0FA9CC]">
+                    <span className="gnb-trend-exit absolute inset-x-0 top-0 block h-full text-center text-[15px] font-extrabold leading-6 text-[#0075c3]">
                       {previousTrendIndex + 1}
                     </span>
                   )}
                   <span
                     key={activeTrendIndex}
-                    className={`absolute inset-x-0 top-0 block h-full text-center text-[15px] font-extrabold leading-6 text-[#0FA9CC] ${
+                    className={`absolute inset-x-0 top-0 block h-full text-center text-[15px] font-extrabold leading-6 text-[#0075c3] ${
                       previousTrend ? "gnb-trend-enter" : ""
                     }`}
                   >
@@ -179,7 +179,7 @@ export default function GnbSearchBar({ compact = false }: GnbSearchBarProps) {
         </div>
 
         {isOpen && (
-          <div className="absolute left-0 right-0 top-[50px] z-[70] rounded-b-[8px] border border-t-0 border-[#0FA9CC] bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
+          <div className="absolute left-0 right-0 top-[50px] z-[70] rounded-b-[8px] border border-t-0 border-[#0075c3] bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
             <div className="h-px bg-[#dfdfdf]" />
             <div className="p-7">
               <section>
@@ -216,11 +216,11 @@ export default function GnbSearchBar({ compact = false }: GnbSearchBarProps) {
                       key={certificate.name}
                       href={`/certificate/search?keyword=${encodeURIComponent(certificate.name)}`}
                       onClick={() => setIsOpen(false)}
-                      className="flex min-w-0 items-center gap-4 text-[15px] transition-colors hover:text-[#0FA9CC]"
+                      className="flex min-w-0 items-center gap-4 text-[15px] transition-colors hover:text-[#0075c3]"
                     >
                       <span
                         className={`w-5 flex-none text-center font-bold ${
-                          index < 3 ? "text-[#0FA9CC]" : "text-[#c0c6cf]"
+                          index < 3 ? "text-[#0075c3]" : "text-[#c0c6cf]"
                         }`}
                       >
                         {index + 1}
