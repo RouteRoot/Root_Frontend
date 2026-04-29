@@ -13,7 +13,7 @@ export default function Gnb() {
   const router = useRouter();
   const [userName, setUserName] = useState<string>("");
   const [scrolled, setScrolled] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // ✅ 추가
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
 
   useEffect(() => {
     async function fetchMe() {
@@ -28,11 +28,11 @@ export default function Gnb() {
       try {
         const data = await getMe();
         setUserName(data.name);
-        setIsLoggedIn(true); // ✅ 로그인 상태
+        setIsLoggedIn(true); 
       } catch {
         localStorage.removeItem("accessToken");
         setUserName("");
-        setIsLoggedIn(false); // ❌ 비로그인 상태
+        setIsLoggedIn(false); 
       }
     }
     fetchMe();
@@ -68,7 +68,7 @@ export default function Gnb() {
             href="/dashboard"
             className="absolute left-4 flex items-center text-[28px] font-bold leading-none tracking-[-0.04em] text-[#4876EF]"
           >
-            BBuri
+            bburi
           </Link>
           <GnbSearchBar compact />
         </div>
@@ -80,12 +80,11 @@ export default function Gnb() {
                 href="/dashboard"
                 className="flex h-full w-[158px] items-center px-4 text-[28px] font-bold leading-none tracking-[-0.04em] text-[#4876EF]"
               >
-                BBuri
+                bburi
               </Link>
               <GnbNav />
             </div>
 
-            {/* ✅ 여기만 분기 */}
             <div className="flex h-full items-center">
               {isLoggedIn ? (
                 <>

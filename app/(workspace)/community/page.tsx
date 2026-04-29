@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Eye, MessageCircle, Plus, Search, ThumbsUp } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getMyPosts, getPopularPosts, getPosts } from "@/app/api/community/post";
 import { getMyLikes } from "@/app/api/community/like";
 import type { BoardType, Post } from "@/app/api/community/types";
@@ -41,6 +41,7 @@ const CATEGORY_TABS: CategoryTab[] = [
 ];
 
 const POST_FILTERS: PostFilter[] = ["모두보기", "뿌리 PICK", "일반 게시글"];
+const POSTS_PAGE_SIZE = 7;
 
 function isCategoryTab(category: string): category is Exclude<CategoryTab, "전체"> {
   return CATEGORY_TABS.includes(category as CategoryTab) && category !== "전체";
@@ -280,7 +281,11 @@ export default function Page() {
   const [myPostCount, setMyPostCount] = useState(0);
   const [likedPostCount, setLikedPostCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [page, setPage] = useState(0);
+  const [hasMorePosts, setHasMorePosts] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -291,7 +296,7 @@ export default function Page() {
         setErrorMessage("");
 
         const [postPage, popular, myPosts, myLikes] = await Promise.all([
-          getPosts({ sort: "latest", page: 0, size: 20 }),
+          getPosts({ sort: "latest", page: 0, size: POSTS_PAGE_SIZE }),
           getPopularPosts(6),
           getMyPosts().catch(() => []),
           getMyLikes().catch(() => []),
@@ -300,12 +305,16 @@ export default function Page() {
         if (!mounted) return;
 
         setAllPosts(postPage.content.map(toCommunityPost));
+        setPage(0);
+        setHasMorePosts(!postPage.last);
         setPopularPosts(popular.map(toCommunityPost));
         setMyPostCount(myPosts.length);
         setLikedPostCount(myLikes.length);
       } catch {
         if (!mounted) return;
         setAllPosts([]);
+        setPage(0);
+        setHasMorePosts(false);
         setPopularPosts([]);
         setMyPostCount(0);
         setLikedPostCount(0);
@@ -321,6 +330,58 @@ export default function Page() {
       mounted = false;
     };
   }, []);
+
+  const loadMorePosts = useCallback(async () => {
+    if (isLoading || isLoadingMore || !hasMorePosts) return;
+
+    try {
+      setIsLoadingMore(true);
+
+      const nextPage = page + 1;
+      const postPage = await getPosts({
+        sort: "latest",
+        page: nextPage,
+        size: POSTS_PAGE_SIZE,
+      });
+
+      setAllPosts((prev) => {
+        const seen = new Set(prev.map((post) => post.id));
+        const nextPosts = postPage.content
+          .map(toCommunityPost)
+          .filter((post) => !seen.has(post.id));
+
+        return [...prev, ...nextPosts];
+      });
+      setPage(nextPage);
+      setHasMorePosts(!postPage.last);
+    } catch {
+      setHasMorePosts(false);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [hasMorePosts, isLoading, isLoadingMore, page]);
+
+  useEffect(() => {
+    const target = loadMoreRef.current;
+    if (!target || isLoading || isLoadingMore || !hasMorePosts || errorMessage) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          void loadMorePosts();
+        }
+      },
+      { rootMargin: "240px 0px" }
+    );
+
+    observer.observe(target);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [errorMessage, hasMorePosts, isLoading, isLoadingMore, loadMorePosts]);
 
   const posts = useMemo(() => {
     return allPosts.filter((post) => {
@@ -442,6 +503,18 @@ export default function Page() {
                 isPopular={popularPostIds.has(post.id)}
               />
             ))
+          )}
+
+          {!isLoading && hasMorePosts && (
+            <div ref={loadMoreRef} className="py-6">
+              {isLoadingMore && (
+                <div className="space-y-3">
+                  <div className="h-4 w-2/3 animate-pulse rounded bg-[#EEF2F7]" />
+                  <div className="h-4 w-full animate-pulse rounded bg-[#F3F6FA]" />
+                  <div className="h-4 w-44 animate-pulse rounded bg-[#F3F6FA]" />
+                </div>
+              )}
+            </div>
           )}
 
           {!isLoading && errorMessage && (
