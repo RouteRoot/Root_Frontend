@@ -1,12 +1,14 @@
 import {axiosInstance} from "../axios/axiosInstance";
 
-// 좋아요 누르기
-export const likePost = async (userId: number, postId: number): Promise<string> => {
+// 좋아요 토글
+export const toggleLike = async (postId: number): Promise<string> => {
   const response = await axiosInstance.post("/likes", null, {
-    params: { userId, postId },
+    params: { postId },
   });
   return response.data;
 };
+
+export const likePost = toggleLike;
 
 // 좋아요 수 조회
 export const getLikeCount = async (postId: number): Promise<number> => {
@@ -17,9 +19,15 @@ export const getLikeCount = async (postId: number): Promise<number> => {
 };
 
 // 좋아요 여부 확인
-export const checkLiked = async (userId: number, postId: number): Promise<boolean> => {
+export const checkLiked = async (postId: number): Promise<boolean> => {
   const response = await axiosInstance.get("/likes/check", {
-    params: { userId, postId },
+    params: { postId },
   });
+  return response.data;
+};
+
+// 내가 좋아요한 게시글 ID 목록 조회
+export const getMyLikes = async (): Promise<number[]> => {
+  const response = await axiosInstance.get("/likes");
   return response.data;
 };

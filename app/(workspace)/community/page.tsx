@@ -4,7 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Eye, MessageCircle, Plus, Search, ThumbsUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { getPopularPosts, getPosts } from "@/app/api/community/post";
+import { getMyPosts, getPopularPosts, getPosts } from "@/app/api/community/post";
+import { getMyLikes } from "@/app/api/community/like";
 import type { BoardType, Post } from "@/app/api/community/types";
 
 type CategoryTab =
@@ -58,10 +59,11 @@ function getCreatedAgo(createdAt: string) {
   const diffHours = Math.floor(diffMinutes / 60);
   if (diffHours < 24) return `${diffHours}시간 전`;
 
-  const diffDays = Math.floor(diffHours / 24);
-  if (diffDays < 7) return `${diffDays}일 전`;
-
-  return createdAt.slice(0, 10).replace(/-/g, ".");
+  return new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(date);
 }
 
 function getFirstImageUrl(content: string) {
@@ -84,8 +86,11 @@ function stripImagesFromContent(content: string) {
 
 function toCommunityPost(post: Post): CommunityPost {
   const postWithImage = post as Post & { imageUrl?: string };
+  const isAdminPick = post.category === "뿌리 PICK";
   const category =
-    post.boardType === "STUDY"
+    isAdminPick
+      ? "정보공유"
+      : post.boardType === "STUDY"
       ? "스터디 모집"
       : isCategoryTab(post.category)
         ? post.category
@@ -96,7 +101,7 @@ function toCommunityPost(post: Post): CommunityPost {
     id: post.postId,
     boardType: post.boardType,
     category,
-    isAdminPick: false,
+    isAdminPick,
     title: post.title,
     content: stripImagesFromContent(post.content),
     likeCount: post.likeCount,
@@ -136,48 +141,51 @@ function StatRow({
 
 function PostListItem({ post }: { post: CommunityPost }) {
   return (
-    <Link href={`/community/${post.id}`} className="block border-b border-[#E5E8EB] py-7">
-      <article className="group flex gap-5">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5">
-            <span className="inline-flex rounded-[4px] bg-[#F5F7FA] px-2 py-1 text-[12px] font-medium text-[#7B8798]">
-              {post.category}
-            </span>
-            {post.isAdminPick && (
-              <span className="inline-flex rounded-[4px] bg-[#EEF4FF] px-2 py-1 text-[12px] font-medium text-[#4876EF]">
-                뿌리 PICK
+    <Link href={`/community/${post.id}`} className="block border-b border-[#E5E8EB] pb-4 pt-7">
+      <article className="group flex flex-col gap-3">
+        <div className="flex gap-5">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
+              <span className="inline-flex rounded-[4px] bg-[#F5F7FA] px-2 py-1 text-[12px] font-medium text-[#7B8798]">
+                {post.category}
               </span>
-            )}
+              {post.isAdminPick && (
+                <span className="inline-flex items-center rounded-[4px] bg-[#EEF4FF] px-2 py-1 text-[11px] font-semibold leading-none text-[#4876EF]">
+                  <span className="relative -top-px">@</span>뿌리 PICK
+                </span>
+              )}
+            </div>
+            <h2 className="mt-3 line-clamp-1 text-[17px] font-medium leading-[1.45] tracking-tight text-[#333333] group-hover:text-[#4876EF]">
+              {post.title}
+            </h2>
+            <p className="mt-1 line-clamp-3 whitespace-pre-wrap text-[15px] leading-[1.6] text-[#575757]">
+              {post.content}
+            </p>
           </div>
-          <h2 className="mt-3 line-clamp-1 text-[17px] font-medium leading-[1.45] tracking-tight text-[#333333] group-hover:text-[#4876EF]">
-            {post.title}
-          </h2>
-          <p className="mt-1 line-clamp-2 text-[15px] leading-[1.6] text-[#575757]">
-            {post.content}
-          </p>
-          <div className="mt-5 flex items-center justify-between gap-4">
-            <StatRow
-              likeCount={post.likeCount}
-              commentCount={post.commentCount}
-              viewCount={post.viewCount}
-            />
-            <span className="shrink-0 text-[13px] text-[#9AA3B2]">
-              {post.createdAgo}
-            </span>
-          </div>
+
+          {post.imageUrl && (
+            <div className="relative mt-1 h-[106px] w-[106px] shrink-0 overflow-hidden rounded-[8px] bg-[#F3F6FA]">
+              <Image
+                src={post.imageUrl}
+                alt=""
+                fill
+                sizes="106px"
+                className="object-cover"
+              />
+            </div>
+          )}
         </div>
 
-        {post.imageUrl && (
-          <div className="relative mt-1 h-[106px] w-[106px] shrink-0 overflow-hidden rounded-[8px] bg-[#F3F6FA]">
-            <Image
-              src={post.imageUrl}
-              alt=""
-              fill
-              sizes="106px"
-              className="object-cover"
-            />
-          </div>
-        )}
+        <div className="flex items-center justify-between gap-4">
+          <StatRow
+            likeCount={post.likeCount}
+            commentCount={post.commentCount}
+            viewCount={post.viewCount}
+          />
+          <span className="shrink-0 text-[13px] text-[#9AA3B2]">
+            {post.createdAgo}
+          </span>
+        </div>
       </article>
     </Link>
   );
@@ -193,9 +201,14 @@ function PopularCard({
       href={`/community/${post.id}`}
       className="block rounded-[8px] bg-[#F8F9FA] px-5 py-5 transition-colors hover:bg-[#F3F6FA]"
     >
-      <span className="text-[12px] font-semibold text-[#4876EF]">인기</span>
-      <p className="mt-3 line-clamp-2 min-h-12 text-[15px] font-normal leading-[1.55] text-[#333333]">
+      <span className="inline-flex rounded-[4px] bg-[#EEF4FF] px-2 py-1 text-[11px] font-semibold leading-none text-[#4876EF]">
+        인기
+      </span>
+      <p className="mt-3 line-clamp-2 text-[15px] font-medium leading-[1.55] text-[#333333]">
         {post.title}
+      </p>
+      <p className="mt-1 line-clamp-2 text-[13px] leading-[1.55] text-[#667085]">
+        {post.content}
       </p>
       <div className="mt-5 flex items-center justify-between gap-4">
         <StatRow
@@ -208,6 +221,44 @@ function PopularCard({
   );
 }
 
+function MyActivityCard({
+  myPostCount,
+  likedPostCount,
+  isLoading,
+}: {
+  myPostCount: number;
+  likedPostCount: number;
+  isLoading: boolean;
+}) {
+  return (
+    <section className="px-1 py-1">
+      <div className="flex items-center justify-center text-[14px] leading-none">
+        <Link
+          href="/community/my-posts"
+          className="font-medium text-[#575757]"
+        >
+          내가 쓴 글{" "}
+          <span className="font-semibold text-[#4876EF]">
+            {isLoading ? "-" : `${myPostCount}개`}
+          </span>
+        </Link>
+
+        <span className="mx-3 h-3 w-px bg-[#DDE2EA]" />
+
+        <Link
+          href="/community/liked"
+          className="font-medium text-[#575757]"
+        >
+          좋아요한 글{" "}
+          <span className="font-semibold text-[#4876EF]">
+            {isLoading ? "-" : `${likedPostCount}개`}
+          </span>
+        </Link>
+      </div>
+    </section>
+  );
+}
+
 export default function Page() {
   const [activeTab, setActiveTab] = useState<CategoryTab>("전체");
   const [activePostFilter, setActivePostFilter] =
@@ -215,6 +266,8 @@ export default function Page() {
   const [query, setQuery] = useState("");
   const [allPosts, setAllPosts] = useState<CommunityPost[]>([]);
   const [popularPosts, setPopularPosts] = useState<CommunityPost[]>([]);
+  const [myPostCount, setMyPostCount] = useState(0);
+  const [likedPostCount, setLikedPostCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -226,19 +279,25 @@ export default function Page() {
         setIsLoading(true);
         setErrorMessage("");
 
-        const [postPage, popular] = await Promise.all([
+        const [postPage, popular, myPosts, myLikes] = await Promise.all([
           getPosts({ sort: "latest", page: 0, size: 20 }),
           getPopularPosts(6),
+          getMyPosts().catch(() => []),
+          getMyLikes().catch(() => []),
         ]);
 
         if (!mounted) return;
 
         setAllPosts(postPage.content.map(toCommunityPost));
         setPopularPosts(popular.map(toCommunityPost));
+        setMyPostCount(myPosts.length);
+        setLikedPostCount(myLikes.length);
       } catch {
         if (!mounted) return;
         setAllPosts([]);
         setPopularPosts([]);
+        setMyPostCount(0);
+        setLikedPostCount(0);
         setErrorMessage("커뮤니티 게시글을 불러오지 못했어요.");
       } finally {
         if (mounted) setIsLoading(false);
@@ -376,7 +435,15 @@ export default function Page() {
           )}
         </section>
 
-        <aside className="space-y-3 lg:pt-5">
+        <aside className="space-y-3">
+          <div className="-mt-6 mb-5">
+            <MyActivityCard
+              myPostCount={myPostCount}
+              likedPostCount={likedPostCount}
+              isLoading={isLoading}
+            />
+          </div>
+
           {isLoading
             ? [1, 2, 3, 4, 5, 6].map((item) => (
                 <div

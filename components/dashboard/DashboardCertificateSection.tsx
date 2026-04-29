@@ -21,10 +21,10 @@ function CertificateCard({ item }: { item: DashboardCertificateItem }) {
           <div className="absolute right-10 top-8 h-12 w-12 rounded-full bg-white/10" />
 
           <div className="relative min-w-0">
-            <span className="mb-2 inline-flex items-center rounded-full bg-white/18 px-2.5 py-1 text-[11px] font-bold leading-none text-white backdrop-blur">
+            <span className="mb-2 inline-flex items-center rounded-full bg-white/18 px-2.5 py-1 text-[11px] font-medium leading-none text-white backdrop-blur">
               TOP {item.rank}
             </span>
-            <h3 className="line-clamp-1 text-[18px] font-black tracking-tight text-white">
+            <h3 className="line-clamp-1 text-[18px] font-medium tracking-tight text-white">
               {item.name}
             </h3>
           </div>
@@ -58,13 +58,13 @@ export default function DashboardCertificateSection() {
   return (
     <section className="mt-16">
       <div className="mb-5 flex items-center justify-between">
-        <p className="text-[22px] font-semibold font-black tracking-tight text-[#333333]">
+        <p className="text-[22px] font-bold tracking-tight text-[#333333]">
           자격증 TOP16
         </p>
 
         <Link
           href="/certificate"
-          className="flex items-center gap-0.5 text-[16px] font-medium text-[#94A3B8] transition-colors hover:text-[#4876EF]"
+          className="flex items-center gap-0.5 text-[14px] font-medium text-[#94A3B8] transition-colors hover:text-[#4876EF]"
         >
           더보기
           <ChevronRight className="h-4 w-4" />

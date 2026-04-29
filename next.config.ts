@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
       {
         protocol: "http",
         hostname: "13.239.246.72",
+        port: "8080",
       },
     ],
   },

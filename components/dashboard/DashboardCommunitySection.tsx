@@ -108,7 +108,7 @@ export default function DashboardCommunitySection() {
         </p>
         <Link
           href="/community"
-          className="flex items-center gap-0.5 text-[16px] font-medium text-[#94A3B8] transition-colors hover:text-[#4876EF]"
+          className="flex items-center gap-0.5 text-[14px] font-normal text-[#94A3B8] transition-colors hover:text-[#4876EF]"
         >
           더보기
           <ChevronRight className="h-4 w-4" />
