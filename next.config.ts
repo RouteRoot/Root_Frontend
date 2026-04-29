@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "velog.velcdn.com",
       },
+      {
+        protocol: "http",
+        hostname: "13.239.246.72",
+      },
     ],
   },
 
