@@ -76,9 +76,9 @@ function RecommendCard({
       "
     >
       <span
-        className={`inline-flex h-[28px] w-fit items-center rounded-full px-[10px] text-[11px] font-bold leading-none text-white ${
-          isPick ? "bg-[#00D3AB]" : "bg-[#FF6363]"
-        }`}
+        className={`inline-flex h-[28px] w-fit items-center rounded-full px-[10px] text-[11px] leading-none text-white ${
+          isPick ? "bg-[#00D3AB]" : "bg-[#12B76A]"
+        } ${isPick ? "font-bold" : "font-medium"}`}
       >
         {isPick ? "PICK" : "인기글"}
       </span>

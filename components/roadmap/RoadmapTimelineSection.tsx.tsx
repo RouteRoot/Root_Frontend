@@ -51,7 +51,7 @@ function getCardStyle(status: TaskStatus, hasPlan: boolean) {
     case "IN_PROGRESS":
       return {
         wrapper:
-          "border border-[#5AA6D8]/60 bg-[#0075c3]/70 text-white shadow-[0_3px_8px_rgba(0,117,195,0.10)] hover:border-[#7DBBE2] hover:shadow-[0_5px_12px_rgba(0,117,195,0.12)]",
+          "border border-[#5AA6D8]/60 bg-[#4876EF] text-white shadow-[0_3px_8px_rgba(0,117,195,0.10)] hover:border-[#7DBBE2] hover:shadow-[0_5px_12px_rgba(0,117,195,0.12)]",
         badge: "bg-white/18 text-white",
       };
     case "COMPLETED":
@@ -399,9 +399,12 @@ export default function RoadmapTimelineSection() {
                             {phase.phaseTitle}
                           </h3>
                           {phase.phaseNumber !== null && (
-                            <span className="rounded-full bg-[#e3f0f3] px-2 py-[3px] text-[10px] font-semibold leading-none text-[#61b5d6]">
-                              Phase {phase.phaseNumber}
-                            </span>
+                            <>
+                              <span className="h-3 w-px bg-[#D8DEE8]" />
+                              <span className="text-[11px] font-semibold leading-none text-[#64748B]">
+                                Phase {phase.phaseNumber}
+                              </span>
+                            </>
                           )}
                         </div>
 

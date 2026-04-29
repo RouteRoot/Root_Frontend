@@ -139,7 +139,13 @@ function StatRow({
   );
 }
 
-function PostListItem({ post }: { post: CommunityPost }) {
+function PostListItem({
+  post,
+  isPopular,
+}: {
+  post: CommunityPost;
+  isPopular: boolean;
+}) {
   return (
     <Link href={`/community/${post.id}`} className="block border-b border-[#E5E8EB] pb-4 pt-7">
       <article className="group flex flex-col gap-3">
@@ -152,6 +158,11 @@ function PostListItem({ post }: { post: CommunityPost }) {
               {post.isAdminPick && (
                 <span className="inline-flex items-center rounded-[4px] bg-[#EEF4FF] px-2 py-1 text-[11px] font-semibold leading-none text-[#4876EF]">
                   <span className="relative -top-px">@</span>뿌리 PICK
+                </span>
+              )}
+              {isPopular && (
+                <span className="inline-flex rounded-[4px] bg-[#ECFDF3] px-2 py-1 text-[11px] font-medium leading-none text-[#039855]">
+                  인기
                 </span>
               )}
             </div>
@@ -201,7 +212,7 @@ function PopularCard({
       href={`/community/${post.id}`}
       className="block rounded-[8px] bg-[#F8F9FA] px-5 py-5 transition-colors hover:bg-[#F3F6FA]"
     >
-      <span className="inline-flex rounded-[4px] bg-[#EEF4FF] px-2 py-1 text-[11px] font-semibold leading-none text-[#4876EF]">
+      <span className="inline-flex rounded-[4px] bg-[#ECFDF3] px-2 py-1 text-[11px] font-medium leading-none text-[#039855]">
         인기
       </span>
       <p className="mt-3 line-clamp-2 text-[15px] font-medium leading-[1.55] text-[#333333]">
@@ -328,6 +339,11 @@ export default function Page() {
     });
   }, [activeTab, activePostFilter, allPosts, query]);
 
+  const popularPostIds = useMemo(
+    () => new Set(popularPosts.map((post) => post.id)),
+    [popularPosts]
+  );
+
   return (
     <main className="mx-auto w-full max-w-[1060px] pb-24 pt-8">
       <h1 className="text-[31px] font-semibold tracking-[-0.04em] text-[#333333]">
@@ -419,7 +435,13 @@ export default function Page() {
               ))}
             </div>
           ) : (
-            posts.map((post) => <PostListItem key={post.id} post={post} />)
+            posts.map((post) => (
+              <PostListItem
+                key={post.id}
+                post={post}
+                isPopular={popularPostIds.has(post.id)}
+              />
+            ))
           )}
 
           {!isLoading && errorMessage && (

@@ -49,11 +49,11 @@ function getEffectiveStatus(status: TaskStatus, hasPlan: boolean): TaskStatus {
 function getStatusLabel(status: TaskStatus) {
   switch (status) {
     case "NOT_STARTED":
-      return "시작 전";
+      return "진행 예정";
     case "IN_PROGRESS":
       return "진행 중";
     case "COMPLETED":
-      return "완료";
+      return "취득 완료";
     default:
       return "";
   }
@@ -69,7 +69,7 @@ function getStatusStyle(status: TaskStatus) {
     case "IN_PROGRESS":
       return {
         chip: "border border-[#DDD8FF] bg-[#eeeeee] text-[#555555]",
-        dot: "bg-[#0075c3]",
+        dot: "bg-[#4876EF]",
       };
     case "COMPLETED":
       return {
@@ -118,7 +118,7 @@ function TaskCard({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <span className={`h-2.5 w-2.5 rounded-full ${statusStyle.dot}`} />
+            <span className={`mt-1 h-2.5 w-2.5 rounded-full ${statusStyle.dot}`} />
             {/* <span className="text-[11px] font-bold tracking-[0.02em] text-[#A0AEC0]">
               Task
             </span> */}

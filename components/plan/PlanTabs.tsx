@@ -100,7 +100,7 @@ export default function PlanTabs({
                 onClick={() => onSelect(tab.examTaskId)}
                 className={`rounded-[10px] px-4 py-2 text-[13px] font-semibold transition-all duration-200 sm:px-5 sm:text-[14px] ${
                   isActive
-                    ? "bg-[#0075c3]/80 text-white"
+                    ? "bg-[#4876EF] text-white"
                     : "bg-[#ffffff] text-[#667085] hover:bg-[#EEF2F7] border border-[#c4c4c4] hover:text-[#4876EF]"
                 }`}
               >

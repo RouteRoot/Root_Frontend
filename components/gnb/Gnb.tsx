@@ -17,12 +17,20 @@ export default function Gnb() {
 
   useEffect(() => {
     async function fetchMe() {
+      const token = localStorage.getItem("accessToken");
+
+      if (!token) {
+        setUserName("");
+        setIsLoggedIn(false);
+        return;
+      }
+
       try {
         const data = await getMe();
         setUserName(data.name);
         setIsLoggedIn(true); // ✅ 로그인 상태
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
+      } catch {
+        localStorage.removeItem("accessToken");
         setUserName("");
         setIsLoggedIn(false); // ❌ 비로그인 상태
       }

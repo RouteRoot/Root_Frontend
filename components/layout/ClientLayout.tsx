@@ -11,13 +11,22 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [checked, setChecked] = useState(false);
+  const [checkedPath, setCheckedPath] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
 
-    const authPaths = ["/login", "/signup"];
-    const protectedPaths = ["/community", "/plan", "/roadmap"];
+    const authPaths = ["/login", "/register", "/signup"];
+    const protectedPaths = [
+      "/dashboard",
+      "/community",
+      "/plan",
+      "/roadmap",
+      "/certificate",
+      "/notification",
+      "/mypage",
+      "/settings",
+    ];
 
     const isAuthPath = authPaths.includes(pathname);
     const isProtectedPath = protectedPaths.some((path) =>
@@ -34,14 +43,14 @@ export default function ClientLayout({
       return;
     }
 
-    const timer = setTimeout(() => {
-      setChecked(true);
+    const timer = window.setTimeout(() => {
+      setCheckedPath(pathname);
     }, 0);
 
-    return () => clearTimeout(timer);
+    return () => window.clearTimeout(timer);
   }, [pathname, router]);
 
-  if (!checked) return null;
+  if (checkedPath !== pathname) return null;
 
   return (
     <>

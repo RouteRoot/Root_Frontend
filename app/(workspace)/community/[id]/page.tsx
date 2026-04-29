@@ -218,28 +218,30 @@ function CommentItem({
           </div>
         </div>
 
-        <div ref={menuRef} className="relative">
-          <button
-            type="button"
-            onClick={() => setMenuOpen((prev) => !prev)}
-            className="text-[#A0A7B3] transition-colors hover:text-[#667085]"
-            aria-label="댓글 더보기"
-          >
-            <MoreVertical className="h-4 w-4" />
-          </button>
-          {menuOpen && isAuthor && (
-            <ActionMenu
-              onEdit={() => {
-                setIsEditing(true);
-                setMenuOpen(false);
-              }}
-              onDelete={() => {
-                setMenuOpen(false);
-                onDelete(comment.commentId);
-              }}
-            />
-          )}
-        </div>
+        {isAuthor && (
+          <div ref={menuRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setMenuOpen((prev) => !prev)}
+              className="text-[#A0A7B3] transition-colors hover:text-[#667085]"
+              aria-label="댓글 더보기"
+            >
+              <MoreVertical className="h-4 w-4" />
+            </button>
+            {menuOpen && (
+              <ActionMenu
+                onEdit={() => {
+                  setIsEditing(true);
+                  setMenuOpen(false);
+                }}
+                onDelete={() => {
+                  setMenuOpen(false);
+                  onDelete(comment.commentId);
+                }}
+              />
+            )}
+          </div>
+        )}
       </div>
 
       {isEditing ? (
@@ -372,7 +374,7 @@ export default function Page() {
   };
 
   const handleDeletePost = async () => {
-    if (!post) return;
+    if (!post || !isPostAuthor) return;
     try {
       await deletePost(post.postId);
       router.push("/community");
@@ -399,6 +401,11 @@ export default function Page() {
   };
 
   const handleDeleteComment = async (commentId: number) => {
+    const targetComment = comments.find(
+      (comment) => comment.commentId === commentId
+    );
+    if (!myName || targetComment?.author !== myName) return;
+
     try {
       await deleteComment(commentId);
       setComments((prev) => prev.filter((c) => c.commentId !== commentId));
@@ -484,28 +491,30 @@ export default function Page() {
             </h1>
           </div>
 
-          <div ref={postMenuRef} className="relative shrink-0">
-            <button
-              type="button"
-              onClick={() => setPostMenuOpen((prev) => !prev)}
-              className="text-[#A0A7B3] transition-colors hover:text-[#667085]"
-              aria-label="게시글 더보기"
-            >
-              <MoreVertical className="h-4 w-4" />
-            </button>
-            {postMenuOpen && isPostAuthor && (
-              <ActionMenu
-                onEdit={() => {
-                  setPostMenuOpen(false);
-                  router.push(`/community/edit/${post.postId}`);
-                }}
-                onDelete={() => {
-                  setPostMenuOpen(false);
-                  setShowDeletePostConfirm(true);
-                }}
-              />
-            )}
-          </div>
+          {isPostAuthor && (
+            <div ref={postMenuRef} className="relative shrink-0">
+              <button
+                type="button"
+                onClick={() => setPostMenuOpen((prev) => !prev)}
+                className="text-[#A0A7B3] transition-colors hover:text-[#667085]"
+                aria-label="게시글 더보기"
+              >
+                <MoreVertical className="h-4 w-4" />
+              </button>
+              {postMenuOpen && (
+                <ActionMenu
+                  onEdit={() => {
+                    setPostMenuOpen(false);
+                    router.push(`/community/edit/${post.postId}`);
+                  }}
+                  onDelete={() => {
+                    setPostMenuOpen(false);
+                    setShowDeletePostConfirm(true);
+                  }}
+                />
+              )}
+            </div>
+          )}
         </div>
 
         <div className="mt-5 whitespace-pre-wrap text-[16px] leading-[1.65] tracking-[-0.01em] text-[#323438]">

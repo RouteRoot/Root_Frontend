@@ -178,7 +178,7 @@ export default function DailyPlanSection({
                 className={
                   plan.isCompleted
                     ? "absolute bottom-0 right-0 inline-flex h-[32px] items-center gap-1.5 rounded-[10px] border border-[#D1D5DB] bg-[#F3F4F6] px-4 text-[12px] font-semibold text-[#9CA3AF] transition hover:opacity-90"
-                    : "absolute bottom-0 right-0 inline-flex h-[32px] items-center gap-1.5 rounded-[10px] bg-[#0075c3]/80 px-4 text-[12px] font-semibold text-white transition hover:opacity-90"
+                    : "absolute bottom-0 right-0 inline-flex h-[32px] items-center gap-1.5 rounded-[10px] bg-[#4876EF] px-4 text-[12px] font-semibold text-white transition hover:opacity-90"
                 }
               >
                 {plan.isCompleted ? "학습 완료" : "완료"}

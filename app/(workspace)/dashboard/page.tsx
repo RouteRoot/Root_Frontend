@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import ProgressCard from "@/components/dashboard/ProgressCard";
 import DashboardCommunitySection from "@/components/dashboard/DashboardCommunitySection";
 import DashboardCertificateSection from "@/components/dashboard/DashboardCertificateSection";
@@ -19,7 +20,10 @@ export default function Page() {
           style={{ aspectRatio: "1079 / 416" }}
         >
           {/* 메인 카드 — col 1-2, row 1 */}
-          <div className="col-span-2 h-full overflow-hidden rounded-3xl">
+          <Link
+            href="/community/1"
+            className="col-span-2 block h-full overflow-hidden rounded-3xl"
+          >
             <Image
               src="/Group 22.svg"
               alt="오늘의 추천 메인"
@@ -28,7 +32,7 @@ export default function Page() {
               className="block h-full w-full object-cover"
               priority
             />
-          </div>
+          </Link>
 
           {/* 우측 카드 — col 3, row 1-2 */}
           <div className="row-span-2 h-full min-h-0">

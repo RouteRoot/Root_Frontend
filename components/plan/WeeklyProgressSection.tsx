@@ -26,9 +26,9 @@ type WeeklyProgressSectionProps = {
 function getStatusDot(status: TaskStatus) {
   switch (status) {
     case "TODO":
-      return "bg-black/70";
+      return "border border-[#A9B7CA] bg-white";
     case "IN_PROGRESS":
-      return "bg-[#0075c3]/80";
+      return "bg-[#4876EF]";
     case "DONE":
       return "bg-[#C9D2E3]";
     case "REST":
@@ -96,7 +96,7 @@ export default function WeeklyProgressSection({
 
       <div className="mb-4 flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#94A3B8]">
         <div className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-black/70" />
+          <span className="h-2 w-2 rounded-full border border-[#A9B7CA] bg-white" />
           <span>진행 예정</span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -224,7 +224,13 @@ export default function WeeklyProgressSection({
                           {task.title}
                         </p>
 
-                        <p className="mt-2 text-[13px] leading-[1.7] text-[#7B8798] break-keep">
+                        <p
+                          className={`mt-2 text-[13px] leading-[1.7] break-keep ${
+                            task.status === "DONE"
+                              ? "text-[#C9D2E3]"
+                              : "text-[#7B8798]"
+                          }`}
+                        >
                           {task.description}
                         </p>
                       </div>

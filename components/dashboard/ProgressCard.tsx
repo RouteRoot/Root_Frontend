@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getPlanByExamTaskId, getPlanTabs } from "@/app/api/plan/plan";
@@ -9,6 +9,10 @@ import { getRoadmapByToken } from "@/app/api/roadmap/roadmap";
 import { getMe } from "@/app/api/service/user";
 import type { DailyPlan, PlanResponse } from "@/app/api/plan/types";
 import type { Task } from "@/app/api/roadmap/types";
+
+type ProgressCardProps = {
+  variant?: "dashboard" | "guest";
+};
 
 type TodayPlanSlide = {
   examTaskId: number;
@@ -38,10 +42,12 @@ function formatStudyDate(studyDate: string): string {
   if (/^\d{4}-\d{2}-\d{2}$/.test(studyDate)) {
     return studyDate.replace(/-/g, ".");
   }
+
   const sliced = studyDate.slice(0, 10);
   if (/^\d{4}-\d{2}-\d{2}$/.test(sliced)) {
     return sliced.replace(/-/g, ".");
   }
+
   if (/^\d{4}\.\d{2}\.\d{2}$/.test(studyDate)) return studyDate;
   return studyDate;
 }
@@ -94,7 +100,48 @@ function findTodayPlan(
   return null;
 }
 
-export default function ProgressCard() {
+function GuestProgressCard() {
+  return (
+    <div className="flex h-full min-h-[240px] flex-col justify-between overflow-hidden rounded-3xl border border-[#D8E9F6] bg-[#F7FBFE] px-6 py-6">
+      <div>
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#E4F2FB] text-[#0075C3]">
+          <Sparkles className="h-5 w-5" />
+        </div>
+
+        <p className="mt-5 text-[13px] font-medium text-[#0075C3]">
+          맞춤 학습 로드맵
+        </p>
+        <h2 className="mt-2 text-[22px] font-black font-medium leading-tight tracking-tight text-[#172033]">
+          목표 자격증까지
+          <br />
+          오늘 할 일부터 잡아드릴게요.
+        </h2>
+        <p className="mt-3 text-[13px] leading-relaxed text-[#5E6B7A]">
+          회원가입 후 관심 자격증을 선택하면 시험일까지 남은 학습량과
+          오늘의 계획을 한 번에 확인할 수 있어요.
+        </p>
+      </div>
+
+      <div className="mt-6 flex flex-col gap-2">
+        <Link
+          href="/register"
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-[10px] bg-[#0075C3] px-4 text-[14px] font-bold text-white transition hover:bg-[#0069AF]"
+        >
+          무료로 시작하기
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+        <Link
+          href="/login"
+          className="inline-flex h-10 items-center justify-center rounded-[10px] border border-[#CFE1EE] bg-white text-[13px] font-semibold text-[#334155] transition hover:bg-[#F2F7FB]"
+        >
+          이미 계정이 있어요
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function DashboardProgressCard() {
   const router = useRouter();
   const [userName, setUserName] = useState("");
   const [inProgressTasks, setInProgressTasks] = useState<Task[]>([]);
@@ -152,7 +199,7 @@ export default function ProgressCard() {
         if (!mounted) return;
         setSlides(results.filter(Boolean) as TodayPlanSlide[]);
       } catch {
-        // Dashboard cards stay empty when the dashboard data is unavailable.
+        // Dashboard cards stay empty when dashboard data is unavailable.
       } finally {
         if (mounted) setIsLoading(false);
       }
@@ -253,7 +300,8 @@ export default function ProgressCard() {
                       e.stopPropagation();
                       setSlideIndex((i) => (i - 1 + total) % total);
                     }}
-                    className="flex h-6 w-6 items-center justify-center rounded-full text-[#94A3B8] transition hover:bg-[#EEF2F7] disabled:opacity-30"
+                    className="flex h-6 w-6 items-center justify-center rounded-full text-[#94A3B8] transition hover:bg-[#EEF2F7]"
+                    aria-label="이전 플랜"
                   >
                     <ChevronLeft className="h-3.5 w-3.5" />
                   </button>
@@ -264,9 +312,10 @@ export default function ProgressCard() {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setSlideIndex((i) => (i + 1) % total)
+                      setSlideIndex((i) => (i + 1) % total);
                     }}
-                    className="flex h-6 w-6 items-center justify-center rounded-full text-[#94A3B8] transition hover:bg-[#EEF2F7] disabled:opacity-30"
+                    className="flex h-6 w-6 items-center justify-center rounded-full text-[#94A3B8] transition hover:bg-[#EEF2F7]"
+                    aria-label="다음 플랜"
                   >
                     <ChevronRight className="h-3.5 w-3.5" />
                   </button>
@@ -311,63 +360,33 @@ export default function ProgressCard() {
                     key={slide.examTaskId}
                     className="flex h-full w-full shrink-0 flex-col px-4 py-4"
                   >
-                    <div className="flex flex-col">
-                      <div className="hidden">
-                        <div className="rounded-[10px] border border-[#EEF2F7] bg-white px-2.5 py-2.5">
-                          <p className="text-[10px] text-[#98A2B3]">
-                            자격증
-                          </p>
-                          <p className="mt-0.5 line-clamp-2 text-[11px] font-semibold leading-snug text-[#0F172A]">
-                            {slide.taskName}
-                          </p>
-                        </div>
-                        <div className="rounded-[10px] border border-[#EEF2F7] bg-white px-2.5 py-2.5">
-                          <p className="text-[10px] text-[#98A2B3]">
-                            예상 시간
-                          </p>
-                          <p className="mt-0.5 text-[12px] font-semibold text-[#0F172A]">
-                            {slide.estimatedHours}시간
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col">
-                        <div className="flex items-center gap-2">
-                          <span className="relative flex h-3 w-3 shrink-0">
-                            {!slide.isCompleted && (
-                              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#1606a5] opacity-30" />
-                            )}
-                            <span
-                              className={`relative inline-flex h-3 w-3 rounded-full ${
-                                slide.isCompleted
-                                  ? "bg-[#CBD5E1]"
-                                  : "bg-[#4876EF]"
-                              }`}
-                            />
-                          </span>
-                          <h3
-                            className={`line-clamp-2 text-[13px] font-bold leading-snug ${
-                              slide.isCompleted
-                                ? "text-[#94A3B8]"
-                                : "text-[#0F172A]"
-                            }`}
-                          >
-                            {slide.topic}
-                          </h3>
-                        </div>
-
-                        <p
-                        className={`mt-2 line-clamp-4 text-[12px] leading-relaxed ${
-                            slide.isCompleted
-                              ? "text-[#CBD5E1]"
-                              : "text-[#7B8798]"
+                    <div className="flex items-center gap-2">
+                      <span className="relative flex h-3 w-3 shrink-0">
+                        {!slide.isCompleted && (
+                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#1606a5] opacity-30" />
+                        )}
+                        <span
+                          className={`relative inline-flex h-3 w-3 rounded-full ${
+                            slide.isCompleted ? "bg-[#CBD5E1]" : "bg-[#4876EF]"
                           }`}
-                        >
-                          {slide.description}
-                        </p>
-                      </div>
+                        />
+                      </span>
+                      <h3
+                        className={`line-clamp-2 text-[13px] font-bold leading-snug ${
+                          slide.isCompleted ? "text-[#94A3B8]" : "text-[#0F172A]"
+                        }`}
+                      >
+                        {slide.topic}
+                      </h3>
                     </div>
 
+                    <p
+                      className={`mt-2 line-clamp-4 text-[12px] leading-relaxed ${
+                        slide.isCompleted ? "text-[#CBD5E1]" : "text-[#7B8798]"
+                      }`}
+                    >
+                      {slide.description}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -377,4 +396,14 @@ export default function ProgressCard() {
       </div>
     </div>
   );
+}
+
+export default function ProgressCard({
+  variant = "dashboard",
+}: ProgressCardProps) {
+  if (variant === "guest") {
+    return <GuestProgressCard />;
+  }
+
+  return <DashboardProgressCard />;
 }
