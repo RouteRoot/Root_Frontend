@@ -15,7 +15,7 @@ export default function GnbNav() {
           <Link
             key={item.href}
             href={item.href}
-            className={`relative flex h-full items-center px-[18px] text-[14px] font-normal text-[#2f3743] transition-colors hover:text-[#0075c3] after:absolute after:bottom-0 after:left-[18px] after:right-[18px] after:h-[2px] after:bg-[#0075c3] after:transition-opacity ${
+            className={`relative flex h-full items-center px-[18px] text-[14px] font-normal text-[#2f3743] transition-colors hover:text-[#4876EF] after:absolute after:bottom-0 after:left-[18px] after:right-[18px] after:h-[2px] after:bg-[#4876EF] after:transition-opacity ${
               isActive ? "after:opacity-100" : "after:opacity-0"
             }`}
           >

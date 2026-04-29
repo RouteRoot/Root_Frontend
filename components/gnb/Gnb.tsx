@@ -66,7 +66,7 @@ export default function Gnb() {
         <div className="relative flex h-16 items-center justify-center border-b border-[#e5e8eb] bg-white px-6">
           <Link
             href="/dashboard"
-            className="absolute left-4 flex items-center text-[28px] font-bold leading-none tracking-[-0.04em] text-[#0075c3]"
+            className="absolute left-4 flex items-center text-[28px] font-bold leading-none tracking-[-0.04em] text-[#4876EF]"
           >
             BBuri
           </Link>
@@ -78,7 +78,7 @@ export default function Gnb() {
             <div className="flex h-full min-w-0 flex-1 items-center">
               <Link
                 href="/dashboard"
-                className="flex h-full w-[158px] items-center px-4 text-[28px] font-bold leading-none tracking-[-0.04em] text-[#0075c3]"
+                className="flex h-full w-[158px] items-center px-4 text-[28px] font-bold leading-none tracking-[-0.04em] text-[#4876EF]"
               >
                 BBuri
               </Link>
@@ -103,13 +103,13 @@ export default function Gnb() {
                 <>
                   <Link
                     href="/login"
-                    className="px-4 text-[13px] text-[#344054] hover:text-[#0FA9CC]"
+                    className="px-4 text-[13px] text-[#344054] hover:text-[#4876EF]"
                   >
                     로그인
                   </Link>
                   <Link
                     href="/register"
-                    className="px-4 text-[13px] text-[#344054] hover:text-[#0FA9CC]"
+                    className="px-4 text-[13px] text-[#344054] hover:text-[#4876EF]"
                   >
                     회원가입
                   </Link>
@@ -118,7 +118,7 @@ export default function Gnb() {
 
               <Link
                 href="/certificate"
-                className="flex h-full items-center border-l border-[#e5e8eb] px-7 text-[13px] font-medium text-[#344054] transition-colors hover:text-[#0FA9CC]"
+                className="flex h-full items-center border-l border-[#e5e8eb] px-7 text-[13px] font-medium text-[#344054] transition-colors hover:text-[#4876EF]"
               >
                 문의하기
               </Link>

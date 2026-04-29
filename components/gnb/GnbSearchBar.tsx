@@ -87,8 +87,8 @@ export default function GnbSearchBar({ compact = false }: GnbSearchBarProps) {
         <div
           className={`flex h-[50px] w-full items-center bg-white px-4 transition-shadow ${
             isOpen
-              ? "rounded-t-[7px] border border-b-0 border-[#0075c3]"
-              : "rounded-[7px] border border-[#0075c3] hover:shadow-[0_0_0_3px_rgba(15,169,204,0.08)]"
+              ? "rounded-t-[7px] border border-b-0 border-[#4876EF]"
+              : "rounded-[7px] border border-[#4876EF] hover:shadow-[0_0_0_3px_rgba(72,118,239,0.08)]"
           }`}
         >
           {isOpen ? (
@@ -103,7 +103,7 @@ export default function GnbSearchBar({ compact = false }: GnbSearchBarProps) {
               />
               <button
                 type="submit"
-                className="flex h-8 w-8 flex-none items-center justify-center rounded-[6px] bg-[#0075c3] transition-colors hover:bg-[#0d96b5]"
+                className="flex h-8 w-8 flex-none items-center justify-center rounded-[6px] bg-[#4876EF] transition-colors hover:bg-[#3F68D8]"
               >
                 <Search className="h-[16px] w-[16px] text-white" strokeWidth={2.6} />
               </button>
@@ -120,17 +120,17 @@ export default function GnbSearchBar({ compact = false }: GnbSearchBarProps) {
                 원하는 자격증, 분야 검색
               </span>
               <span className="flex w-[304px] flex-none items-center">
-                <Search className="h-[20px] w-[20px] flex-none text-[#0075c3]" strokeWidth={2.6} />
+                <Search className="h-[20px] w-[20px] flex-none text-[#4876EF]" strokeWidth={2.6} />
                 <span className="mx-4 h-7 w-px flex-none bg-[#e5e8eb]" />
                 <span className="relative h-6 w-5 flex-none overflow-hidden">
                   {previousTrend && previousTrendIndex !== null && (
-                    <span className="gnb-trend-exit absolute inset-x-0 top-0 block h-full text-center text-[15px] font-extrabold leading-6 text-[#0075c3]">
+                    <span className="gnb-trend-exit absolute inset-x-0 top-0 block h-full text-center text-[15px] font-extrabold leading-6 text-[#4876EF]">
                       {previousTrendIndex + 1}
                     </span>
                   )}
                   <span
                     key={activeTrendIndex}
-                    className={`absolute inset-x-0 top-0 block h-full text-center text-[15px] font-extrabold leading-6 text-[#0075c3] ${
+                    className={`absolute inset-x-0 top-0 block h-full text-center text-[15px] font-extrabold leading-6 text-[#4876EF] ${
                       previousTrend ? "gnb-trend-enter" : ""
                     }`}
                   >
@@ -179,7 +179,7 @@ export default function GnbSearchBar({ compact = false }: GnbSearchBarProps) {
         </div>
 
         {isOpen && (
-          <div className="absolute left-0 right-0 top-[50px] z-[70] rounded-b-[8px] border border-t-0 border-[#0075c3] bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
+          <div className="absolute left-0 right-0 top-[50px] z-[70] rounded-b-[8px] border border-t-0 border-[#4876EF] bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
             <div className="h-px bg-[#dfdfdf]" />
             <div className="p-7">
               <section>
@@ -216,11 +216,11 @@ export default function GnbSearchBar({ compact = false }: GnbSearchBarProps) {
                       key={certificate.name}
                       href={`/certificate/search?keyword=${encodeURIComponent(certificate.name)}`}
                       onClick={() => setIsOpen(false)}
-                      className="flex min-w-0 items-center gap-4 text-[15px] transition-colors hover:text-[#0075c3]"
+                      className="flex min-w-0 items-center gap-4 text-[15px] transition-colors hover:text-[#4876EF]"
                     >
                       <span
                         className={`w-5 flex-none text-center font-bold ${
-                          index < 3 ? "text-[#0075c3]" : "text-[#c0c6cf]"
+                          index < 3 ? "text-[#4876EF]" : "text-[#c0c6cf]"
                         }`}
                       >
                         {index + 1}
