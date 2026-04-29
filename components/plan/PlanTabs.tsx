@@ -80,9 +80,9 @@ export default function PlanTabs({
 
   if (!tabs.length) {
     return (
-      <div className="text-sm text-[#94A3B8]">
-        생성된 플랜이 아직 없어요. 로드맵 페이지에서 플랜을 생성 할 수 있습니다.
-      </div>
+      <>
+      <div></div>
+      </>
     );
   }
 

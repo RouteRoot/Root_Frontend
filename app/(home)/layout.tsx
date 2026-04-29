@@ -1,13 +1,17 @@
-import React from "react";
+import StandardLayout from "@/components/layouts/StandardLayout";
+import Gnb from "@/components/gnb/Gnb";
 
-export default function Layout({
+export default function CombinedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      {children}
+    <div className="min-h-screen" style={{ backgroundColor: "#F3F3F4" }}>
+      <Gnb />
+      <StandardLayout>
+        {children}
+      </StandardLayout>
     </div>
   );
 }

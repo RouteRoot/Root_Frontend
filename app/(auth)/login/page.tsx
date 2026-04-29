@@ -1,11 +1,10 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
 import { login } from "@/app/api/auth/authApi";
 import type { LoginRequest } from "@/app/api/auth/authTypes";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 type ErrorWithResponse = {
   response?: {
@@ -23,12 +22,12 @@ export default function LandingPage() {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [keepLogin, setKeepLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange =
-    (key: keyof LoginRequest) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (key: keyof LoginRequest) => (e: React.ChangeEvent<HTMLInputElement>) => {
       setForm((prev) => ({
         ...prev,
         [key]: e.target.value,
@@ -50,14 +49,14 @@ export default function LandingPage() {
       }
     }
 
-    return "A server error occurred.";
+    return "서버 오류가 발생했습니다.";
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!form.loginId.trim() || !form.loginPw.trim()) {
-      setErrorMessage("Please enter both ID and password.");
+      setErrorMessage("아이디와 비밀번호를 입력해주세요.");
       return;
     }
 
@@ -72,18 +71,13 @@ export default function LandingPage() {
 
       const token = result.data?.token;
 
-      if (token && typeof token === "string") {
+      if (token) {
         localStorage.setItem("accessToken", token);
-
-        if (typeof result.data?.userId === "number") {
-          localStorage.setItem("userId", String(result.data.userId));
-        }
-
         window.location.href = "/dashboard";
         return;
       }
 
-      setErrorMessage(result.data?.message || "Login failed. Please try again.");
+      setErrorMessage(result.data?.message || "로그인 실패");
     } catch (error: unknown) {
       setErrorMessage(getErrorMessage(error));
     } finally {
@@ -92,130 +86,102 @@ export default function LandingPage() {
   };
 
   return (
-    <main className="min-h-screen bg-white">
-      <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[1fr_1.05fr]">
-        <section className="flex items-center justify-center px-6 py-12 lg:px-20">
-          <div className="w-full max-w-[430px]">
-            <div className="rounded-[28px] border border-black/10 bg-white px-7 py-8 shadow-[0_10px_40px_rgba(0,0,0,0.04)]">
-              <div className="mb-7">
-                <h2 className="text-[18px] font-semibold tracking-[-0.03em] text-black">
-                  Welcome back
-                </h2>
-                <p className="mt-1 text-[15px] leading-6 text-[#7a7a75]">
-                  Sign in to continue to your BBURI.
-                </p>
-              </div>
+    <main className="min-h-screen bg-[#F3F3F4]">
+      <div className="mx-auto flex min-h-screen w-full flex-col items-center px-5 pt-[150px]">
+        {/* 로고 */}
+        <Link
+          href="/"
+          className="text-[36px] font-semibold tracking-[-0.05em] text-[#0075C3]"
+        >
+          BBURI
+        </Link>
 
-              <button
-                type="button"
-                className="flex h-[54px] w-full items-center justify-center gap-3 rounded-[18px] border border-[#dfddd7] bg-white text-[15px] font-medium text-black transition hover:bg-[#faf9f6]"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    fill="#4285F4"
-                    d="M23.49 12.27c0-.79-.07-1.54-.2-2.27H12v4.3h6.45a5.52 5.52 0 0 1-2.4 3.62v3h3.88c2.27-2.09 3.56-5.17 3.56-8.65Z"
-                  />
-                  <path
-                    fill="#34A853"
-                    d="M12 24c3.24 0 5.96-1.07 7.95-2.91l-3.88-3c-1.08.73-2.46 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.26v3.12A12 12 0 0 0 12 24Z"
-                  />
-                  <path
-                    fill="#FBBC05"
-                    d="M5.27 14.29A7.2 7.2 0 0 1 4.89 12c0-.79.14-1.56.38-2.29V6.59H1.26A12 12 0 0 0 0 12c0 1.94.46 3.77 1.26 5.41l4.01-3.12Z"
-                  />
-                  <path
-                    fill="#EA4335"
-                    d="M12 4.77c1.76 0 3.34.61 4.58 1.8l3.43-3.43C17.95 1.14 15.24 0 12 0A12 12 0 0 0 1.26 6.59l4.01 3.12c.95-2.85 3.6-4.94 6.73-4.94Z"
-                  />
-                </svg>
-                Continue with Google
-              </button>
+        {/* 설명 */}
+        <p className="mt-5 text-center text-[14px] leading-[1.7] text-[#333333]">
+          뿌리는 회원님의 목표 성장을 돕기 위해
+          <br />
+          불필요한 개인정보를 노출하지 않습니다.
+        </p>
 
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[#e7e4de]" />
+        {/* 카드 */}
+        <section className="mt-8 w-full max-w-[380px] rounded-[14px] bg-white shadow-sm">
+          <div className="px-[30px] pb-[28px] pt-[28px]">
+            <h1 className="mb-[20px] text-[20px] font-semibold text-[#323438]">
+              로그인
+            </h1>
+
+            <form onSubmit={handleSubmit}>
+              <div className="space-y-[10px]">
+                {/* 이메일 */}
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={form.loginId}
+                    onChange={handleChange("loginId")}
+                    placeholder="이메일 주소"
+                    className="h-[46px] w-full rounded-md border border-gray-300 pl-5 pr-4 text-[14px] outline-none focus:border-[#0075C3]"
+                  />
                 </div>
-                <div className="relative flex justify-center">
-                  <span className="bg-white px-4 text-[13px] text-[#9a9891]">OR</span>
-                </div>
-              </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <input
-                  type="text"
-                  value={form.loginId}
-                  onChange={handleChange("loginId")}
-                  placeholder="Email address"
-                  className="h-[54px] w-full rounded-[18px] border border-[#dfddd7] bg-white px-5 text-[15px] text-black outline-none transition placeholder:text-[#9b98a9] focus:border-black"
-                />
-
+                {/* 비밀번호 */}
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
                     value={form.loginPw}
                     onChange={handleChange("loginPw")}
-                    placeholder="Password"
-                    className="h-[54px] w-full rounded-[18px] border border-[#dfddd7] bg-white px-5 pr-12 text-[15px] text-black outline-none transition placeholder:text-[#9b98a9] focus:border-black"
+                    placeholder="비밀번호"
+                    className="h-[46px] w-full rounded-md border border-gray-300 pl-5 pr-10 text-[14px] outline-none focus:border-[#0075C3]"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8b887f] transition hover:text-black"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
-
-                {errorMessage && (
-                  <div className="rounded-[16px] border border-red-200 bg-red-50 px-4 py-3 text-[14px] text-red-600">
-                    {errorMessage}
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="mt-2 flex h-[54px] w-full items-center justify-center rounded-[18px] bg-black text-[15px] font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isLoading ? "Logging in..." : "Log in"}
-                </button>
-              </form>
-
-              <div className="mt-7 text-center">
-                <button
-                  type="button"
-                  className="text-[15px] font-medium text-[#4f4f4b] underline underline-offset-4 transition hover:text-black"
-                >
-                  Forgot password?
-                </button>
               </div>
 
-              <div className="mt-8 flex items-center justify-center gap-2 text-[15px] text-[#6b6b66]">
-                <span>Dont have an account?</span>
-                <Link
-                  href="/signup"
-                  className="font-semibold text-black hover:opacity-70 underline underline-offset-4 transition"
-                >
-                  Sign up
+              {/* 에러 */}
+              {errorMessage && (
+                <p className="mt-3 text-sm text-red-500">{errorMessage}</p>
+              )}
+
+              {/* 버튼 */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="mt-3 h-[48px] w-full rounded-md bg-[#0075C3] text-[15px] font-semibold text-white hover:bg-[#0069AF]"
+              >
+                {isLoading ? "로그인 중..." : "로그인"}
+              </button>
+
+              {/* 옵션 */}
+              <div className="mt-4 flex items-center justify-between text-sm text-[#323438]">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={keepLogin}
+                    onChange={() => setKeepLogin((prev) => !prev)}
+                  />
+                  로그인 상태 유지
+                </label>
+
+                <Link href="/find-password" className="hover:text-[#323438]">
+                  비밀번호 찾기
                 </Link>
               </div>
-            </div>
+            </form>
           </div>
-        </section>
 
-        <section className="relative hidden min-h-screen lg:block">
-          <div className="absolute inset-0 bg-black" />
-          <div className="relative h-full w-full">
-            <Image
-              src="/main-hero.png"
-              alt="people"
-              fill
-              priority
-              className="object-cover grayscale"
-            />
+          {/* 하단 */}
+          <div className="border-t border-[#E5E7EB] px-[30px] py-[18px] text-center text-sm text-[#323438]">
+            {" "}
+            아직 회원이 아니세요?
+            <Link href="/signup" className="ml-2 font-semibold text-[#0075C3]">
+              회원가입
+            </Link>
           </div>
-          <div className="absolute inset-0 bg-black/10" />
         </section>
       </div>
     </main>

@@ -16,25 +16,29 @@ export default function ClientLayout({
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
 
-    const publicPaths = ["/", "/login", "/signup"];
     const authPaths = ["/login", "/signup"];
+    const protectedPaths = ["/community", "/plan", "/roadmap"];
 
-    const isPublicPath = publicPaths.includes(pathname);
     const isAuthPath = authPaths.includes(pathname);
-
-    if (!token && !isPublicPath) {
-      router.replace("/login");
-      return;
-    }
+    const isProtectedPath = protectedPaths.some((path) =>
+      pathname.startsWith(path)
+    );
 
     if (token && isAuthPath) {
       router.replace("/dashboard");
       return;
     }
 
-    setTimeout(() => {
+    if (!token && isProtectedPath) {
+      router.replace("/login");
+      return;
+    }
+
+    const timer = setTimeout(() => {
       setChecked(true);
     }, 0);
+
+    return () => clearTimeout(timer);
   }, [pathname, router]);
 
   if (!checked) return null;
@@ -46,3 +50,51 @@ export default function ClientLayout({
     </>
   );
 }
+// "use client";
+
+// import { useEffect, useState } from "react";
+// import { usePathname, useRouter } from "next/navigation";
+// import GlobalBannerPopup from "@/components/common/GlobalBannerPopup";
+
+// export default function ClientLayout({
+//   children,
+// }: {
+//   children: React.ReactNode;
+// }) {
+//   const pathname = usePathname();
+//   const router = useRouter();
+//   const [checked, setChecked] = useState(false);
+
+//   useEffect(() => {
+//     const token = localStorage.getItem("accessToken");
+
+//     const publicPaths = ["/", "/login", "/signup"];
+//     const authPaths = ["/login", "/signup"];
+
+//     const isPublicPath = publicPaths.includes(pathname);
+//     const isAuthPath = authPaths.includes(pathname);
+
+//     if (!token && !isPublicPath) {
+//       router.replace("/login");
+//       return;
+//     }
+
+//     if (token && isAuthPath) {
+//       router.replace("/dashboard");
+//       return;
+//     }
+
+//     setTimeout(() => {
+//       setChecked(true);
+//     }, 0);
+//   }, [pathname, router]);
+
+//   if (!checked) return null;
+
+//   return (
+//     <>
+//       <GlobalBannerPopup />
+//       {children}
+//     </>
+//   );
+// }

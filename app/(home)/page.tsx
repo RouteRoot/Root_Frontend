@@ -1,119 +1,61 @@
-"use client";
-
 import Image from "next/image";
-import Link from "next/link";
-import { Playfair_Display } from "next/font/google";
+import ProgressCard from "@/components/dashboard/ProgressCard";
+import DashboardCommunitySection from "@/components/dashboard/DashboardCommunitySection";
+import DashboardCertificateSection from "@/components/dashboard/DashboardCertificateSection";
+import DashboardCertificateReviewSection from "@/components/dashboard/DashboardCertificateReviewSection";
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "600", "700", "900"],
-  style: ["normal", "italic"],
-});
-
-export default function LandingPage() {
+export default function Page() {
   return (
-    <main className="min-h-screen bg-white">
-      <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[1fr_1.05fr]">
-        
-        <section className="flex items-center justify-center px-8 py-16 lg:px-20">
-          <div className="w-full max-w-[460px]">
+    <div className="flex flex-col gap-6">
+      {/* 오늘의 추천 */}
+      <section>
+        <p className="mb-8 font-semibold text-[22px] font-black tracking-tight text-[#333333] mt-14">
+          오늘의 추천
+        </p>
 
-            {/* Title */}
-            <h1
-              className={`
-                ${playfair.className}
-                text-[88px]
-                leading-[0.85]
-                tracking-[-0.05em]
-                font-bold
-                italic
-                text-black
-              `}
-            >
-              BBuri
-            </h1>
-
-            <h1
-              className={`
-                ${playfair.className}
-                text-[88px]
-                leading-[0.85]
-                tracking-[-0.05em]
-                font-bold
-                italic
-                text-black
-              `}
-            >
-              Service
-            </h1>
-
-            {/* Description */}
-            <p className="mt-6 text-[20px] leading-[1.6] text-[#222222]">
-              AI-powered personalized career roadmap
-              <br />
-              and exam scheduling automation.
-            </p>
-
-            {/* Buttons */}
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              
-              <Link
-                href="/login"
-                className="
-                  inline-flex h-[54px] min-w-[160px]
-                  items-center justify-center
-                  bg-black text-white
-                  px-8 text-[15px] font-semibold
-                  transition hover:opacity-90
-                "
-              >
-                Use for Free
-              </Link>
-
-              <Link
-                href="/signup"
-                className="
-                  inline-flex h-[54px] min-w-[160px]
-                  items-center justify-center
-                  border border-2 border-black
-                  text-black
-                  px-8 text-[15px] font-semibold
-                  transition hover:bg-black hover:text-white
-                "
-              >
-                Sign up
-              </Link>
-            </div>
-
-            {/* Footer text */}
-            <p className="mt-14 text-[14px] leading-[1.7] text-[#555]">
-              <span className="font-semibold">BBuri</span> helps you design a realistic
-              career roadmap based on your goals, major, available study time,
-              and current skill level. Manage your exam schedule automatically
-              and stay on track.
-            </p>
-
-          </div>
-        </section>
-
-        <section className="relative hidden min-h-screen lg:block">
-          
-          <div className="absolute inset-0 bg-black" />
-
-          <div className="relative h-full w-full">
+        {/* 3-column grid */}
+        <div
+          className="grid w-full grid-cols-3 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] gap-4"
+          style={{ aspectRatio: "1079 / 416" }}
+        >
+          {/* 메인 카드 — col 1-2, row 1 */}
+          <div className="col-span-2 h-full overflow-hidden rounded-3xl">
             <Image
-              src="/main-hero.png" 
-              alt="people"
-              fill
+              src="/Group 22.svg"
+              alt="오늘의 추천 메인"
+              width={698}
+              height={200}
+              className="block h-full w-full object-cover"
               priority
-              className="object-cover grayscale"
             />
           </div>
 
-          <div className="absolute inset-0 bg-black/10" />
-        </section>
+          {/* 우측 카드 — col 3, row 1-2 */}
+          <div className="row-span-2 h-full min-h-0">
+            <ProgressCard />
+          </div>
 
+          {/* 하단 카드 1 — col 1, row 2 */}
+          <div
+            className="h-full overflow-hidden rounded-3xl"
+            style={{ backgroundColor: "#FBCFE8" }}
+          />
+
+          {/* 하단 카드 2 — col 2, row 2 */}
+          <div
+            className="h-full overflow-hidden rounded-3xl"
+            style={{ backgroundColor: "#BAE6FD" }}
+          />
+        </div>
+      </section>
+
+      <div className="mt-5">
+        <DashboardCommunitySection />
       </div>
-    </main>
+
+      <DashboardCertificateSection />
+
+      <DashboardCertificateReviewSection />
+    </div>
   );
 }
