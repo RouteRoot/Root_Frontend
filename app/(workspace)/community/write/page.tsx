@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import { createPost } from "@/app/api/community/post";
 import { uploadPostImage } from "@/app/api/community/image";
 import type { BoardType, StudyStatus } from "@/app/api/community/types";
+import RichTextEditor, {
+  getRichTextPlainText,
+} from "@/components/community/RichTextEditor";
 
 type CategoryOption = {
   label: string;
@@ -56,12 +59,13 @@ export default function Page() {
     () => CATEGORY_OPTIONS.find((option) => option.label === category),
     [category]
   );
+  const plainContent = getRichTextPlainText(content);
 
   const canSubmit =
     Boolean(selectedCategory) &&
     title.trim().length > 0 &&
-    content.trim().length > 0 &&
-    content.length <= MAX_CONTENT_LENGTH &&
+    plainContent.length > 0 &&
+    plainContent.length <= MAX_CONTENT_LENGTH &&
     !isSubmitting &&
     !isUploading;
 
@@ -178,13 +182,11 @@ export default function Page() {
           />
         </div>
 
-        <div className="mt-8 border-t border-[#E5E8EB] pt-7">
-          <textarea
+        <div className="mt-6 border-t border-[#E5E8EB]">
+          <RichTextEditor
             value={content}
-            maxLength={MAX_CONTENT_LENGTH}
-            onChange={(event) => setContent(event.target.value)}
+            onChange={setContent}
             placeholder="공유하고 싶은 이야기가 있나요?"
-            className="min-h-80 w-full resize-none bg-transparent text-[17px] leading-[1.8] text-[#333333] outline-none placeholder:text-[#B8C0CC]"
           />
         </div>
 
@@ -223,7 +225,7 @@ export default function Page() {
 
           <div className="flex items-center gap-9">
             <span className="text-[15px] font-semibold text-[#9AA3B2]">
-              {content.length}/{MAX_CONTENT_LENGTH}
+              {plainContent.length}/{MAX_CONTENT_LENGTH}
             </span>
             <button
               type="button"

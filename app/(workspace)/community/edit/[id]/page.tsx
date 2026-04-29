@@ -6,6 +6,9 @@ import { useParams, useRouter } from "next/navigation";
 import { getPostDetail, updatePost } from "@/app/api/community/post";
 import { uploadPostImage } from "@/app/api/community/image";
 import type { BoardType, StudyStatus } from "@/app/api/community/types";
+import RichTextEditor, {
+  getRichTextPlainText,
+} from "@/components/community/RichTextEditor";
 
 type CategoryOption = {
   label: string;
@@ -88,12 +91,13 @@ export default function Page() {
     () => CATEGORY_OPTIONS.find((option) => option.label === category),
     [category]
   );
+  const plainContent = getRichTextPlainText(content);
 
   const canSubmit =
     Boolean(selectedCategory) &&
     title.trim().length > 0 &&
-    content.trim().length > 0 &&
-    content.length <= MAX_CONTENT_LENGTH &&
+    plainContent.length > 0 &&
+    plainContent.length <= MAX_CONTENT_LENGTH &&
     !isSubmitting &&
     !isUploading;
 
@@ -143,7 +147,7 @@ export default function Page() {
 
   if (isLoading) {
     return (
-      <main className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-185 flex-col pb-28 pt-16">
+      <main className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-185 flex-col pb-28 pt-12">
         <div className="h-5 w-24 animate-pulse rounded bg-[#EEF2F7]" />
         <div className="mt-10 h-12 animate-pulse rounded-lg bg-[#EEF2F7]" />
         <div className="mt-3 h-12 animate-pulse rounded-lg bg-[#F3F6FA]" />
@@ -152,7 +156,7 @@ export default function Page() {
   }
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-185 flex-col pb-28 pt-16">
+    <main className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-185 flex-col pb-28 pt-12">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-[17px] font-black tracking-tight text-[#4876EF]">
@@ -220,13 +224,11 @@ export default function Page() {
           />
         </div>
 
-        <div className="mt-8 border-t border-[#E5E8EB] pt-7">
-          <textarea
+        <div className="mt-6 border-t border-[#E5E8EB]">
+          <RichTextEditor
             value={content}
-            maxLength={MAX_CONTENT_LENGTH}
-            onChange={(event) => setContent(event.target.value)}
+            onChange={setContent}
             placeholder="공유하고 싶은 이야기가 있나요?"
-            className="min-h-80 w-full resize-none bg-transparent text-[17px] leading-[1.8] text-[#333333] outline-none placeholder:text-[#B8C0CC]"
           />
         </div>
 
@@ -283,7 +285,7 @@ export default function Page() {
             </button>
             <div className="flex items-center gap-4">
               <span className="text-[15px] font-semibold text-[#9AA3B2]">
-                {content.length}/{MAX_CONTENT_LENGTH}
+                {plainContent.length}/{MAX_CONTENT_LENGTH}
               </span>
               <button
                 type="button"
@@ -340,7 +342,7 @@ export default function Page() {
               </section>
               <section>
                 <h3 className="font-semibold text-[#333333]">2. 제목은 핵심이 보이게 작성해주세요</h3>
-                <p className="mt-1">예를 들어 "SQLD 2주 합격 후기", "컴활 1급 실기 함수 질문" 처럼 자격증명과 상황을 함께 적으면 답변과 조회가 더 잘 이어집니다.</p>
+                <p className="mt-1">예를 들어 SQLD 2주 합격 후기, 컴활 1급 실기 함수 질문처럼 자격증명과 상황을 함께 적으면 답변과 조회가 더 잘 이어집니다.</p>
               </section>
               <section>
                 <h3 className="font-semibold text-[#333333]">3. 개인정보와 민감한 정보는 제외해주세요</h3>

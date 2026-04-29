@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { getMyPosts, getPostDetail } from "@/app/api/community/post";
 import { getMyLikes } from "@/app/api/community/like";
 import type { Post } from "@/app/api/community/types";
+import { getPostPreviewContent } from "@/components/community/postContentPreview";
 
 type ActivityMode = "my-posts" | "liked";
 
@@ -21,10 +22,7 @@ function formatDate(createdAt: string) {
 }
 
 function stripImages(content: string) {
-  return content
-    .replace(/<img[^>]*>/gi, "")
-    .replace(/!\[[^\]]*]\([^)]+\)/g, "")
-    .trim();
+  return getPostPreviewContent(content);
 }
 
 function ActivityPostItem({ post }: { post: Post }) {
@@ -42,7 +40,7 @@ function ActivityPostItem({ post }: { post: Post }) {
           {post.title}
         </h2>
 
-        <p className="mt-1 line-clamp-2 text-[15px] leading-[1.6] text-[#575757]">
+        <p className="mt-1 line-clamp-2 whitespace-pre-line text-[15px] leading-[1.6] text-[#575757]">
           {stripImages(post.content)}
         </p>
 

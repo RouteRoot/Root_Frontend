@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getMyPosts, getPopularPosts, getPosts } from "@/app/api/community/post";
 import { getMyLikes } from "@/app/api/community/like";
 import type { BoardType, Post } from "@/app/api/community/types";
+import { getPostPreviewContent } from "@/components/community/postContentPreview";
 
 type CategoryTab =
   | "전체"
@@ -79,10 +80,7 @@ function getFirstImageUrl(content: string) {
 }
 
 function stripImagesFromContent(content: string) {
-  return content
-    .replace(/<img[^>]*>/gi, "")
-    .replace(/!\[[^\]]*]\([^)]+\)/g, "")
-    .trim();
+  return getPostPreviewContent(content);
 }
 
 function toCommunityPost(post: Post): CommunityPost {
@@ -219,7 +217,7 @@ function PopularCard({
       <p className="mt-3 line-clamp-2 text-[15px] font-medium leading-[1.55] text-[#333333]">
         {post.title}
       </p>
-      <p className="mt-1 line-clamp-2 text-[13px] leading-[1.55] text-[#667085]">
+      <p className="mt-1 line-clamp-2 whitespace-pre-line text-[13px] leading-[1.55] text-[#667085]">
         {post.content}
       </p>
       <div className="mt-5 flex items-center justify-between gap-4">

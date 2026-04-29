@@ -5,6 +5,7 @@ import { Heart, MessageCircle, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getPopularPosts } from "@/app/api/community/post";
 import type { Post } from "@/app/api/community/types";
+import { getPostPreviewContent } from "@/components/community/postContentPreview";
 
 type CommunityPost = {
   id: number;
@@ -16,10 +17,7 @@ type CommunityPost = {
 };
 
 function stripImagesFromContent(content: string) {
-  return content
-    .replace(/<img[^>]*>/gi, "")
-    .replace(/!\[[^\]]*]\([^)]+\)/g, "")
-    .trim();
+  return getPostPreviewContent(content);
 }
 
 function toCommunityPost(post: Post): CommunityPost {
@@ -41,7 +39,7 @@ function PostCard({ post }: { post: CommunityPost }) {
           <p className="line-clamp-2 text-[16px] font-semibold leading-[1.55] tracking-tight text-[#575757]">
             {post.title}
           </p>
-          <p className="mt-2 line-clamp-3 text-[16px] leading-[1.65] text-[#777777]">
+          <p className="mt-2 line-clamp-3 whitespace-pre-line text-[16px] leading-[1.65] text-[#777777]">
             {post.content}
           </p>
         </div>

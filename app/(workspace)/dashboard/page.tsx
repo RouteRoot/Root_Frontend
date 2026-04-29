@@ -40,16 +40,32 @@ export default function Page() {
           </div>
 
           {/* 하단 카드 1 — col 1, row 2 */}
-          <div
-            className="h-full overflow-hidden rounded-3xl"
-            style={{ backgroundColor: "#FBCFE8" }}
-          />
+          <Link
+            href="/community/4"
+            className="block h-full overflow-hidden rounded-3xl"
+          >
+            <Image
+              src="/Group 24.svg"
+              alt="?ㅻ뒛??異붿쿇 ?섎떒 1"
+              width={341}
+              height={200}
+              className="block h-full w-full object-cover"
+            />
+          </Link>
 
           {/* 하단 카드 2 — col 2, row 2 */}
-          <div
-            className="h-full overflow-hidden rounded-3xl"
-            style={{ backgroundColor: "#BAE6FD" }}
-          />
+          <Link
+            href="/community/17"
+            className="block h-full overflow-hidden rounded-3xl"
+          >
+            <Image
+              src="/Group 25.svg"
+              alt="?ㅻ뒛??異붿쿇 ?섎떒 2"
+              width={341}
+              height={200}
+              className="block h-full w-full object-cover"
+            />
+          </Link>
         </div>
       </section>
 

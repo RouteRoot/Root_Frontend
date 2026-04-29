@@ -21,6 +21,7 @@ import { checkLiked, toggleLike } from "@/app/api/community/like";
 import { deletePost, getPostDetail } from "@/app/api/community/post";
 import { getMe } from "@/app/api/service/user";
 import type { Comment, Post } from "@/app/api/community/types";
+import { sanitizeRichText } from "@/components/community/RichTextEditor";
 
 const AVATAR_COLORS = ["#D7F2FF", "#FFE1EA", "#DDF7EC", "#E7E2FF", "#FFECCA"];
 
@@ -305,6 +306,10 @@ export default function Page() {
     () => (post ? getFirstImageUrl(post.content) : undefined),
     [post]
   );
+  const sanitizedContent = useMemo(
+    () => (post ? sanitizeRichText(stripImages(post.content)) : ""),
+    [post]
+  );
 
   const isPostAuthor = Boolean(myName && post && post.author === myName);
 
@@ -517,9 +522,10 @@ export default function Page() {
           )}
         </div>
 
-        <div className="mt-5 whitespace-pre-wrap text-[16px] leading-[1.65] tracking-[-0.01em] text-[#323438]">
-          {stripImages(post.content)}
-        </div>
+        <div
+          className="rich-text-content mt-5 text-[16px] leading-[1.65] tracking-[-0.01em] text-[#323438]"
+          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+        />
 
         {imageUrl && (
           <div className="mt-6 w-full overflow-hidden rounded-xl bg-[#F3F6FA]">

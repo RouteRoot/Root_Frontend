@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { getPopularPosts, getPosts } from "@/app/api/community/post";
 import type { Post } from "@/app/api/community/types";
+import { getPostPreviewContent } from "@/components/community/postContentPreview";
 
 type TabType = "pick" | "popular";
 
@@ -24,10 +25,7 @@ const MAX_VISIBLE_COUNT = 5;
 const DRAG_THRESHOLD = 8;
 
 function stripImages(content: string) {
-  return content
-    .replace(/<img[^>]*>/gi, "")
-    .replace(/!\[[^\]]*]\([^)]+\)/g, "")
-    .trim();
+  return getPostPreviewContent(content);
 }
 
 function toRecommendPost(post: Post, type: TabType): RecommendPost {
@@ -87,7 +85,7 @@ function RecommendCard({
         {post.title}
       </h3>
 
-      <p className="mt-[12px] min-h-[42px] overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] text-[14px] leading-[1.5] tracking-[-0.02em] text-[#5A6178]">
+      <p className="mt-[12px] min-h-[42px] overflow-hidden text-ellipsis whitespace-pre-line [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] text-[14px] leading-[1.5] tracking-[-0.02em] text-[#5A6178]">
         {post.content}
       </p>
 
