@@ -1,38 +1,152 @@
 import { axiosInstance } from "../axios/axiosInstance";
+import type {
+  CertificateDetail,
+  CertificateMutationPayload,
+  CertificateSchedule,
+  CertificateSchedulePayload,
+  CertificateSearchItem,
+} from "./types";
 
-export type ExamSchedule = {
-  round: string;
-  docExamStart?: string;
-  docDday?: number;
-  pracExamStart?: string;
-  pracDday?: number;
-};
+export type {
+  CertificateDetail,
+  CertificateMutationPayload,
+  CertificateSchedule,
+  CertificateSchedulePayload,
+  CertificateScheduleSummary,
+  CertificateSearchItem,
+  ExamDetail,
+  ExamMutationPayload,
+  ExamSchedule,
+  ExamSchedulePayload,
+  ExamScheduleSummary,
+  ExamSearchItem,
+} from "./types";
 
-export type ExamSearchItem = {
-  examName: string;
-  schedules: ExamSchedule[];
-};
-
-export const searchCertificates = async (
+export async function searchCertificates(
   keyword: string
-): Promise<ExamSearchItem[]> => {
-  console.log("====================================");
-  console.log("[API 함수 진입] searchCertificates");
-  console.log("전달받은 keyword:", keyword);
-  console.log("axios baseURL:", axiosInstance.defaults.baseURL);
-  console.log("요청 URL: /exams/search");
-  console.log("요청 params:", { keyword });
-  console.log("====================================");
+): Promise<CertificateSearchItem[]> {
+  if (!keyword.trim()) return [];
 
-  const res = await axiosInstance.get("/exams/search", {
-    params: { keyword },
+  const response = await axiosInstance.get<CertificateSearchItem[]>(
+    "/exams/search",
+    {
+      params: { keyword: keyword.trim() },
+    }
+  );
+
+  return response.data;
+}
+
+export async function getCertificateDetail(
+  examCode: string
+): Promise<CertificateDetail> {
+  const response = await axiosInstance.get<CertificateDetail>(
+    `/exams/${examCode}`
+  );
+
+  return response.data;
+}
+
+export async function getAllCertificates(): Promise<CertificateDetail[]> {
+  const response = await axiosInstance.get<CertificateDetail[]>("/exams/all");
+
+  return response.data;
+}
+
+export async function createCertificateManual(
+  payload: CertificateMutationPayload
+): Promise<CertificateDetail> {
+  const response = await axiosInstance.post<CertificateDetail>(
+    "/exams/manual",
+    payload
+  );
+
+  return response.data;
+}
+
+export async function patchCertificate(
+  examCode: string,
+  payload: CertificateMutationPayload
+): Promise<CertificateDetail> {
+  const response = await axiosInstance.patch<CertificateDetail>(
+    `/exams/${examCode}`,
+    payload
+  );
+
+  return response.data;
+}
+
+export async function deleteCertificate(examCode: string): Promise<string> {
+  const response = await axiosInstance.delete<string>(`/exams/${examCode}`);
+
+  return response.data;
+}
+
+export async function addCertificateSchedule(
+  examCode: string,
+  payload: CertificateSchedulePayload
+): Promise<CertificateSchedule> {
+  const response = await axiosInstance.post<CertificateSchedule>(
+    `/exams/${examCode}/schedules`,
+    payload
+  );
+
+  return response.data;
+}
+
+export async function patchCertificateSchedule(
+  scheduleId: number,
+  payload: CertificateSchedulePayload
+): Promise<CertificateSchedule> {
+  const response = await axiosInstance.patch<CertificateSchedule>(
+    `/exams/schedules/${scheduleId}`,
+    payload
+  );
+
+  return response.data;
+}
+
+export async function deleteCertificateSchedule(
+  scheduleId: number
+): Promise<string> {
+  const response = await axiosInstance.delete<string>(
+    `/exams/schedules/${scheduleId}`
+  );
+
+  return response.data;
+}
+
+export async function fetchExternalCertificates(): Promise<string> {
+  const response = await axiosInstance.get<string>("/exams/fetch-external");
+
+  return response.data;
+}
+
+export async function testFetchCertificateSchedules(
+  examCode: string
+): Promise<string> {
+  const response = await axiosInstance.get<string>("/exams/test-fetch", {
+    params: { examCode },
   });
 
-  console.log("====================================");
-  console.log("[API 함수 응답]");
-  console.log("status:", res.status);
-  console.log("response.data:", res.data);
-  console.log("====================================");
+  return response.data;
+}
 
-  return res.data;
-};
+export async function fetchAllCertificateSchedules(): Promise<string> {
+  const response = await axiosInstance.get<string>("/exams/test-fetch-all");
+
+  return response.data;
+}
+
+export const searchExams = searchCertificates;
+export const getExamDetail = getCertificateDetail;
+export const getAllExams = getAllCertificates;
+export const createExamManual = createCertificateManual;
+export const patchExam = patchCertificate;
+export const deleteExam = deleteCertificate;
+export const addExamSchedule = addCertificateSchedule;
+export const patchExamSchedule = patchCertificateSchedule;
+export const deleteExamSchedule = deleteCertificateSchedule;
+export const fetchExternalExams = fetchExternalCertificates;
+export const testFetchExamSchedules = testFetchCertificateSchedules;
+export const fetchAllExamSchedules = fetchAllCertificateSchedules;
