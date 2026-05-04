@@ -133,7 +133,7 @@ export default function Footer() {
   return (
     <>
       <footer className="border-t border-[#E6E8EC] bg-white text-[#6B7280]">
-        <div className="mx-auto flex min-h-[260px] w-full max-w-[1070px] flex-col px-6 py-8 md:px-8">
+        <div className="mx-auto flex min-h-[260px] w-full max-w-[1062px] flex-col px-6 py-8 md:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <nav
               aria-label="footer navigation"
