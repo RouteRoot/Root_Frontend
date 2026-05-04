@@ -4,8 +4,12 @@ import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, ImageIcon, Info, Loader2, X } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { getPostDetail, updatePost } from "@/app/api/community/post";
-import { uploadPostImage } from "@/app/api/community/image";
+import {
+  normalizePostImageUrl,
+  uploadPostImage,
+} from "@/app/api/community/image";
 import type { BoardType, StudyStatus } from "@/app/api/community/types";
+import AuthenticatedImage from "@/components/community/AuthenticatedImage";
 import RichTextEditor, {
   getRichTextPlainText,
 } from "@/components/community/RichTextEditor";
@@ -69,7 +73,7 @@ export default function Page() {
         setTitle(post.title);
 
         const imgMatch = post.content.match(/<img[^>]+src=["']([^"']+)["']/i);
-        if (imgMatch?.[1]) setImageUrl(imgMatch[1]);
+        if (imgMatch?.[1]) setImageUrl(normalizePostImageUrl(imgMatch[1]));
 
         setContent(
           post.content
@@ -233,18 +237,25 @@ export default function Page() {
         </div>
 
         {imageUrl && (
-          <div className="mt-4 flex items-center justify-between rounded-lg border border-[#E5E8EB] bg-[#F8F9FA] px-4 py-3">
-            <span className="text-[13px] font-medium text-[#667085]">
-              이미지가 첨부되었습니다.
-            </span>
-            <button
-              type="button"
-              onClick={() => setImageUrl("")}
-              className="text-[#94A3B8] transition-colors hover:text-[#667085]"
-              aria-label="이미지 제거"
-            >
-              <X className="h-4 w-4" />
-            </button>
+          <div className="mt-4 overflow-hidden rounded-lg border border-[#E5E8EB] bg-[#F8F9FA]">
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-[13px] font-medium text-[#667085]">
+                이미지가 첨부되었습니다.
+              </span>
+              <button
+                type="button"
+                onClick={() => setImageUrl("")}
+                className="text-[#94A3B8] transition-colors hover:text-[#667085]"
+                aria-label="이미지 제거"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <AuthenticatedImage
+              src={imageUrl}
+              alt=""
+              className="max-h-80 w-full border-t border-[#E5E8EB] object-contain"
+            />
           </div>
         )}
 

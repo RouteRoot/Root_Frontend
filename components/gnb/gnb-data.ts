@@ -2,7 +2,7 @@ export const navItems = [
   { label: "플랜", href: "/plan" },
   { label: "로드맵", href: "/roadmap" },
   { label: "커뮤니티", href: "/community" },
-  { label: "자격증", href: "/certificate" },
+  { label: "자격증 위키", href: "/certificate" },
 ];
 
 export const trendingCertificates = [

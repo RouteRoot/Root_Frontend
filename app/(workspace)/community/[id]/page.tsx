@@ -19,8 +19,10 @@ import {
 } from "@/app/api/community/comment";
 import { checkLiked, toggleLike } from "@/app/api/community/like";
 import { deletePost, getPostDetail } from "@/app/api/community/post";
+import { normalizePostImageUrl } from "@/app/api/community/image";
 import { getMe } from "@/app/api/service/user";
 import type { Comment, Post } from "@/app/api/community/types";
+import AuthenticatedImage from "@/components/community/AuthenticatedImage";
 import { sanitizeRichText } from "@/components/community/RichTextEditor";
 
 const AVATAR_COLORS = ["#D7F2FF", "#FFE1EA", "#DDF7EC", "#E7E2FF", "#FFECCA"];
@@ -79,13 +81,13 @@ function formatRelativeTime(createdAt: string) {
 
 function getFirstImageUrl(content: string) {
   const imageTagMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i);
-  if (imageTagMatch?.[1]) return imageTagMatch[1];
+  if (imageTagMatch?.[1]) return normalizePostImageUrl(imageTagMatch[1]);
 
   const markdownMatch = content.match(/!\[[^\]]*]\(([^)]+)\)/);
-  if (markdownMatch?.[1]) return markdownMatch[1];
+  if (markdownMatch?.[1]) return normalizePostImageUrl(markdownMatch[1]);
 
   const urlMatch = content.match(/https?:\/\/\S+\.(?:png|jpe?g|gif|webp)/i);
-  return urlMatch?.[0];
+  return urlMatch?.[0] ? normalizePostImageUrl(urlMatch[0]) : undefined;
 }
 
 function stripImages(content: string) {
@@ -529,8 +531,7 @@ export default function Page() {
 
         {imageUrl && (
           <div className="mt-6 w-full overflow-hidden rounded-xl bg-[#F3F6FA]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <AuthenticatedImage
               src={imageUrl}
               alt=""
               className="w-full object-cover"

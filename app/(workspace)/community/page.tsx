@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { Eye, MessageCircle, Plus, Search, ThumbsUp } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { normalizePostImageUrl } from "@/app/api/community/image";
 import { getMyPosts, getPopularPosts, getPosts } from "@/app/api/community/post";
 import { getMyLikes } from "@/app/api/community/like";
 import type { BoardType, Post } from "@/app/api/community/types";
+import AuthenticatedImage from "@/components/community/AuthenticatedImage";
 import { getPostPreviewContent } from "@/components/community/postContentPreview";
 
 type CategoryTab =
@@ -70,13 +71,13 @@ function getCreatedAgo(createdAt: string) {
 
 function getFirstImageUrl(content: string) {
   const imageTagMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i);
-  if (imageTagMatch?.[1]) return imageTagMatch[1];
+  if (imageTagMatch?.[1]) return normalizePostImageUrl(imageTagMatch[1]);
 
   const markdownMatch = content.match(/!\[[^\]]*]\(([^)]+)\)/);
-  if (markdownMatch?.[1]) return markdownMatch[1];
+  if (markdownMatch?.[1]) return normalizePostImageUrl(markdownMatch[1]);
 
   const urlMatch = content.match(/https?:\/\/\S+\.(?:png|jpe?g|gif|webp)/i);
-  return urlMatch?.[0];
+  return urlMatch?.[0] ? normalizePostImageUrl(urlMatch[0]) : undefined;
 }
 
 function stripImagesFromContent(content: string) {
@@ -94,7 +95,9 @@ function toCommunityPost(post: Post): CommunityPost {
       : isCategoryTab(post.category)
         ? post.category
         : "자유";
-  const imageUrl = postWithImage.imageUrl ?? getFirstImageUrl(post.content);
+  const imageUrl = postWithImage.imageUrl
+    ? normalizePostImageUrl(postWithImage.imageUrl)
+    : getFirstImageUrl(post.content);
 
   return {
     id: post.postId,
@@ -175,12 +178,10 @@ function PostListItem({
 
           {post.imageUrl && (
             <div className="relative mt-1 h-[106px] w-[106px] shrink-0 overflow-hidden rounded-[8px] bg-[#F3F6FA]">
-              <Image
+              <AuthenticatedImage
                 src={post.imageUrl}
                 alt=""
-                fill
-                sizes="106px"
-                className="object-cover"
+                className="h-full w-full object-cover"
               />
             </div>
           )}

@@ -1,5 +1,6 @@
 import StandardLayout from "@/components/layouts/StandardLayout";
 import Gnb from "@/components/gnb/Gnb";
+import Footer from "@/components/common/Footer";
 
 export default function CombinedLayout({
   children,
@@ -12,6 +13,7 @@ export default function CombinedLayout({
       <StandardLayout>
         {children}
       </StandardLayout>
+      <Footer />
     </div>
   );
 }

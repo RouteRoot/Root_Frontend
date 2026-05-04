@@ -1,4 +1,5 @@
 import Gnb from "@/components/gnb/Gnb";
+import Footer from "@/components/common/Footer";
 
 export default function WorkspaceLayout({
   children,
@@ -9,6 +10,7 @@ export default function WorkspaceLayout({
     <div className="min-h-screen bg-white">
       <Gnb />
       {children}
+      <Footer />
     </div>
   );
 }

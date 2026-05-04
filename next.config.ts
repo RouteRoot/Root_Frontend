@@ -29,6 +29,14 @@ const nextConfig: NextConfig = {
         source: "/api/:path*",
         destination: "http://13.239.246.72:8080/api/:path*",
       },
+      {
+        source: "/images/:path*",
+        destination: "http://13.239.246.72:8080/images/:path*",
+      },
+      {
+        source: "/uploads/:path*",
+        destination: "http://13.239.246.72:8080/uploads/:path*",
+      },
     ];
   },
 };
