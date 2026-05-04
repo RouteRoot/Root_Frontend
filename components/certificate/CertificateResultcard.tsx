@@ -1,54 +1,70 @@
-import type { CertificateScheduleSummary } from "@/app/api/certificate/types";
+import type { CertificateSearchItem } from "@/app/api/certificate/types";
+import { Building2, CalendarDays, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { getCertificateDescriptionText } from "./certificateDescription";
 
 type CertificateResultCardProps = {
-  examName: string;
-  schedules: CertificateScheduleSummary[];
+  item: CertificateSearchItem;
 };
 
+function getNextScheduleLabel(item: CertificateSearchItem) {
+  const next = item.schedules.find(
+    (schedule) => schedule.docExamStart || schedule.pracExamStart
+  );
+
+  if (!next) return "등록된 일정 없음";
+  return next.docExamStart
+    ? `필기 ${next.docExamStart}`
+    : `실기 ${next.pracExamStart}`;
+}
+
 export default function CertificateResultCard({
-  examName,
-  schedules,
+  item,
 }: CertificateResultCardProps) {
+  const descriptionText = getCertificateDescriptionText(item.description);
+
   return (
-    <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-sm">
-      <p className="text-[11px] font-black uppercase tracking-[0.08em] text-slate-400">
-        CERTIFICATE
-      </p>
-
-      <h3 className="mt-3 text-[22px] font-black tracking-tight text-slate-900">
-        {examName}
-      </h3>
-
-      <div className="mt-5 space-y-3">
-        {schedules.length === 0 && (
-          <p className="rounded-2xl bg-slate-50 px-4 py-4 text-[13px] font-semibold text-slate-400">
-            등록된 시험 일정이 없습니다.
-          </p>
-        )}
-
-        {schedules.map((schedule, index) => (
-          <div key={index} className="rounded-2xl bg-slate-50 px-4 py-4">
-            <p className="text-[13px] font-black text-slate-800">
-              {schedule.round ?? "일정 정보"}
-            </p>
-
-            <div className="mt-2 space-y-1 text-[13px] text-slate-500">
-              {schedule.docExamStart && (
-                <p>필기시험: {schedule.docExamStart}</p>
-              )}
-              {typeof schedule.docDDay === "number" && (
-                <p>필기 D-day: {schedule.docDDay}</p>
-              )}
-              {schedule.pracExamStart && (
-                <p>실기시험: {schedule.pracExamStart}</p>
-              )}
-              {typeof schedule.pracDDay === "number" && (
-                <p>실기 D-day: {schedule.pracDDay}</p>
-              )}
-            </div>
+    <Link
+      href={`/certificate/${encodeURIComponent(item.examCode)}`}
+      className="group block border-b border-[#E5E8EB] py-6"
+    >
+      <article className="flex items-start justify-between gap-6">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            {item.category && (
+              <span className="rounded-sm bg-[#F5F7FA] px-2 py-1 text-[12px] font-normal text-[#7B8798]">
+                {item.category}
+              </span>
+            )}
+            {item.examGroup && (
+              <span className="rounded-sm bg-[#EEF3FF] px-2 py-1 text-[12px] font-normal text-[#4876EF]">
+                {item.examGroup}
+              </span>
+            )}
           </div>
-        ))}
-      </div>
-    </div>
+
+          <h3 className="mt-3 text-[18px] font-semibold tracking-tight text-[#333333] transition-colors group-hover:text-[#4876EF]">
+            {item.examName}
+          </h3>
+
+          <p className="mt-2 line-clamp-2 text-[14px] leading-[1.65] text-[#667085]">
+            {descriptionText || "자격증 상세 정보와 시험 일정을 확인해보세요."}
+          </p>
+
+          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-[#7B8798]">
+            <span className="inline-flex items-center gap-1.5">
+              <Building2 className="h-3.5 w-3.5" />
+              {item.organization || "기관 정보 없음"}
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <CalendarDays className="h-3.5 w-3.5" />
+              {getNextScheduleLabel(item)}
+            </span>
+          </div>
+        </div>
+
+        <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-[#B8C0CC] transition-colors group-hover:text-[#4876EF]" />
+      </article>
+    </Link>
   );
 }

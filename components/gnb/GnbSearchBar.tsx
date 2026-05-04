@@ -127,8 +127,8 @@ export default function GnbSearchBar({ compact = false }: GnbSearchBarProps) {
     }
   };
 
-  const handleResultClick = (examName: string) => {
-    router.push(`/certificate/search?keyword=${encodeURIComponent(examName)}`);
+  const handleResultClick = (examCode: string) => {
+    router.push(`/certificate/${encodeURIComponent(examCode)}`);
     closeSearch();
   };
 
@@ -260,7 +260,7 @@ export default function GnbSearchBar({ compact = false }: GnbSearchBarProps) {
                     <button
                       key={certificate.examCode}
                       type="button"
-                      onClick={() => handleResultClick(certificate.examName)}
+                      onClick={() => handleResultClick(certificate.examCode)}
                       className="flex w-full items-start justify-between gap-4 rounded-[8px] px-4 py-3 text-left transition-colors hover:bg-[#F3F6FA]"
                     >
                       <span className="min-w-0">

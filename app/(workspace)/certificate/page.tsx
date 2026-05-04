@@ -3,47 +3,67 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import CertificateSearchBar from "@/components/certificate/CertificateSearchBar";
-import ExploreSectionHeader from "@/components/certificate/ExploreSectionHeader";
+
+const SUGGESTED_KEYWORDS = [
+  "정보처리기사",
+  "컴퓨터활용능력",
+  "SQLD",
+  "전기기사",
+  "산업안전기사",
+  "한국사능력검정시험",
+];
 
 export default function Page() {
   const router = useRouter();
   const [keyword, setKeyword] = useState("");
 
   const handleSearch = (searchedKeyword: string) => {
+    const trimmedKeyword = searchedKeyword.trim();
+    if (!trimmedKeyword) return;
+
     router.push(
-      `/certificate/search?keyword=${encodeURIComponent(searchedKeyword)}`
+      `/certificate/search?keyword=${encodeURIComponent(trimmedKeyword)}`
     );
   };
 
   return (
-    <main className="px-8 py-10">
-      <div className="mx-auto max-w-[1200px]">
-        <div className="text-center">
-          <h1 className="text-[42px] font-black tracking-tight text-slate-900">
-            Search <span className="italic text-indigo-600">Certificate</span>
-          </h1>
-          <p className="mt-4 text-[16px] font-semibold text-slate-500">
-            나에게 맞는 자격증을 탐색해보세요.
-          </p>
-        </div>
+    <div className="mx-auto w-full max-w-230">
+      <section className="border-b border-[#E5E8EB] pb-12">
+        <p className="text-[14px] font-semibold text-[#4876EF]">Certificate</p>
+        <h1 className="mt-2 text-[30px] font-bold tracking-tight text-[#333333]">
+          자격증 찾기
+        </h1>
+        <p className="mt-3 max-w-160 text-[15px] leading-[1.75] text-[#7B8798]">
+          목표 자격증을 검색하고 시험 일정, 주관 기관, 상세 정보를 한 번에
+          확인해보세요.
+        </p>
 
-        <div className="mt-10">
+        <div className="mt-8 max-w-140">
           <CertificateSearchBar
             value={keyword}
             onChange={setKeyword}
             onSearch={handleSearch}
           />
         </div>
+      </section>
 
-        <div className="mt-16">
-          <ExploreSectionHeader
-            title="EXPLORE"
-            description="다양한 분류의 자격증을 둘러보세요"
-          />
+      <section className="mt-10">
+        <h2 className="text-[18px] font-semibold text-[#333333]">
+          많이 찾는 자격증
+        </h2>
+        <div className="mt-5 flex flex-wrap gap-3">
+          {SUGGESTED_KEYWORDS.map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => handleSearch(item)}
+              className="rounded-full border border-[#DDE2EA] bg-white px-4 py-2 text-[14px] font-medium text-[#667085] transition-colors hover:border-[#4876EF] hover:text-[#4876EF]"
+            >
+              {item}
+            </button>
+          ))}
         </div>
-
-        <div className="mt-10 text-[14px] text-slate-400">자격증 카드들</div>
-      </div>
-    </main>
+      </section>
+    </div>
   );
 }

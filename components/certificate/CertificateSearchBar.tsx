@@ -13,7 +13,7 @@ export default function CertificateSearchBar({
   value,
   onChange,
   onSearch,
-  placeholder = "자격증명, 직무, 기술스택으로 검색해보세요",
+  placeholder = "자격증명, 분야, 기관 검색",
 }: CertificateSearchBarProps) {
   const handleSearch = () => {
     const trimmed = value.trim();
@@ -22,16 +22,8 @@ export default function CertificateSearchBar({
   };
 
   return (
-    <div className="mx-auto w-full max-w-[640px]">
-      <div
-        className="
-          flex items-center rounded-full border border-[#E5E7EB] bg-white
-          pl-6 pr-2 shadow-[0_4px_18px_rgba(15,23,42,0.06)]
-          transition-all duration-200
-          focus-within:border-[#C7D2FE]
-          focus-within:shadow-[0_8px_24px_rgba(79,70,229,0.10)]
-        "
-      >
+    <div className="w-full">
+      <div className="flex h-12 items-center rounded-lg border border-[#DDE2EA] bg-white pl-4 pr-2 transition-colors focus-within:border-[#4876EF]">
         <input
           type="text"
           value={value}
@@ -40,29 +32,17 @@ export default function CertificateSearchBar({
             if (e.key === "Enter") handleSearch();
           }}
           placeholder={placeholder}
-          className="
-            h-[58px] min-w-0 flex-1 bg-transparent text-[15px] font-medium
-            text-slate-700 outline-none
-            placeholder:text-slate-400
-          "
+          className="min-w-0 flex-1 bg-transparent text-[15px] font-normal text-[#333333] outline-none placeholder:text-[#B8C0CC]"
         />
 
         <button
           type="button"
           onClick={handleSearch}
           disabled={!value.trim()}
-          className={`
-            flex h-[46px] w-[46px] shrink-0 items-center justify-center
-            rounded-full text-white transition-transform duration-200
-            ${
-              value.trim()
-                ? "bg-indigo-600 hover:scale-105"
-                : "cursor-not-allowed bg-slate-300"
-            }
-          `}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[#4876EF] text-white transition-colors disabled:bg-[#DDE7FF] hover:enabled:bg-[#3F68D8]"
           aria-label="검색"
         >
-          <Search size={20} />
+          <Search className="h-4 w-4" strokeWidth={2.5} />
         </button>
       </div>
     </div>
