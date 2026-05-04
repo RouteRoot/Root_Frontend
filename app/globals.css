@@ -240,6 +240,47 @@
   text-decoration: underline;
 }
 
+.rich-text-editor p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: #B8C0CC;
+  pointer-events: none;
+}
+
+.rich-text-editor h1,
+.rich-text-content h1 {
+  margin: 1.25rem 0 0.75rem;
+  font-size: 1.7em;
+  font-weight: 800;
+  line-height: 1.35;
+  color: #252A32;
+}
+
+.rich-text-editor h2,
+.rich-text-content h2 {
+  margin: 1rem 0 0.65rem;
+  font-size: 1.35em;
+  font-weight: 750;
+  line-height: 1.4;
+  color: #252A32;
+}
+
+.rich-text-editor img,
+.rich-text-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1rem 0;
+  border-radius: 8px;
+}
+
+.rich-text-editor .ProseMirror-selectednode,
+.rich-text-editor img.ProseMirror-selectednode {
+  outline: 2px solid #4876EF;
+  outline-offset: 3px;
+}
+
 .rich-text-editor font[size="4"],
 .rich-text-content font[size="4"] {
   font-size: 1.125em;

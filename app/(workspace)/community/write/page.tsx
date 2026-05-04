@@ -1,12 +1,11 @@
 "use client";
 
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown, ImageIcon, Info, Loader2, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ChevronDown, Info, Loader2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createPost } from "@/app/api/community/post";
 import { uploadPostImage } from "@/app/api/community/image";
 import type { BoardType, StudyStatus } from "@/app/api/community/types";
-import AuthenticatedImage from "@/components/community/AuthenticatedImage";
 import RichTextEditor, {
   getRichTextPlainText,
 } from "@/components/community/RichTextEditor";
@@ -33,14 +32,11 @@ const CATEGORY_OPTIONS: CategoryOption[] = [
 
 export default function Page() {
   const router = useRouter();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -67,25 +63,7 @@ export default function Page() {
     title.trim().length > 0 &&
     plainContent.length > 0 &&
     plainContent.length <= MAX_CONTENT_LENGTH &&
-    !isSubmitting &&
-    !isUploading;
-
-  const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    try {
-      setIsUploading(true);
-      setErrorMessage("");
-      const result = await uploadPostImage(file);
-      setImageUrl(result.imageUrl);
-    } catch {
-      setErrorMessage("이미지 업로드에 실패했어요.");
-    } finally {
-      setIsUploading(false);
-      event.target.value = "";
-    }
-  };
+    !isSubmitting;
 
   const handleSubmit = async () => {
     if (!selectedCategory || !canSubmit) return;
@@ -94,13 +72,9 @@ export default function Page() {
       setIsSubmitting(true);
       setErrorMessage("");
 
-      const contentWithImage = imageUrl
-        ? `${content.trim()}\n\n<img src="${imageUrl}" alt="" />`
-        : content.trim();
-
       const post = await createPost({
         title: title.trim(),
-        content: contentWithImage,
+        content: content.trim(),
         boardType: selectedCategory.boardType,
         category: selectedCategory.label,
         studyStatus: selectedCategory.studyStatus,
@@ -188,31 +162,12 @@ export default function Page() {
             value={content}
             onChange={setContent}
             placeholder="공유하고 싶은 이야기가 있나요?"
+            onImageUpload={async (file) => {
+              const result = await uploadPostImage(file);
+              return result.imageUrl;
+            }}
           />
         </div>
-
-        {imageUrl && (
-          <div className="mt-4 overflow-hidden rounded-lg border border-[#E5E8EB] bg-[#F8F9FA]">
-            <div className="flex items-center justify-between px-4 py-3">
-              <span className="text-[13px] font-medium text-[#667085]">
-                이미지가 첨부되었습니다.
-              </span>
-              <button
-                type="button"
-                onClick={() => setImageUrl("")}
-                className="text-[#94A3B8] transition-colors hover:text-[#667085]"
-                aria-label="이미지 제거"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <AuthenticatedImage
-              src={imageUrl}
-              alt=""
-              className="max-h-80 w-full border-t border-[#E5E8EB] object-contain"
-            />
-          </div>
-        )}
 
         {errorMessage && (
           <p className="mt-4 text-[13px] font-medium text-[#EF4444]">
@@ -222,25 +177,7 @@ export default function Page() {
       </section>
 
       <div className="fixed inset-x-0 bottom-0 border-t border-[#E5E8EB] bg-white">
-        <div className="mx-auto flex h-18 w-full max-w-185 items-center justify-between">
-          <div className="flex items-center gap-6">
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 text-[15px] font-semibold text-[#7B8798] transition-colors hover:text-[#4876EF]"
-            >
-              <ImageIcon className="h-4.5 w-4.5" />
-              이미지
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleImageChange}
-            />
-          </div>
-
+        <div className="mx-auto flex h-18 w-full max-w-185 items-center justify-end">
           <div className="flex items-center gap-9">
             <span className="text-[15px] font-semibold text-[#9AA3B2]">
               {plainContent.length}/{MAX_CONTENT_LENGTH}
@@ -251,7 +188,7 @@ export default function Page() {
               onClick={handleSubmit}
               className="flex h-12 w-28 items-center justify-center rounded-lg bg-[#4876EF] text-[15px] font-bold text-white transition-colors disabled:bg-[#DDE7FF] disabled:text-white hover:enabled:bg-[#3F68D8]"
             >
-              {isSubmitting || isUploading ? (
+              {isSubmitting ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 "작성하기"

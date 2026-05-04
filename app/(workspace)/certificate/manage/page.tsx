@@ -21,6 +21,7 @@ import type {
   CertificateSchedulePayload,
   CertificateSearchItem,
 } from "@/app/api/certificate/types";
+import { uploadPostImage } from "@/app/api/community/image";
 import { hasMeaningfulCertificateDescription } from "@/components/certificate/certificateDescription";
 import RichTextEditor from "@/components/community/RichTextEditor";
 
@@ -624,6 +625,10 @@ export default function CertificateManagePage() {
                 updateCertificateForm("description", value)
               }
               placeholder="상세 페이지에 표시할 설명을 입력해주세요."
+              onImageUpload={async (file) => {
+                const result = await uploadPostImage(file);
+                return result.imageUrl;
+              }}
             />
           </div>
         </div>
