@@ -9,6 +9,8 @@ import type { BoardType, StudyStatus } from "@/app/api/community/types";
 import RichTextEditor, {
   getRichTextPlainText,
 } from "@/components/community/RichTextEditor";
+import { useWikiEditorAccess } from "@/components/certificate/useWikiEditorAccess";
+import { BBURI_PICK_CATEGORY } from "@/components/certificate/wikiPost";
 
 type CategoryOption = {
   label: string;
@@ -33,6 +35,7 @@ const CATEGORY_OPTIONS: CategoryOption[] = [
 export default function Page() {
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const { isEditor } = useWikiEditorAccess();
 
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
@@ -55,6 +58,15 @@ export default function Page() {
   const selectedCategory = useMemo(
     () => CATEGORY_OPTIONS.find((option) => option.label === category),
     [category]
+  );
+  const categoryOptions = useMemo(
+    () =>
+      isEditor
+        ? CATEGORY_OPTIONS
+        : CATEGORY_OPTIONS.filter(
+            (option) => option.label !== BBURI_PICK_CATEGORY
+          ),
+    [isEditor]
   );
   const plainContent = getRichTextPlainText(content);
 
@@ -131,7 +143,7 @@ export default function Page() {
             {dropdownOpen && (
               <div className="absolute left-0 top-[calc(100%+6px)] z-20 w-full overflow-hidden rounded-xl border border-[#E5E8EB] bg-white shadow-[0_8px_32px_rgba(15,23,42,0.10)]">
                 <div className="p-1.5">
-                  {CATEGORY_OPTIONS.map((option) => (
+                  {categoryOptions.map((option) => (
                     <button
                       key={option.label}
                       type="button"

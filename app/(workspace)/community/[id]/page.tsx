@@ -18,10 +18,12 @@ import {
   updateComment,
 } from "@/app/api/community/comment";
 import { checkLiked, toggleLike } from "@/app/api/community/like";
-import { deletePost, getPostDetail } from "@/app/api/community/post";
+import { deletePost, getPostDetail, updatePost } from "@/app/api/community/post";
 import { getMe } from "@/app/api/service/user";
 import type { Comment, Post } from "@/app/api/community/types";
 import { sanitizeRichText } from "@/components/community/RichTextEditor";
+import { useWikiEditorAccess } from "@/components/certificate/useWikiEditorAccess";
+import { BBURI_PICK_CATEGORY } from "@/components/certificate/wikiPost";
 
 const AVATAR_COLORS = ["#D7F2FF", "#FFE1EA", "#DDF7EC", "#E7E2FF", "#FFECCA"];
 
@@ -78,9 +80,13 @@ function formatRelativeTime(createdAt: string) {
 }
 
 function getCategoryLabel(post: Post) {
-  if (post.category === "뿌리 PICK") return "뿌리 PICK";
+  if (post.category === BBURI_PICK_CATEGORY) return BBURI_PICK_CATEGORY;
   if (post.boardType === "STUDY") return "스터디 모집";
   return post.category || "자유";
+}
+
+function getDefaultCommunityCategory(post: Post) {
+  return post.boardType === "STUDY" ? "스터디 모집" : "자유";
 }
 
 function ConfirmModal({
@@ -123,12 +129,25 @@ function ConfirmModal({
 function ActionMenu({
   onEdit,
   onDelete,
+  onTogglePick,
+  pickLabel,
 }: {
   onEdit: () => void;
   onDelete: () => void;
+  onTogglePick?: () => void;
+  pickLabel?: string;
 }) {
   return (
-    <div className="absolute right-0 top-6 z-10 w-32 overflow-hidden rounded-xl border border-[#E5E8EB] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.10)]">
+    <div className="absolute right-0 top-6 z-10 w-36 overflow-hidden rounded-xl border border-[#E5E8EB] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.10)]">
+      {onTogglePick && pickLabel && (
+        <button
+          type="button"
+          onClick={onTogglePick}
+          className="flex w-full items-center px-3.5 py-2.5 text-[13px] font-medium text-[#4876EF] transition-colors hover:bg-[#F3F6FA]"
+        >
+          {pickLabel}
+        </button>
+      )}
       <button
         type="button"
         onClick={onEdit}
@@ -270,6 +289,7 @@ export default function Page() {
   const router = useRouter();
   const postId = Number(params.id);
   const postMenuRef = useRef<HTMLDivElement>(null);
+  const { isEditor } = useWikiEditorAccess();
 
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -290,6 +310,8 @@ export default function Page() {
   );
 
   const isPostAuthor = Boolean(myName && post && post.author === myName);
+  const canManagePost = isPostAuthor || isEditor;
+  const isPicked = post?.category === BBURI_PICK_CATEGORY;
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -357,12 +379,33 @@ export default function Page() {
   };
 
   const handleDeletePost = async () => {
-    if (!post || !isPostAuthor) return;
+    if (!post || !canManagePost) return;
     try {
       await deletePost(post.postId);
       router.push("/community");
     } catch {
       setErrorMessage("게시글 삭제에 실패했어요.");
+    }
+  };
+
+  const handleTogglePick = async () => {
+    if (!post || !isEditor) return;
+
+    const nextCategory = isPicked
+      ? getDefaultCommunityCategory(post)
+      : BBURI_PICK_CATEGORY;
+
+    try {
+      const updatedPost = await updatePost(post.postId, {
+        title: post.title,
+        content: post.content,
+        boardType: post.boardType,
+        category: nextCategory,
+        studyStatus: post.studyStatus,
+      });
+      setPost(updatedPost);
+    } catch {
+      setErrorMessage("뿌리 PICK 변경에 실패했어요.");
     }
   };
 
@@ -474,7 +517,7 @@ export default function Page() {
             </h1>
           </div>
 
-          {isPostAuthor && (
+          {canManagePost && (
             <div ref={postMenuRef} className="relative shrink-0">
               <button
                 type="button"
@@ -486,6 +529,15 @@ export default function Page() {
               </button>
               {postMenuOpen && (
                 <ActionMenu
+                  onTogglePick={
+                    isEditor
+                      ? () => {
+                          setPostMenuOpen(false);
+                          void handleTogglePick();
+                        }
+                      : undefined
+                  }
+                  pickLabel={isPicked ? "PICK 해제" : "PICK 지정"}
                   onEdit={() => {
                     setPostMenuOpen(false);
                     router.push(`/community/edit/${post.postId}`);

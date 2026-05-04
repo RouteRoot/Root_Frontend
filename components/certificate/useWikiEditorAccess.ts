@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getMe } from "@/app/api/service/user";
 
-const WIKI_EDITOR_NAMES = ["bburi 에디터", "뿌리 에디터"];
+const WIKI_EDITOR_NAMES = ["뿌리 에디터"];
 
 export function useWikiEditorAccess() {
   const [isChecking, setIsChecking] = useState(true);

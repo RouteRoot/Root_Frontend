@@ -5,10 +5,13 @@ import { ChevronDown, Info, Loader2, X } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { getPostDetail, updatePost } from "@/app/api/community/post";
 import { uploadPostImage } from "@/app/api/community/image";
+import { getMe } from "@/app/api/service/user";
 import type { BoardType, StudyStatus } from "@/app/api/community/types";
 import RichTextEditor, {
   getRichTextPlainText,
 } from "@/components/community/RichTextEditor";
+import { useWikiEditorAccess } from "@/components/certificate/useWikiEditorAccess";
+import { BBURI_PICK_CATEGORY } from "@/components/certificate/wikiPost";
 
 type CategoryOption = {
   label: string;
@@ -35,6 +38,7 @@ export default function Page() {
   const router = useRouter();
   const postId = Number(params.id);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const { isChecking, isEditor } = useWikiEditorAccess();
 
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
@@ -44,6 +48,8 @@ export default function Page() {
   const [guideOpen, setGuideOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [postAuthor, setPostAuthor] = useState("");
+  const [myName, setMyName] = useState("");
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -58,13 +64,18 @@ export default function Page() {
   useEffect(() => {
     async function loadPost() {
       try {
-        const post = await getPostDetail(postId);
+        const [post, me] = await Promise.all([
+          getPostDetail(postId),
+          getMe().catch(() => null),
+        ]);
         const matchedCategory = CATEGORY_OPTIONS.find(
           (opt) => opt.label === post.category
         );
         setCategory(matchedCategory?.label ?? "");
         setTitle(post.title);
         setContent(post.content.trim());
+        setPostAuthor(post.author);
+        setMyName(me?.name ?? "");
       } catch {
         setErrorMessage("게시글을 불러오지 못했어요.");
       } finally {
@@ -79,7 +90,17 @@ export default function Page() {
     () => CATEGORY_OPTIONS.find((option) => option.label === category),
     [category]
   );
+  const categoryOptions = useMemo(
+    () =>
+      isEditor
+        ? CATEGORY_OPTIONS
+        : CATEGORY_OPTIONS.filter(
+            (option) => option.label !== BBURI_PICK_CATEGORY
+          ),
+    [isEditor]
+  );
   const plainContent = getRichTextPlainText(content);
+  const canManagePost = Boolean(myName && postAuthor === myName) || isEditor;
 
   const canSubmit =
     Boolean(selectedCategory) &&
@@ -111,12 +132,29 @@ export default function Page() {
     }
   };
 
-  if (isLoading) {
+  if (isChecking || isLoading) {
     return (
       <main className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-185 flex-col pb-28 pt-12">
         <div className="h-5 w-24 animate-pulse rounded bg-[#EEF2F7]" />
         <div className="mt-10 h-12 animate-pulse rounded-lg bg-[#EEF2F7]" />
         <div className="mt-3 h-12 animate-pulse rounded-lg bg-[#F3F6FA]" />
+      </main>
+    );
+  }
+
+  if (!canManagePost) {
+    return (
+      <main className="mx-auto w-full max-w-185 py-24 text-center">
+        <p className="text-[16px] font-medium text-[#333333]">
+          수정 권한이 없어요.
+        </p>
+        <button
+          type="button"
+          onClick={() => router.push(`/community/${postId}`)}
+          className="mt-6 h-10 rounded-[8px] border border-[#DDE2EA] px-5 text-[14px] font-medium text-[#667085] transition-colors hover:border-[#BFD0FF] hover:text-[#4876EF]"
+        >
+          게시글로 돌아가기
+        </button>
       </main>
     );
   }
@@ -164,7 +202,7 @@ export default function Page() {
             {dropdownOpen && (
               <div className="absolute left-0 top-[calc(100%+6px)] z-20 w-full overflow-hidden rounded-xl border border-[#E5E8EB] bg-white shadow-[0_8px_32px_rgba(15,23,42,0.10)]">
                 <div className="p-1.5">
-                  {CATEGORY_OPTIONS.map((option) => (
+                  {categoryOptions.map((option) => (
                     <button
                       key={option.label}
                       type="button"
