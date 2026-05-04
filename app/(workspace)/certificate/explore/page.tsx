@@ -1,283 +1,490 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { ChevronRight, Search } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { CalendarDays, ChevronRight } from "lucide-react";
+import {
+  getAllCertificates,
+  type CertificateDetail,
+} from "@/app/api/certificate/certificate";
 import CertificateWikiSubNav from "@/components/certificate/CertificateWikiSubNav";
 
-type SubCategory = { label: string; value: string };
+const ALL_FILTER = "전체";
+const ETC_GROUP = "기타";
 
-type CertItem = {
-  examCode: string;
-  examName: string;
-  organization: string;
-  examType: "국가기술자격" | "국가전문자격" | "국가자격" | "국가공인민간자격" | "민간자격";
-  subCategory: string;
-  dday?: string;
-};
-
-type MainCategory = {
+type CategoryGroup = {
   label: string;
-  value: string;
-  icon: string;
-  subCategories: SubCategory[];
-  certs: CertItem[];
+  categories: string[];
 };
 
-const CATEGORIES: MainCategory[] = [
+const CATEGORY_GROUPS: CategoryGroup[] = [
   {
-    label: "IT/정보통신",
-    value: "it",
-    icon: "💻",
-    subCategories: [
-      { label: "전체", value: "all" },
-      { label: "프로그래밍", value: "programming" },
-      { label: "데이터베이스", value: "database" },
-      { label: "정보보안", value: "security" },
-      { label: "네트워크", value: "network" },
-    ],
-    certs: [
-      { examCode: "1320", examName: "정보처리기사", organization: "한국산업인력공단", examType: "국가기술자격", subCategory: "programming", dday: "D-45" },
-      { examCode: "1321", examName: "정보처리산업기사", organization: "한국산업인력공단", examType: "국가기술자격", subCategory: "programming" },
-      { examCode: "CQ1", examName: "컴퓨터활용능력 1급", organization: "대한상공회의소", examType: "국가기술자격", subCategory: "programming" },
-      { examCode: "CQ2", examName: "컴퓨터활용능력 2급", organization: "대한상공회의소", examType: "국가기술자격", subCategory: "programming" },
-      { examCode: "SQLD", examName: "SQLD", organization: "한국데이터산업진흥원", examType: "국가공인민간자격", subCategory: "database", dday: "D-30" },
-      { examCode: "SQLP", examName: "SQLP", organization: "한국데이터산업진흥원", examType: "국가공인민간자격", subCategory: "database" },
-      { examCode: "BDA", examName: "빅데이터분석기사", organization: "한국데이터산업진흥원", examType: "국가기술자격", subCategory: "database", dday: "D-60" },
-      { examCode: "ISE1", examName: "정보보안기사", organization: "한국인터넷진흥원", examType: "국가기술자격", subCategory: "security" },
-      { examCode: "ISE2", examName: "정보보안산업기사", organization: "한국인터넷진흥원", examType: "국가기술자격", subCategory: "security" },
-      { examCode: "NM2", examName: "네트워크관리사 2급", organization: "한국정보통신자격협회", examType: "민간자격", subCategory: "network" },
+    label: "기술·제조",
+    categories: [
+      "금형·공작기계",
+      "기계장비설비·설치",
+      "기계제작",
+      "금속·재료",
+      "자동차",
+      "조선",
+      "항공",
+      "전기",
+      "전자",
+      "에너지·기상",
+      "환경",
     ],
   },
   {
-    label: "전기/전자",
-    value: "electric",
-    icon: "⚡",
-    subCategories: [
-      { label: "전체", value: "all" },
-      { label: "전기", value: "electricity" },
-      { label: "전자", value: "electronics" },
-    ],
-    certs: [
-      { examCode: "EE1", examName: "전기기사", organization: "한국산업인력공단", examType: "국가기술자격", subCategory: "electricity" },
-      { examCode: "EE2", examName: "전기산업기사", organization: "한국산업인력공단", examType: "국가기술자격", subCategory: "electricity" },
-      { examCode: "EE3", examName: "전기기능사", organization: "한국산업인력공단", examType: "국가기술자격", subCategory: "electricity" },
-      { examCode: "EL1", examName: "전자기기기능사", organization: "한국산업인력공단", examType: "국가기술자격", subCategory: "electronics" },
-      { examCode: "EL2", examName: "전자계산기기능사", organization: "한국산업인력공단", examType: "국가기술자격", subCategory: "electronics" },
+    label: "건설·인프라",
+    categories: [
+      "건축",
+      "토목",
+      "철도",
+      "도시·교통",
+      "건설배관",
+      "단조·주조",
+      "위험물",
+      "안전관리",
     ],
   },
   {
-    label: "건설/안전",
-    value: "construction",
-    icon: "🏗️",
-    subCategories: [
-      { label: "전체", value: "all" },
-      { label: "건설", value: "construction_sub" },
-      { label: "안전", value: "safety" },
-    ],
-    certs: [
-      { examCode: "SA1", examName: "산업안전기사", organization: "한국산업인력공단", examType: "국가기술자격", subCategory: "safety" },
-      { examCode: "SA2", examName: "산업안전산업기사", organization: "한국산업인력공단", examType: "국가기술자격", subCategory: "safety" },
-      { examCode: "CA1", examName: "건설안전기사", organization: "한국산업인력공단", examType: "국가기술자격", subCategory: "safety" },
-      { examCode: "CB1", examName: "건축기사", organization: "한국산업인력공단", examType: "국가기술자격", subCategory: "construction_sub" },
-      { examCode: "CB2", examName: "건설재료시험기사", organization: "한국산업인력공단", examType: "국가기술자격", subCategory: "construction_sub" },
+    label: "IT·데이터",
+    categories: ["정보기술", "디자인", "인쇄·사진"],
+  },
+  {
+    label: "생산·품질·관리",
+    categories: [
+      "생산관리",
+      "품질관리",
+      "농산물품질관리사",
+      "수산물품질관리사",
+      "산업안전지도사",
+      "산업보건지도사",
     ],
   },
   {
-    label: "경영/회계",
-    value: "business",
-    icon: "📊",
-    subCategories: [
-      { label: "전체", value: "all" },
-      { label: "회계", value: "accounting" },
-      { label: "금융", value: "finance" },
-      { label: "경영", value: "management" },
-    ],
-    certs: [
-      { examCode: "TAX1", examName: "전산세무 1급", organization: "한국세무사회", examType: "국가공인민간자격", subCategory: "accounting" },
-      { examCode: "TAX2", examName: "전산세무 2급", organization: "한국세무사회", examType: "국가공인민간자격", subCategory: "accounting" },
-      { examCode: "ACC1", examName: "전산회계 1급", organization: "한국세무사회", examType: "국가공인민간자격", subCategory: "accounting" },
-      { examCode: "FRM1", examName: "재경관리사", organization: "삼일아이닷컴", examType: "국가공인민간자격", subCategory: "accounting" },
-      { examCode: "FIN1", examName: "증권투자권유대행인", organization: "금융투자협회", examType: "국가공인민간자격", subCategory: "finance" },
-      { examCode: "FIN2", examName: "펀드투자권유대행인", organization: "금융투자협회", examType: "국가공인민간자격", subCategory: "finance" },
+    label: "경영·전문직",
+    categories: [
+      "경영",
+      "영업·판매",
+      "세무사",
+      "관세사",
+      "변리사",
+      "감정평가사",
+      "노무사",
     ],
   },
   {
-    label: "어학",
-    value: "language",
-    icon: "🗣️",
-    subCategories: [
-      { label: "전체", value: "all" },
-      { label: "영어", value: "english" },
-      { label: "일본어", value: "japanese" },
-      { label: "중국어", value: "chinese" },
-    ],
-    certs: [
-      { examCode: "TOEIC", examName: "TOEIC", organization: "YBM", examType: "국가공인민간자격", subCategory: "english" },
-      { examCode: "TOEFL", examName: "TOEFL", organization: "ETS", examType: "민간자격", subCategory: "english" },
-      { examCode: "OPIC", examName: "OPIc", organization: "ACTFL", examType: "국가공인민간자격", subCategory: "english" },
-      { examCode: "JLPT1", examName: "JLPT N1", organization: "일본국제교류기금", examType: "민간자격", subCategory: "japanese" },
-      { examCode: "JLPT2", examName: "JLPT N2", organization: "일본국제교류기금", examType: "민간자격", subCategory: "japanese" },
-      { examCode: "HSK5", examName: "HSK 5급", organization: "한국HSK사무국", examType: "민간자격", subCategory: "chinese" },
-      { examCode: "HSK6", examName: "HSK 6급", organization: "한국HSK사무국", examType: "민간자격", subCategory: "chinese" },
+    label: "공공·행정",
+    categories: [
+      "공인중개사",
+      "행정사",
+      "경비지도사",
+      "청소년지도사",
     ],
   },
   {
-    label: "인문/사회",
-    value: "humanities",
-    icon: "📚",
-    subCategories: [
-      { label: "전체", value: "all" },
-      { label: "역사", value: "history" },
-      { label: "법률", value: "law" },
+    label: "교육·복지",
+    categories: [
+      "교육·자연·과학·사회과학",
+      "사회복지·종교",
+      "청소년상담사",
+      "보건·의료",
     ],
-    certs: [
-      { examCode: "KH1", examName: "한국사능력검정시험 1급", organization: "국사편찬위원회", examType: "국가자격", subCategory: "history", dday: "D-20" },
-      { examCode: "KH2", examName: "한국사능력검정시험 2급", organization: "국사편찬위원회", examType: "국가자격", subCategory: "history" },
-      { examCode: "KH3", examName: "한국사능력검정시험 3급", organization: "국사편찬위원회", examType: "국가자격", subCategory: "history" },
-      { examCode: "ADM", examName: "행정사", organization: "행정안전부", examType: "국가전문자격", subCategory: "law" },
+  },
+  {
+    label: "서비스·관광",
+    categories: [
+      "숙박·여행·오락·스포츠",
+      "관광통역안내사",
+      "호텔경영사",
+      "호텔관리사",
+      "호텔서비스사",
     ],
+  },
+  {
+    label: "생활·기능 서비스",
+    categories: [
+      "조리",
+      "제과·제빵",
+      "이용·미용",
+      "섬유",
+      "의복",
+      "목재·가구·공예",
+    ],
+  },
+  {
+    label: "농림·축산",
+    categories: ["농업", "축산", "임업"],
   },
 ];
 
-const EXAM_TYPE_STYLE: Record<CertItem["examType"], string> = {
+const EXAM_TYPE_STYLE: Record<string, string> = {
   국가기술자격: "bg-[#EEF4FF] text-[#4876EF]",
-  국가전문자격: "bg-[#ECFDF3] text-[#039855]",
-  국가자격: "bg-[#ECFDF3] text-[#039855]",
-  국가공인민간자격: "bg-[#FFF7ED] text-[#EA580C]",
-  민간자격: "bg-[#F5F7FA] text-[#6B7280]",
+  국가전문자격: "bg-[#F5F8FF] text-[#5B79D6]",
+  국가자격: "bg-[#F5F8FF] text-[#5B79D6]",
+  국가공인민간자격: "bg-[#F7F9FC] text-[#667085]",
+  민간자격: "bg-[#F7F9FC] text-[#8A94A6]",
 };
 
+function getCategoryLabel(certificate: CertificateDetail) {
+  return (
+    certificate.category?.trim() ||
+    certificate.examGroup?.trim() ||
+    "기타"
+  );
+}
+
+function getExamTypeLabel(certificate: CertificateDetail) {
+  return certificate.examType?.trim() || "유형 미정";
+}
+
+function getExamTypeStyle(examType: string) {
+  return EXAM_TYPE_STYLE[examType] ?? "bg-[#F7F9FC] text-[#667085]";
+}
+
+function uniqueValues(values: string[]) {
+  return Array.from(new Set(values.filter(Boolean)));
+}
+
+function normalizeCategory(value: string) {
+  return value.replace(/[.\sㆍ]/g, "·").replace(/·+/g, "·").trim();
+}
+
+function categoryMatches(source: string, target: string) {
+  return normalizeCategory(source) === normalizeCategory(target);
+}
+
+function getGroupLabel(category: string) {
+  return (
+    CATEGORY_GROUPS.find((group) =>
+      group.categories.some((groupCategory) =>
+        categoryMatches(category, groupCategory)
+      )
+    )?.label ?? ETC_GROUP
+  );
+}
+
+function getCanonicalCategoryLabel(category: string) {
+  for (const group of CATEGORY_GROUPS) {
+    const matchedCategory = group.categories.find((groupCategory) =>
+      categoryMatches(category, groupCategory)
+    );
+
+    if (matchedCategory) return matchedCategory;
+  }
+
+  return category;
+}
+
+function getGroupCategories(groupLabel: string, availableCategories: string[]) {
+  if (groupLabel === ALL_FILTER) return [];
+  if (groupLabel === ETC_GROUP) {
+    return availableCategories.filter(
+      (category) => getGroupLabel(category) === ETC_GROUP
+    );
+  }
+
+  const group = CATEGORY_GROUPS.find((item) => item.label === groupLabel);
+  if (!group) return [];
+
+  return group.categories.filter((groupCategory) =>
+    availableCategories.some((category) => categoryMatches(category, groupCategory))
+  );
+}
+
+function CertificateCardSkeleton() {
+  return (
+    <div className="min-h-[150px] rounded-[8px] border border-[#EEF2F7] bg-white p-5">
+      <div className="h-5 w-20 rounded bg-[#EEF2F7]" />
+      <div className="mt-5 h-4 w-32 rounded bg-[#F3F6FA]" />
+      <div className="mt-3 h-5 w-40 rounded bg-[#EEF2F7]" />
+      <div className="mt-8 h-4 w-24 rounded bg-[#F3F6FA]" />
+    </div>
+  );
+}
+
 export default function CertificateExplorePage() {
-  const [selectedCategory, setSelectedCategory] = useState("it");
-  const [selectedSub, setSelectedSub] = useState("all");
-  const [query, setQuery] = useState("");
+  const [certificates, setCertificates] = useState<CertificateDetail[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState(ALL_FILTER);
+  const [selectedCategory, setSelectedCategory] = useState(ALL_FILTER);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const currentCategory = CATEGORIES.find((c) => c.value === selectedCategory)!;
+  useEffect(() => {
+    let mounted = true;
 
-  const filteredCerts = currentCategory.certs.filter((cert) => {
-    const subMatch = selectedSub === "all" || cert.subCategory === selectedSub;
-    const queryMatch =
-      query.trim() === "" || cert.examName.includes(query.trim());
-    return subMatch && queryMatch;
-  });
+    async function loadCertificates() {
+      try {
+        setIsLoading(true);
+        setErrorMessage("");
+        const data = await getAllCertificates();
+        if (mounted) setCertificates(data);
+      } catch {
+        if (mounted) {
+          setCertificates([]);
+          setErrorMessage("자격증 목록을 불러오지 못했어요.");
+        }
+      } finally {
+        if (mounted) setIsLoading(false);
+      }
+    }
+
+    loadCertificates();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const availableCategories = useMemo(
+    () =>
+      uniqueValues(
+        certificates.map((certificate) =>
+          getCanonicalCategoryLabel(getCategoryLabel(certificate))
+        )
+      ),
+    [certificates]
+  );
+
+  const groupOptions = useMemo(() => {
+    const availableGroups = uniqueValues(
+      availableCategories.map(getGroupLabel)
+    );
+    const orderedGroups = CATEGORY_GROUPS.map((group) => group.label).filter(
+      (groupLabel) => availableGroups.includes(groupLabel)
+    );
+
+    return [
+      ALL_FILTER,
+      ...orderedGroups,
+      ...(availableGroups.includes(ETC_GROUP) ? [ETC_GROUP] : []),
+    ];
+  }, [availableCategories]);
+
+  const subCategoryOptions = useMemo(
+    () => [
+      ALL_FILTER,
+      ...getGroupCategories(selectedGroup, availableCategories),
+    ],
+    [availableCategories, selectedGroup]
+  );
+
+  const groupFilteredCertificates = useMemo(() => {
+    if (selectedGroup === ALL_FILTER) return certificates;
+    return certificates.filter(
+      (certificate) =>
+        getGroupLabel(getCategoryLabel(certificate)) === selectedGroup
+    );
+  }, [certificates, selectedGroup]);
+
+  const filteredCertificates = useMemo(() => {
+    const filtered = groupFilteredCertificates.filter((certificate) => {
+      if (selectedCategory === ALL_FILTER) return true;
+      return categoryMatches(getCategoryLabel(certificate), selectedCategory);
+    });
+
+    return filtered.sort((a, b) => {
+      const activeScore = Number(b.isActive) - Number(a.isActive);
+      if (activeScore !== 0) return activeScore;
+
+      const scheduleScore = b.schedules.length - a.schedules.length;
+      if (scheduleScore !== 0) return scheduleScore;
+
+      return a.examName.localeCompare(b.examName, "ko");
+    });
+  }, [groupFilteredCertificates, selectedCategory]);
+
+  const groupCounts = useMemo(() => {
+    return certificates.reduce<Record<string, number>>((acc, certificate) => {
+      const groupLabel = getGroupLabel(getCategoryLabel(certificate));
+      acc[groupLabel] = (acc[groupLabel] ?? 0) + 1;
+      acc[ALL_FILTER] = (acc[ALL_FILTER] ?? 0) + 1;
+      return acc;
+    }, {});
+  }, [certificates]);
+
+  const categoryCounts = useMemo(() => {
+    return groupFilteredCertificates.reduce<Record<string, number>>(
+      (acc, certificate) => {
+        const category = getCanonicalCategoryLabel(getCategoryLabel(certificate));
+        acc[category] = (acc[category] ?? 0) + 1;
+        acc[ALL_FILTER] = (acc[ALL_FILTER] ?? 0) + 1;
+        return acc;
+      },
+      {}
+    );
+  }, [groupFilteredCertificates]);
+
+  const hasSubCategories = subCategoryOptions.length > 1;
 
   return (
     <div>
       <CertificateWikiSubNav />
-      <main className="mx-auto w-full max-w-265.5 pb-24 pt-8">
-        <div className="flex items-end justify-between">
-          <h1 className="text-[28px] font-bold tracking-[-0.03em] text-[#1F2D4A]">
-            자격증 탐색
-          </h1>
-          <p className="text-[14px] text-[#8A94A6]">
-            분야별로 자격증을 찾아보세요
-          </p>
-        </div>
+      <main className="mx-auto w-full max-w-265.5 pb-24 pt-10">
+        <section>
+          {!isLoading && !errorMessage && (
+            <>
+              <div className="flex items-center justify-between gap-4">
+                <div className="min-w-0 flex-1">
+                  <p className="mb-2 text-[12px] font-medium text-[#8A94A6]">
+                    상위 분야
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {groupOptions.map((group) => {
+                      const active = selectedGroup === group;
 
-        {/* 검색 */}
-        <label className="mt-6 flex h-12 items-center gap-3 rounded-xl border border-[#E1E6EE] bg-white px-4">
-          <Search className="h-4 w-4 shrink-0 text-[#B3BBC8]" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="자격증 이름으로 검색"
-            className="min-w-0 flex-1 bg-transparent text-[15px] text-[#333333] outline-none placeholder:text-[#B3BBC8]"
-          />
-        </label>
-
-        {/* 대분류 */}
-        <div className="mt-8 flex flex-wrap gap-3">
-          {CATEGORIES.map((cat) => {
-            const active = selectedCategory === cat.value;
-            return (
-              <button
-                key={cat.value}
-                type="button"
-                onClick={() => {
-                  setSelectedCategory(cat.value);
-                  setSelectedSub("all");
-                }}
-                className={`flex items-center gap-2 rounded-[14px] border px-5 py-3 text-[14px] font-medium transition-all ${
-                  active
-                    ? "border-[#4876EF] bg-[#4876EF] text-white shadow-sm"
-                    : "border-[#E1E6EE] bg-white text-[#475569] hover:border-[#C9D7F5]"
-                }`}
-              >
-                <span>{cat.icon}</span>
-                {cat.label}
-                <span
-                  className={`text-[12px] ${active ? "text-white/70" : "text-[#B3BBC8]"}`}
-                >
-                  {cat.certs.length}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* 소분류 */}
-        <div className="mt-4 flex flex-wrap gap-2">
-          {currentCategory.subCategories.map((sub) => {
-            const active = selectedSub === sub.value;
-            return (
-              <button
-                key={sub.value}
-                type="button"
-                onClick={() => setSelectedSub(sub.value)}
-                className={`h-8 rounded-full border px-4 text-[13px] transition-colors ${
-                  active
-                    ? "border-[#4876EF] font-semibold text-[#4876EF]"
-                    : "border-[#E5E8EE] text-[#6B7280] hover:border-[#C9D7F5]"
-                }`}
-              >
-                {sub.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* 자격증 그리드 */}
-        {filteredCerts.length > 0 ? (
-          <div className="mt-8 grid grid-cols-3 gap-4">
-            {filteredCerts.map((cert) => (
-              <Link
-                key={cert.examCode}
-                href={`/certificate/${cert.examCode}`}
-                className="group block rounded-2xl border border-[#E8ECF5] bg-white p-5 transition-all hover:border-[#C9D7F5] hover:shadow-sm"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <span
-                      className={`inline-flex rounded-sm px-2 py-0.5 text-[11px] font-medium ${EXAM_TYPE_STYLE[cert.examType]}`}
-                    >
-                      {cert.examType}
-                    </span>
-                    <h3 className="mt-2 line-clamp-1 text-[15px] font-semibold text-[#1F2D4A] transition-colors group-hover:text-[#4876EF]">
-                      {cert.examName}
-                    </h3>
-                    <p className="mt-1 text-[12px] text-[#8A94A6]">
-                      {cert.organization}
-                    </p>
+                      return (
+                        <button
+                          key={group}
+                          type="button"
+                          onClick={() => {
+                            setSelectedGroup(group);
+                            setSelectedCategory(ALL_FILTER);
+                          }}
+                          className={`inline-flex h-9 items-center gap-1.5 rounded-[8px] border px-3.5 text-[13px] transition-colors ${
+                            active
+                              ? "border-[#4876EF] bg-white font-medium text-[#4876EF]"
+                              : "border-[#DDE2EA] bg-white font-normal text-[#334155] hover:border-[#BFD0FF] hover:text-[#4876EF]"
+                          }`}
+                        >
+                          <span>{group}</span>
+                          <span
+                            className={`text-[11px] ${
+                              active ? "text-[#4876EF]" : "text-[#9AA3B2]"
+                            }`}
+                          >
+                            {groupCounts[group] ?? 0}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
-                  {cert.dday && (
-                    <span className="shrink-0 rounded-md bg-[#FEF2F2] px-2 py-1 text-[11px] font-semibold text-[#EF4444]">
-                      {cert.dday}
-                    </span>
-                  )}
                 </div>
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="text-[12px] text-[#B3BBC8]">상세 보기</span>
-                  <ChevronRight className="h-4 w-4 text-[#C0C8D5] transition-colors group-hover:text-[#4876EF]" />
+
+                <button
+                  type="button"
+                  className="inline-flex h-9 items-center gap-2 px-1 text-[13px] text-[#667085] transition-colors hover:text-[#4876EF]"
+                >
+                  추천순
+                  <ChevronRight className="h-3.5 w-3.5 rotate-90 text-[#9AA3B2]" />
+                </button>
+              </div>
+
+              {hasSubCategories && (
+                <div className="mt-5">
+                  <p className="mb-2 text-[12px] font-medium text-[#8A94A6]">
+                    세부 분야
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {subCategoryOptions.map((category) => {
+                      const active = selectedCategory === category;
+
+                      return (
+                        <button
+                          key={category}
+                          type="button"
+                          onClick={() => setSelectedCategory(category)}
+                          className={`h-9 rounded-full border px-4 text-[13px] transition-colors ${
+                            active
+                              ? "border-[#4876EF] bg-white font-medium text-[#4876EF]"
+                              : "border-[#DDE2EA] bg-white font-normal text-[#334155] hover:border-[#BFD0FF] hover:text-[#4876EF]"
+                          }`}
+                        >
+                          {category}
+                          <span
+                            className={`ml-1.5 text-[11px] ${
+                              active ? "text-[#4876EF]" : "text-[#9AA3B2]"
+                            }`}
+                          >
+                            {categoryCounts[category] ?? 0}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="mt-20 text-center text-[15px] text-[#9AA3B2]">
-            검색 결과가 없어요.
-          </div>
-        )}
+              )}
+            </>
+          )}
+
+          {isLoading && (
+            <div className="mt-7 grid grid-cols-4 gap-x-5 gap-y-8">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <CertificateCardSkeleton key={index} />
+              ))}
+            </div>
+          )}
+
+          {!isLoading && errorMessage && (
+            <div className="mt-16 rounded-[8px] border border-dashed border-[#DDE2EA] py-14 text-center">
+              <p className="text-[15px] font-medium text-[#667085]">
+                {errorMessage}
+              </p>
+              <p className="mt-2 text-[13px] text-[#9AA3B2]">
+                잠시 후 다시 시도해주세요.
+              </p>
+            </div>
+          )}
+
+          {!isLoading && !errorMessage && filteredCertificates.length > 0 && (
+            <div className="mt-7 grid grid-cols-4 gap-x-5 gap-y-8">
+              {filteredCertificates.map((certificate) => {
+                const examType = getExamTypeLabel(certificate);
+                const hasSchedule = certificate.schedules.length > 0;
+
+                return (
+                  <Link
+                    key={certificate.examCode}
+                    href={`/certificate/${encodeURIComponent(certificate.examCode)}`}
+                    className="group block min-h-[150px]"
+                  >
+                    <div className="flex min-h-[150px] flex-col rounded-[8px] border border-[#E8ECF5] bg-white p-5 transition-colors hover:border-[#C9D7F5]">
+                      <div className="flex items-start justify-between gap-2">
+                        <span
+                          className={`inline-flex rounded-[4px] px-2 py-0.5 text-[11px] font-normal ${getExamTypeStyle(examType)}`}
+                        >
+                          {examType}
+                        </span>
+                        {!certificate.isActive && (
+                          <span className="shrink-0 rounded-[6px] bg-[#F7F9FC] px-2 py-1 text-[11px] font-normal text-[#9AA3B2]">
+                            비활성
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="mt-4 line-clamp-1 text-[13px] text-[#475569]">
+                        {certificate.organization || "기관 정보 없음"}
+                      </p>
+                      <h2 className="mt-2 line-clamp-2 text-[17px] font-medium leading-[1.42] tracking-[-0.025em] text-[#263241]">
+                        {certificate.examName}
+                      </h2>
+
+                      <div className="mt-auto flex items-center justify-between pt-6">
+                        <span className="inline-flex items-center gap-1.5 text-[12px] text-[#8A94A6]">
+                          <CalendarDays className="h-3.5 w-3.5" />
+                          {hasSchedule ? "일정 있음" : "일정 확인"}
+                        </span>
+                        <ChevronRight className="h-4 w-4 text-[#C0C8D5] transition-colors group-hover:text-[#4876EF]" />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+
+          {!isLoading && !errorMessage && filteredCertificates.length === 0 && (
+            <div className="mt-16 rounded-[8px] border border-dashed border-[#DDE2EA] py-14 text-center">
+              <p className="text-[15px] font-medium text-[#667085]">
+                조건에 맞는 자격증이 없어요.
+              </p>
+              <p className="mt-2 text-[13px] text-[#9AA3B2]">
+                다른 분야나 유형을 선택해보세요.
+              </p>
+            </div>
+          )}
+        </section>
       </main>
     </div>
   );

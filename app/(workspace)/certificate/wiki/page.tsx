@@ -24,7 +24,7 @@ const HERO: Article = {
   title: "정보처리기사 필기, 3주 안에 합격하는 방법",
   description:
     "비전공자도 3주면 충분합니다. 과목별 핵심 이론 정리와 CBT 기출 활용법을 공개합니다.",
-  category: "오늘의 자격증",
+  category: "오늘의 컨텐츠",
   author: "bburi 에디터",
   gradient: "from-[#1E3A8A] via-[#1D4ED8] to-[#3B82F6]",
 };
@@ -118,19 +118,25 @@ function HeroCard({ article }: { article: Article }) {
   return (
     <Link href={`/certificate/wiki/${article.id}`} className="block h-full">
       <div
-        className={`relative flex h-full min-h-[360px] flex-col justify-between overflow-hidden rounded-[20px] bg-gradient-to-br p-8 ${article.gradient}`}
+        className={`relative flex aspect-[16/9] h-full flex-col justify-end overflow-hidden rounded-[18px] bg-gradient-to-br p-7 ${article.gradient}`}
       >
-        <span className="inline-flex w-fit rounded-full bg-white/20 px-3 py-1.5 text-[12px] font-semibold text-white backdrop-blur-sm">
-          📌 {article.category}
-        </span>
-        <div>
-          <h2 className="line-clamp-2 text-[26px] font-bold leading-[1.3] tracking-[-0.03em] text-white">
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:18px_18px]" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/72 via-black/36 to-transparent" />
+        <div className="relative z-10">
+          <div className="mb-4 flex items-center gap-2">
+            <span className="inline-flex w-fit rounded-full bg-white/20 px-3 py-1.5 text-[12px] font-medium text-white backdrop-blur-sm">
+              {article.category}
+            </span>
+            <span className="text-[12px] font-normal text-white/68">
+              {article.author}
+            </span>
+          </div>
+          <h2 className="line-clamp-2 text-[25px] font-semibold leading-[1.32] tracking-[-0.03em] text-white">
             {article.title}
           </h2>
-          <p className="mt-3 line-clamp-2 text-[14px] leading-[1.7] text-white/80">
+          <p className="mt-3 line-clamp-2 text-[14px] font-normal leading-[1.7] text-white/80">
             {article.description}
           </p>
-          <p className="mt-5 text-[13px] text-white/60">{article.author}</p>
         </div>
       </div>
     </Link>
@@ -141,21 +147,27 @@ function SmallCard({ article }: { article: Article }) {
   return (
     <Link href={`/certificate/wiki/${article.id}`} className="block flex-1">
       <div
-        className={`flex h-full flex-col justify-between overflow-hidden rounded-[16px] bg-gradient-to-br p-5 ${article.gradient}`}
+        className={`relative flex aspect-[16/9] h-full flex-col justify-end overflow-hidden rounded-[16px] bg-gradient-to-br p-5 ${article.gradient}`}
       >
-        <span className="text-[11px] font-medium text-white/70">
-          {article.category}
-        </span>
-        <div>
-          <h3 className="mt-2 line-clamp-2 text-[16px] font-bold leading-[1.4] text-white">
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.07)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.07)_1px,transparent_1px)] bg-[size:16px_16px]" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/72 via-black/32 to-transparent" />
+        <div className="relative z-10">
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-white/18 px-2.5 py-1 text-[11px] font-normal text-white/78 backdrop-blur-sm">
+              {article.category}
+            </span>
+            <span className="text-[11px] font-normal text-white/62">
+              {article.author}
+            </span>
+          </div>
+          <h3 className="mt-2 line-clamp-2 text-[16px] font-semibold leading-[1.42] text-white">
             {article.title}
           </h3>
           {article.description && (
-            <p className="mt-1.5 line-clamp-2 text-[12px] leading-[1.6] text-white/70">
+            <p className="mt-1.5 line-clamp-1 text-[12px] font-normal leading-[1.6] text-white/70">
               {article.description}
             </p>
           )}
-          <p className="mt-4 text-[12px] text-white/50">{article.author}</p>
         </div>
       </div>
     </Link>
@@ -290,7 +302,7 @@ export default function CertificateWikiPage() {
       <CertificateWikiSubNav />
       <main className="mx-auto w-full max-w-265.5 pb-24 pt-8">
         {/* Hero */}
-        <section className="grid grid-cols-[3fr_2fr] gap-4">
+        <section className="grid grid-cols-[2fr_1fr] gap-4">
           <HeroCard article={HERO} />
           <div className="flex flex-col gap-4">
             {SIDE_ARTICLES.map((a) => (

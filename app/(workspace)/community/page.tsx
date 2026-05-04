@@ -9,6 +9,7 @@ import { getMyLikes } from "@/app/api/community/like";
 import type { BoardType, Post } from "@/app/api/community/types";
 import AuthenticatedImage from "@/components/community/AuthenticatedImage";
 import { getPostPreviewContent } from "@/components/community/postContentPreview";
+import { isWikiPost } from "@/components/certificate/wikiPost";
 
 type CategoryTab =
   | "전체"
@@ -303,7 +304,9 @@ export default function Page() {
 
         if (!mounted) return;
 
-        setAllPosts(postPage.content.map(toCommunityPost));
+        setAllPosts(
+          postPage.content.filter((post) => !isWikiPost(post)).map(toCommunityPost)
+        );
         setPage(0);
         setHasMorePosts(!postPage.last);
         setPopularPosts(popular.map(toCommunityPost));
@@ -346,6 +349,7 @@ export default function Page() {
       setAllPosts((prev) => {
         const seen = new Set(prev.map((post) => post.id));
         const nextPosts = postPage.content
+          .filter((post) => !isWikiPost(post))
           .map(toCommunityPost)
           .filter((post) => !seen.has(post.id));
 
