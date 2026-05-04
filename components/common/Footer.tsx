@@ -132,12 +132,12 @@ export default function Footer() {
 
   return (
     <>
-      <footer className="border-t border-[#E6E8EC] bg-white text-[#6B7280]">
-        <div className="mx-auto flex min-h-[260px] w-full max-w-[1062px] flex-col px-6 py-8 md:px-8">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <footer className="border-t border-[#E1E5EA] bg-white text-[#6B7280]">
+        <div className="border-b border-[#E1E5EA]">
+          <div className="mx-auto flex min-h-[54px] w-full max-w-265.5 flex-col gap-4 px-4 py-4 md:flex-row md:items-center md:justify-between md:px-0 md:py-0">
             <nav
               aria-label="footer navigation"
-              className="flex flex-wrap items-center gap-y-3 text-[12px] font-medium text-[#344054]"
+              className="flex flex-wrap items-center gap-y-3 text-[12px] font-normal text-[#344054]"
             >
               {footerLinks.map((item, index) => (
                 <span key={item.key} className="flex items-center">
@@ -165,15 +165,15 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="bburi kakao open chat"
-                className="flex h-7 w-7 items-center justify-center rounded-full bg-[#C6CBD3] text-white transition-colors hover:bg-[#4876EF]"
+                className="flex h-5.5 w-5.5 items-center justify-center rounded-full bg-[#C6CBD3] text-white transition-colors hover:bg-[#4876EF]"
               >
-                <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                <MessageCircle className="h-3.5 w-3.5" aria-hidden="true" />
               </a>
               <button
                 type="button"
                 onClick={() => setActiveModal("social")}
                 aria-label="bburi naver channel"
-                className="flex h-7 w-7 items-center justify-center rounded-full bg-[#C6CBD3] text-[11px] font-bold text-white transition-colors hover:bg-[#4876EF]"
+                className="flex h-5.5 w-5.5 items-center justify-center rounded-full bg-[#C6CBD3] text-[10px] font-bold text-white transition-colors hover:bg-[#4876EF]"
               >
                 N
               </button>
@@ -181,63 +181,54 @@ export default function Footer() {
                 type="button"
                 onClick={() => setActiveModal("social")}
                 aria-label="bburi instagram"
-                className="flex h-7 w-7 items-center justify-center rounded-full bg-[#C6CBD3] text-white transition-colors hover:bg-[#4876EF]"
+                className="flex h-5.5 w-5.5 items-center justify-center rounded-full bg-[#C6CBD3] text-white transition-colors hover:bg-[#4876EF]"
               >
-                <Instagram className="h-4 w-4" aria-hidden="true" />
+                <Instagram className="h-3.5 w-3.5" aria-hidden="true" />
               </button>
               <button
                 type="button"
                 onClick={() => setActiveModal("social")}
                 aria-label="bburi youtube"
-                className="flex h-7 w-7 items-center justify-center rounded-full bg-[#C6CBD3] text-white transition-colors hover:bg-[#4876EF]"
+                className="flex h-5.5 w-5.5 items-center justify-center rounded-full bg-[#C6CBD3] text-white transition-colors hover:bg-[#4876EF]"
               >
-                <Play className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
+                <Play className="h-3 w-3 fill-current" aria-hidden="true" />
               </button>
             </div>
           </div>
+        </div>
 
-          <div className="mt-8">
-            <div className="space-y-2 text-[12px] leading-6">
-              <p className="font-bold text-[#2B2F36]">bburi</p>
-              <p className="flex flex-wrap gap-x-4 gap-y-1">
-                <span>
-                  <span className="font-bold text-[#4B5563]">주소</span>{" "}
-                  서울특별시 성북구 삼선교로 16길 116 한성대학교
+        <div className="mx-auto flex w-full max-w-265.5 flex-col px-4 py-8 md:px-0 md:py-9">
+          <div className="space-y-2 text-[12px] leading-6">
+            <p className="font-bold text-[#333333]">bburi</p>
+            <p className="flex flex-wrap items-center gap-y-1 text-[#6B7280]">
+              {[
+                "주소 서울특별시 성북구 삼선교로 16길 116 한성대학교",
+                "개발자 권민서, 김성민, 박준서, 조은",
+                "개인정보보호책임자 권민서",
+                "서비스 운영팀 bburi",
+              ].map((text) => (
+                <span key={text} className="flex items-center">
+                  <span>{text}</span>
+                  <span className="mx-3 h-[10px] w-px bg-[#D9DDE3]" />
                 </span>
-                <span>
-                  <span className="font-bold text-[#4B5563]">개발자</span>{" "}
-                  권민서, 김성민, 박준서, 조은
-                </span>
-                <span>
-                  <span className="font-bold text-[#4B5563]">
-                    개인정보보호책임자
-                  </span>{" "}
-                  권민서
-                </span>
-                <span>
-                  <span className="font-bold text-[#4B5563]">
-                    서비스 운영팀
-                  </span>{" "}
-                  bburi
-                </span>
-              </p>
-              <p>
-                고객센터{" "}
+              ))}
+              <span className="flex items-center">
+                고객 문의{" "}
                 <a
                   href={kakaoOpenChatUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1 font-semibold text-[#4876EF] underline-offset-2 hover:underline"
+                  className="ml-1 inline-flex items-center gap-1 text-[#6B7280] underline-offset-2 hover:underline"
                 >
                   카카오톡 오픈채팅방
                   <ExternalLink className="h-3 w-3" aria-hidden="true" />
                 </a>
-              </p>
-              <p className="pt-5 text-[#9AA3AF]">
-                © bburi. All rights reserved. 모든 콘텐츠의 무단 전재, 무단
-                수집, 재배포 및 AI 학습 이용 금지
-              </p>
-            </div>
+              </span>
+            </p>
+            <p className="text-[#9AA3AF]">
+              © bburi. All rights reserved. 모든 콘텐츠의 무단 전재, 무단 수집,
+              재배포 및 AI 학습 이용 금지
+            </p>
           </div>
         </div>
       </footer>
