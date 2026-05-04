@@ -66,7 +66,7 @@ export default function Page() {
         setTitle(post.title);
         setContent(post.content.trim());
       } catch {
-        setErrorMessage("寃뚯떆湲??遺덈윭?ㅼ? 紐삵뻽?댁슂.");
+        setErrorMessage("게시글을 불러오지 못했어요.");
       } finally {
         setIsLoading(false);
       }
@@ -105,7 +105,7 @@ export default function Page() {
 
       router.push(`/community/${postId}`);
     } catch {
-      setErrorMessage("寃뚯떆湲 ?섏젙???ㅽ뙣?덉뼱?? ?좎떆 ???ㅼ떆 ?쒕룄?댁＜?몄슂.");
+      setErrorMessage("게시글 수정에 실패했어요. 잠시 후 다시 시도해주세요.");
     } finally {
       setIsSubmitting(false);
     }
@@ -129,7 +129,7 @@ export default function Page() {
             BBURI
           </span>
           <span className="text-[15px] font-medium text-[#7B8798]">
-            而ㅻ??덊떚 湲 ?섏젙
+            커뮤니티 글 수정
           </span>
         </div>
 
@@ -138,7 +138,7 @@ export default function Page() {
           onClick={() => setGuideOpen(true)}
           className="flex items-center gap-1.5 text-[13px] font-semibold text-[#8A94A6] transition-colors hover:text-[#4876EF]"
         >
-          ?댁슜 媛?대뱶
+          이용 가이드
           <Info className="h-3.5 w-3.5" />
         </button>
       </div>
@@ -156,7 +156,7 @@ export default function Page() {
                   {selectedCategory.label}
                 </span>
               ) : (
-                <span className="text-[15px] font-normal text-[#B8C0CC]">移댄뀒怨좊━ ?좏깮</span>
+                <span className="text-[15px] font-normal text-[#B8C0CC]">카테고리 선택</span>
               )}
               <ChevronDown className={`h-4 w-4 text-[#B3BBC8] transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`} />
             </button>
@@ -185,7 +185,7 @@ export default function Page() {
           <input
             value={title}
             onChange={(event) => setTitle(event.target.value)}
-            placeholder="?쒕ぉ???낅젰?댁＜?몄슂"
+            placeholder="제목을 입력해주세요"
             className="h-12 rounded-lg border border-[#DDE2EA] bg-white px-4 text-[15px] font-medium text-[#333333] outline-none transition-colors placeholder:text-[#B8C0CC] focus:border-[#4876EF]"
           />
         </div>
@@ -194,7 +194,7 @@ export default function Page() {
           <RichTextEditor
             value={content}
             onChange={setContent}
-            placeholder="怨듭쑀?섍퀬 ?띠? ?댁빞湲곌? ?덈굹??"
+            placeholder="공유하고 싶은 이야기가 있나요?"
             onImageUpload={async (file) => {
               const result = await uploadPostImage(file);
               return result.imageUrl;
@@ -217,7 +217,7 @@ export default function Page() {
               onClick={() => router.push(`/community/${postId}`)}
               className="flex h-12 w-20 items-center justify-center rounded-lg border border-[#DDE2EA] text-[15px] font-bold text-[#7B8798] transition-colors hover:bg-[#F3F6FA]"
             >
-              痍⑥냼
+              취소
             </button>
             <div className="flex items-center gap-4">
               <span className="text-[15px] font-semibold text-[#9AA3B2]">
@@ -232,7 +232,7 @@ export default function Page() {
                 {isSubmitting ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  "?섏젙?섍린"
+                  "수정하기"
                 )}
               </button>
             </div>
@@ -253,19 +253,19 @@ export default function Page() {
           <div className="w-full max-w-130 rounded-2xl border border-[#E5E8EB] bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.14)]">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-[13px] font-semibold text-[#4876EF]">而ㅻ??덊떚</p>
+                <p className="text-[13px] font-semibold text-[#4876EF]">커뮤니티</p>
                 <h2
                   id="community-edit-guide-title"
                   className="mt-1 text-[20px] font-semibold tracking-tight text-[#333333]"
                 >
-                  湲?곌린 ?댁슜 媛?대뱶
+                  글쓰기 이용 가이드
                 </h2>
               </div>
               <button
                 type="button"
                 onClick={() => setGuideOpen(false)}
                 className="flex h-8 w-8 items-center justify-center rounded-full text-[#94A3B8] transition-colors hover:bg-[#F3F6FA] hover:text-[#333333]"
-                aria-label="?댁슜 媛?대뱶 ?リ린"
+                aria-label="이용 가이드 닫기"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -273,24 +273,24 @@ export default function Page() {
 
             <div className="mt-6 space-y-5 text-[14px] leading-[1.75] text-[#575757]">
               <section>
-                <h3 className="font-semibold text-[#333333]">1. 移댄뀒怨좊━瑜?癒쇱? ?좏깮?댁＜?몄슂</h3>
-                <p className="mt-1">?먯쑀, ?ㅽ꽣??紐⑥쭛, ?먭꺽利??꾧린, 吏덈Ц/怨좊?, ?뺣낫怨듭쑀 以?湲 ?깃꺽??媛??媛源뚯슫 移댄뀒怨좊━瑜??좏깮?섎㈃ ?ㅻⅨ ?ъ슜?먭? ???쎄쾶 湲??李얠쓣 ???덉뼱??</p>
+                <h3 className="font-semibold text-[#333333]">1. 카테고리를 먼저 선택해주세요</h3>
+                <p className="mt-1">자유, 스터디 모집, 자격증 후기, 질문/고민, 정보공유 중 글 성격에 가장 가까운 카테고리를 선택하면 다른 사용자가 더 쉽게 글을 찾을 수 있어요.</p>
               </section>
               <section>
-                <h3 className="font-semibold text-[#333333]">2. ?쒕ぉ? ?듭떖??蹂댁씠寃??묒꽦?댁＜?몄슂</h3>
-                <p className="mt-1">?덈? ?ㅼ뼱 SQLD 2二??⑷꺽 ?꾧린, 而댄솢 1湲??ㅺ린 ?⑥닔 吏덈Ц泥섎읆 ?먭꺽利앸챸怨??곹솴???④퍡 ?곸쑝硫??듬?怨?議고쉶媛 ?????댁뼱吏묐땲??</p>
+                <h3 className="font-semibold text-[#333333]">2. 제목은 핵심이 보이게 작성해주세요</h3>
+                <p className="mt-1">예를 들어 “SQLD 2주 합격 후기”, “컴활 1급 실기 함수 질문”처럼 자격증명과 상황을 함께 적으면 답변과 조회가 더 잘 이어집니다.</p>
               </section>
               <section>
-                <h3 className="font-semibold text-[#333333]">3. 媛쒖씤?뺣낫? 誘쇨컧???뺣낫???쒖쇅?댁＜?몄슂</h3>
-                <p className="mt-1">?꾪솕踰덊샇, ?대찓?? ?ㅻ챸, ?숆탳/?뚯궗 ?대??먮즺, ?쒗뿕 臾몄젣 ?먮Ц ??怨듦컻?섎㈃ 怨ㅻ????뺣낫???묒꽦?섏? ?딅뒗 寃껋씠 醫뗭븘??</p>
+                <h3 className="font-semibold text-[#333333]">3. 개인정보와 민감한 정보는 제외해주세요</h3>
+                <p className="mt-1">전화번호, 이메일, 실명, 학교/회사 내부자료, 시험 문제 원문 등 공개되면 곤란한 정보는 작성하지 않는 것이 좋아요.</p>
               </section>
               <section>
-                <h3 className="font-semibold text-[#333333]">4. ?대?吏 泥⑤? ???뺤씤?댁＜?몄슂</h3>
-                <p className="mt-1">?대?吏?먮뒗 媛쒖씤?뺣낫, ?섑뿕??踰덊샇, 寃곗젣 ?댁뿭, ?뚯궗 臾몄꽌媛 蹂댁씠吏 ?딅룄濡?媛?ㅼ＜?몄슂.</p>
+                <h3 className="font-semibold text-[#333333]">4. 이미지 첨부 전 확인해주세요</h3>
+                <p className="mt-1">이미지에는 개인정보, 수험표 번호, 결제 내역, 회사 문서가 보이지 않도록 가려주세요. 첨부한 이미지는 게시글 본문에 함께 표시됩니다.</p>
               </section>
               <section>
                 <h3 className="font-semibold text-[#333333]">5. 광고와 비방 글은 제한될 수 있어요</h3>
-                <p className="mt-1">臾닿????띾낫, 諛섎났 寃뚯떆, ?뱀젙??鍮꾨갑, ?먯삤 ?쒗쁽, ?덉쐞 ?뺣낫??愿由ъ옄 ?뺤씤 ???④? ?먮뒗 ??젣?????덉뒿?덈떎.</p>
+                <p className="mt-1">무관한 홍보, 반복 게시, 특정인 비방, 혐오 표현, 허위 정보는 관리자 확인 후 숨김 또는 삭제될 수 있습니다.</p>
               </section>
             </div>
 
@@ -299,7 +299,8 @@ export default function Page() {
               onClick={() => setGuideOpen(false)}
               className="mt-7 h-11 w-full rounded-lg bg-[#4876EF] text-[14px] font-semibold text-white transition-colors hover:bg-[#3F68D8]"
             >
-              ?뺤씤?덉뼱??            </button>
+              확인했어요
+            </button>
           </div>
         </div>
       )}

@@ -19,10 +19,8 @@ import {
 } from "@/app/api/community/comment";
 import { checkLiked, toggleLike } from "@/app/api/community/like";
 import { deletePost, getPostDetail } from "@/app/api/community/post";
-import { normalizePostImageUrl } from "@/app/api/community/image";
 import { getMe } from "@/app/api/service/user";
 import type { Comment, Post } from "@/app/api/community/types";
-import AuthenticatedImage from "@/components/community/AuthenticatedImage";
 import { sanitizeRichText } from "@/components/community/RichTextEditor";
 
 const AVATAR_COLORS = ["#D7F2FF", "#FFE1EA", "#DDF7EC", "#E7E2FF", "#FFECCA"];
@@ -77,24 +75,6 @@ function formatRelativeTime(createdAt: string) {
     month: "long",
     day: "numeric",
   }).format(date);
-}
-
-function getFirstImageUrl(content: string) {
-  const imageTagMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i);
-  if (imageTagMatch?.[1]) return normalizePostImageUrl(imageTagMatch[1]);
-
-  const markdownMatch = content.match(/!\[[^\]]*]\(([^)]+)\)/);
-  if (markdownMatch?.[1]) return normalizePostImageUrl(markdownMatch[1]);
-
-  const urlMatch = content.match(/https?:\/\/\S+\.(?:png|jpe?g|gif|webp)/i);
-  return urlMatch?.[0] ? normalizePostImageUrl(urlMatch[0]) : undefined;
-}
-
-function stripImages(content: string) {
-  return content
-    .replace(/<img[^>]*>/gi, "")
-    .replace(/!\[[^\]]*]\([^)]+\)/g, "")
-    .trim();
 }
 
 function getCategoryLabel(post: Post) {
@@ -304,12 +284,8 @@ export default function Page() {
   const [showDeletePostConfirm, setShowDeletePostConfirm] = useState(false);
   const [showCopiedToast, setShowCopiedToast] = useState(false);
 
-  const imageUrl = useMemo(
-    () => (post ? getFirstImageUrl(post.content) : undefined),
-    [post]
-  );
   const sanitizedContent = useMemo(
-    () => (post ? sanitizeRichText(stripImages(post.content)) : ""),
+    () => (post ? sanitizeRichText(post.content) : ""),
     [post]
   );
 
@@ -528,16 +504,6 @@ export default function Page() {
           className="rich-text-content mt-5 text-[16px] leading-[1.65] tracking-[-0.01em] text-[#323438]"
           dangerouslySetInnerHTML={{ __html: sanitizedContent }}
         />
-
-        {imageUrl && (
-          <div className="mt-6 w-full overflow-hidden rounded-xl bg-[#F3F6FA]">
-            <AuthenticatedImage
-              src={imageUrl}
-              alt=""
-              className="w-full object-cover"
-            />
-          </div>
-        )}
 
         <div className="mt-8 flex items-center gap-5 text-[14px] text-[#8A94A6]">
           <span className="flex items-center gap-1.5">
