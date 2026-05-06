@@ -5,6 +5,12 @@ import type {
   PlanCheckResponse,
   PlanTab,
   PlanDeleteResponse,
+  PlanMigrateRequest,
+  PlanMigrateResponse,
+  PlanSettingsResponse,
+  PlanRedistributeRequest,
+  RedistributedWeeklyPlan,
+  WeeklyPlan,
 } from "./types";
 
 // 플랜 생성
@@ -53,4 +59,43 @@ export async function deletePlan(
 
   const response = await axiosInstance.delete(`/plans/tasks/${examTaskId}`);
   return response.data;
+}
+
+export async function migrateDailyPlan(
+  payload: PlanMigrateRequest
+): Promise<PlanMigrateResponse> {
+  const response = await axiosInstance.post("/plans/daily/migrate", payload);
+  return response.data;
+}
+
+export async function getPlanSettings(
+  examTaskId: number
+): Promise<PlanSettingsResponse> {
+  const response = await axiosInstance.get(`/plans/settings/${examTaskId}`);
+  return response.data;
+}
+
+export async function redistributePlan(
+  payload: PlanRedistributeRequest
+): Promise<WeeklyPlan[]> {
+  const response = await axiosInstance.post<RedistributedWeeklyPlan[]>(
+    "/plans/redistribute",
+    payload
+  );
+
+  return response.data.map((week) => ({
+    weeklyPlanId: week.id,
+    weekNumber: week.weekNumber,
+    weeklyGoal: week.weeklyGoal,
+    dailyPlans: week.dailyPlans.map((day) => ({
+      dailyPlanId: day.id,
+      studyDate: day.studyDate,
+      isCompleted: day.isCompleted,
+      dayNumber: day.dayNumber,
+      topic: day.topic,
+      description: day.description,
+      estimatedHours: day.estimatedHours,
+      isRest: day.isRest,
+    })),
+  }));
 }
