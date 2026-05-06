@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import PlanTabs from "@/components/plan/PlanTabs";
+import PlanRegenerateModal from "@/components/plan/PlanRegenerateModal";
+import PlanMigrateModal from "@/components/plan/PlanMigrateModal";
 import WeeklyProgressSection, {
   PlannerTask,
   TaskStatus,
@@ -16,9 +18,17 @@ import {
   getPlanByExamTaskId,
   checkDailyPlan,
   deletePlan,
+  getPlanSettings,
+  migrateDailyPlan,
+  redistributePlan,
 } from "@/app/api/plan/plan";
 import { completeTask } from "@/app/api/roadmap/roadmap";
-import type { PlanResponse, PlanTab } from "@/app/api/plan/types";
+import type {
+  PlanRedistributeRequest,
+  PlanResponse,
+  PlanSettingsResponse,
+  PlanTab,
+} from "@/app/api/plan/types";
 
 function getTodayInSeoulString(): string {
   const formatter = new Intl.DateTimeFormat("sv-SE", {
@@ -80,6 +90,21 @@ function findWeekContainingToday(plan: PlanResponse | null): number {
   }
 
   return 1;
+}
+
+function findWeekByDailyPlanId(
+  plan: PlanResponse | null,
+  dailyPlanId: number
+): number {
+  if (!plan) return 1;
+
+  const matchedWeek = plan.weeklyPlans.find((weeklyPlan) =>
+    weeklyPlan.dailyPlans.some(
+      (dailyPlan) => dailyPlan.dailyPlanId === dailyPlanId
+    )
+  );
+
+  return matchedWeek?.weekNumber ?? findWeekContainingToday(plan);
 }
 
 function mapPlanToPlannerTasks(plan: PlanResponse | null): PlannerTask[] {
@@ -172,6 +197,13 @@ export default function PlannerPage() {
     null
   );
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [regenerateOpen, setRegenerateOpen] = useState(false);
+  const [regenerateSettings, setRegenerateSettings] =
+    useState<PlanSettingsResponse | null>(null);
+  const [regenerateLoading, setRegenerateLoading] = useState(false);
+  const [regenerateSubmitting, setRegenerateSubmitting] = useState(false);
+  const [migrateTask, setMigrateTask] = useState<PlannerTask | null>(null);
+  const [migrateLoading, setMigrateLoading] = useState(false);
 
   useEffect(() => {
     const fetchTabs = async () => {
@@ -343,8 +375,90 @@ export default function PlannerPage() {
     };
 
     const handleRegeneratePlan = async (examTaskId: number) => {
-    console.log("재생성 클릭:", examTaskId);
+    try {
+      setRegenerateOpen(true);
+      setRegenerateLoading(true);
+      setRegenerateSettings(null);
+
+      const settings = await getPlanSettings(examTaskId);
+      setRegenerateSettings(settings);
+    } catch (error) {
+      console.error("plan settings load failed:", error);
+      setRegenerateOpen(false);
+      showToast("플랜 설정을 불러오지 못했습니다.", "error");
+    } finally {
+      setRegenerateLoading(false);
+    }
     };
+
+  const closeRegenerateModal = () => {
+    if (regenerateSubmitting) return;
+    setRegenerateOpen(false);
+    setRegenerateSettings(null);
+  };
+
+  const handleSubmitRegenerate = async (payload: PlanRedistributeRequest) => {
+    try {
+      setRegenerateSubmitting(true);
+
+      const weeklyPlans = await redistributePlan(payload);
+
+      setPlan((prev) => {
+        if (!prev) return prev;
+
+        return {
+          ...prev,
+          totalWeeks: weeklyPlans.length,
+          weeklyPlans,
+        };
+      });
+
+      const refreshedPlan = await getPlanByExamTaskId(payload.examTaskId);
+      setPlan(refreshedPlan);
+      setSelectedWeek(findWeekContainingToday(refreshedPlan));
+
+      const mappedTasks = mapPlanToPlannerTasks(refreshedPlan);
+      setSelectedTaskId(mappedTasks[0]?.id ?? null);
+      setRegenerateOpen(false);
+      setRegenerateSettings(null);
+      showToast("플랜이 재설정되었습니다.");
+    } catch (error) {
+      console.error("plan redistribute failed:", error);
+      showToast("플랜 재설정 중 오류가 발생했습니다.", "error");
+    } finally {
+      setRegenerateSubmitting(false);
+    }
+  };
+
+  const closeMigrateModal = () => {
+    if (migrateLoading) return;
+    setMigrateTask(null);
+  };
+
+  const handleSubmitMigrate = async (
+    dailyPlanId: number,
+    targetDate: string
+  ) => {
+    if (selectedExamTaskId == null) return;
+
+    try {
+      setMigrateLoading(true);
+
+      await migrateDailyPlan({ dailyPlanId, targetDate });
+
+      const refreshedPlan = await getPlanByExamTaskId(selectedExamTaskId);
+      setPlan(refreshedPlan);
+      setSelectedWeek(findWeekByDailyPlanId(refreshedPlan, dailyPlanId));
+      setSelectedTaskId(dailyPlanId);
+      setMigrateTask(null);
+      showToast("일정이 설정되었습니다.");
+    } catch (error) {
+      console.error("daily plan migrate failed:", error);
+      showToast("일정 설정 중 오류가 발생했습니다.", "error");
+    } finally {
+      setMigrateLoading(false);
+    }
+  };
 
   const handleCompleteTask = async (examTaskId: number) => {
     try {
@@ -429,6 +543,7 @@ export default function PlannerPage() {
               tasks={plannerTasks}
               selectedWeek={selectedWeek}
               onChangeWeek={setSelectedWeek}
+              onMovePlan={setMigrateTask}
               isLoading={false}
             //   selectedTaskId={selectedTaskId}
             //   onSelectTask={setSelectedTaskId}
@@ -456,6 +571,23 @@ export default function PlannerPage() {
         loading={confirmLoading}
         onConfirm={handleConfirmComplete}
         onCancel={closeCompleteModal}
+      />
+
+      <PlanRegenerateModal
+        open={regenerateOpen}
+        settings={regenerateSettings}
+        loading={regenerateLoading}
+        submitting={regenerateSubmitting}
+        onClose={closeRegenerateModal}
+        onSubmit={handleSubmitRegenerate}
+      />
+
+      <PlanMigrateModal
+        key={migrateTask?.id ?? "migrate-closed"}
+        task={migrateTask}
+        loading={migrateLoading}
+        onClose={closeMigrateModal}
+        onSubmit={handleSubmitMigrate}
       />
 
       <ToastContainer />

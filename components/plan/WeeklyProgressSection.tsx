@@ -1,7 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
-import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { useMemo, useState } from "react";
+import {
+  CalendarDays,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 export type TaskStatus = "TODO" | "IN_PROGRESS" | "DONE" | "REST";
 
@@ -20,6 +25,7 @@ type WeeklyProgressSectionProps = {
   tasks: PlannerTask[];
   selectedWeek: number;
   onChangeWeek: (week: number) => void;
+  onMovePlan?: (task: PlannerTask) => void;
   isLoading?: boolean;
 };
 
@@ -42,8 +48,10 @@ export default function WeeklyProgressSection({
   tasks,
   selectedWeek,
   onChangeWeek,
+  onMovePlan,
   isLoading = false,
 }: WeeklyProgressSectionProps) {
+  const [moveMode, setMoveMode] = useState(false);
   const totalWeeks = useMemo(() => {
     return Array.from(new Set(tasks.map((task) => task.week))).sort(
       (a, b) => a - b
@@ -94,7 +102,8 @@ export default function WeeklyProgressSection({
         </h2>
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#94A3B8]">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-5 text-[11px] font-medium text-[#94A3B8]">
         <div className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full border border-[#A9B7CA] bg-white" />
           <span>진행 예정</span>
@@ -111,6 +120,22 @@ export default function WeeklyProgressSection({
           <span className="h-2 w-2 rounded-full bg-[#E8DCC6]" />
           <span>휴식일</span>
         </div>
+        </div>
+
+        {onMovePlan && (
+          <button
+            type="button"
+            onClick={() => setMoveMode((prev) => !prev)}
+            className={`inline-flex h-8 items-center gap-1.5 rounded-full border px-3 text-[12px] font-semibold transition ${
+              moveMode
+                ? "border-[#4876EF] bg-[#F5F8FF] text-[#4876EF]"
+                : "border-[#DDE5F0] bg-white text-[#667085] hover:border-[#BFD0F8] hover:text-[#4876EF]"
+            }`}
+          >
+            <CalendarDays className="h-3.5 w-3.5" />
+            {moveMode ? "설정 모드 종료" : "일정 설정"}
+          </button>
+        )}
       </div>
 
       <div className="overflow-hidden rounded-[30px] border border-[#E8EDF5] bg-white">
@@ -240,7 +265,19 @@ export default function WeeklyProgressSection({
 
                 {/* 날짜 */}
                 <div className="flex min-h-[116px] items-center justify-center border-l border-[#EEF2F7] px-3 py-5 text-[13px] font-medium text-[#7C8BA1]">
-                  {task.date}
+                  <div className="flex items-center gap-2">
+                    <span>{task.date}</span>
+                    {moveMode && task.status !== "REST" && onMovePlan && (
+                      <button
+                        type="button"
+                        onClick={() => onMovePlan(task)}
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#D8E4FF] bg-[#F5F8FF] text-[#4876EF] transition hover:bg-[#EAF0FF]"
+                        aria-label={`${task.title} 일정 설정`}
+                      >
+                        <CalendarDays className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* 시간 */}

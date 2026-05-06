@@ -152,7 +152,7 @@ export default function PlanTabs({
                 transition-colors duration-150 hover:bg-[#F8FAFC]
               "
             >
-              재생성하기
+              재설정하기
             </button>
 
             <button

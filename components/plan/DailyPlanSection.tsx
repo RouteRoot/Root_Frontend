@@ -1,8 +1,5 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { CheckCircle2 } from "lucide-react";
-
 export type DailyPlanSectionItem = {
   id: number;
   day: number;
