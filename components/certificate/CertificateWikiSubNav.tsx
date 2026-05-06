@@ -14,6 +14,9 @@ const ITEMS = [
 export default function CertificateWikiSubNav() {
   const pathname = usePathname();
   const { isEditor } = useWikiEditorAccess();
+  const writeHref = pathname.startsWith("/certificate/archive")
+    ? "/certificate/archive/write"
+    : "/certificate/wiki/write";
 
   return (
     <nav className="border-b border-[#E5E8EB]">
@@ -44,7 +47,7 @@ export default function CertificateWikiSubNav() {
 
         {isEditor && (
           <Link
-            href="/certificate/wiki/write"
+            href={writeHref}
             className="inline-flex h-9 items-center rounded-[8px] border border-[#4876EF] bg-white px-4 text-[13px] font-medium text-[#4876EF] transition-colors hover:bg-[#F5F8FF]"
           >
             작성하기
