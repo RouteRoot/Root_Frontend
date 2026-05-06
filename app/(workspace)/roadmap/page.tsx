@@ -8,6 +8,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+function RoadmapPageLoading() {
+  return <div className="min-h-[calc(100vh-260px)] w-full" />;
+}
+
 export default function Page() {
   const [hasRoadmap, setHasRoadmap] = useState<boolean | null>(null);
 
@@ -30,7 +34,7 @@ export default function Page() {
     fetchRoadmap();
   }, []);
 
-  if (hasRoadmap === null) return null;
+  if (hasRoadmap === null) return <RoadmapPageLoading />;
 
   if (!hasRoadmap) {
     return (
