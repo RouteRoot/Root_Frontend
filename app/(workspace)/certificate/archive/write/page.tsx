@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Loader2 } from "lucide-react";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { createArchivePost } from "@/app/api/archive/archive";
 import type { ArchiveBoardType } from "@/app/api/archive/types";
@@ -124,8 +125,15 @@ export default function ArchiveWritePage() {
       localStorage.removeItem(DRAFT_KEY);
       router.push(`/certificate/archive/${post.postId}`);
     } catch (error) {
-      console.error("archive create failed:", error);
-      setErrorMessage("아카이브 글 작성에 실패했어요. 잠시 후 다시 시도해주세요.");
+      const serverMessage =
+        axios.isAxiosError(error) && typeof error.response?.data === "string"
+          ? error.response.data
+          : "";
+      setErrorMessage(
+        serverMessage
+          ? `아카이브 글 작성에 실패했어요. (${serverMessage})`
+          : "아카이브 글 작성에 실패했어요. 잠시 후 다시 시도해주세요."
+      );
     } finally {
       setIsSubmitting(false);
     }

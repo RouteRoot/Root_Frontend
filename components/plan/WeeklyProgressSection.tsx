@@ -44,6 +44,27 @@ function getStatusDot(status: TaskStatus) {
   }
 }
 
+function splitOverdueTitle(title: string) {
+  const prefix = "[밀린 학습]";
+
+  if (!title.startsWith(prefix)) {
+    return { overdueLabel: "", title };
+  }
+
+  return {
+    overdueLabel: prefix,
+    title: title.slice(prefix.length).trim(),
+  };
+}
+
+function renderTextWithBracketBreaks(text: string) {
+  return text.split(/(?=\[밀)/g).map((part, index) => (
+    <span key={`${part}-${index}`} className={index > 0 ? "block" : undefined}>
+      {part.trimStart()}
+    </span>
+  ));
+}
+
 export default function WeeklyProgressSection({
   tasks,
   selectedWeek,
@@ -245,9 +266,26 @@ export default function WeeklyProgressSection({
                       />
 
                       <div className="min-w-0">
-                        <p className={`text-[15px] font-bold leading-[1.45] break-keep ${task.status === "DONE" ? "text-[#C9D2E3]" : "text-[#333333]"}`}>
-                          {task.title}
-                        </p>
+                        {(() => {
+                          const titleParts = splitOverdueTitle(task.title);
+
+                          return (
+                            <div
+                              className={`text-[15px] font-bold leading-[1.45] break-keep ${
+                                task.status === "DONE"
+                                  ? "text-[#C9D2E3]"
+                                  : "text-[#333333]"
+                              }`}
+                            >
+                              {titleParts.overdueLabel && (
+                                <span className="mb-1 block text-[12px] font-semibold text-[#F97316]">
+                                  {titleParts.overdueLabel}
+                                </span>
+                              )}
+                              <p>{titleParts.title}</p>
+                            </div>
+                          );
+                        })()}
 
                         <p
                           className={`mt-2 text-[13px] leading-[1.7] break-keep ${
@@ -256,7 +294,7 @@ export default function WeeklyProgressSection({
                               : "text-[#7B8798]"
                           }`}
                         >
-                          {task.description}
+                          {renderTextWithBracketBreaks(task.description)}
                         </p>
                       </div>
                     </div>

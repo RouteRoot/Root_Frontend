@@ -35,6 +35,14 @@ function getDday(examDate: string) {
   return `D+${Math.abs(diff)}`;
 }
 
+function renderTextWithBracketBreaks(text: string) {
+  return text.split(/(?=\[밀)/g).map((part, index) => (
+    <span key={`${part}-${index}`} className={index > 0 ? "block" : undefined}>
+      {part.trimStart()}
+    </span>
+  ));
+}
+
 function DailyPlanSectionSkeleton() {
   return (
     <section className="w-full">
@@ -166,7 +174,7 @@ export default function DailyPlanSection({
                   plan.isCompleted ? "text-[#CBD5E1]" : "text-[#7B8798]"
                 }`}
               >
-                {plan.description}
+                {renderTextWithBracketBreaks(plan.description)}
               </p>
 
               <button
