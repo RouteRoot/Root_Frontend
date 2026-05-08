@@ -143,7 +143,7 @@ export default function ArchiveWritePage() {
     return (
       <div>
         <CertificateWikiSubNav />
-        <main className="mx-auto w-full max-w-265.5 pb-28 pt-14">
+        <main className="mx-auto w-full max-w-175 pb-28 pt-14">
           <div className="h-5 w-28 animate-pulse rounded bg-[#EEF2F7]" />
           <div className="mt-10 h-12 animate-pulse rounded-[8px] bg-[#EEF2F7]" />
           <div className="mt-3 h-12 animate-pulse rounded-[8px] bg-[#F3F6FA]" />
@@ -157,7 +157,7 @@ export default function ArchiveWritePage() {
     return (
       <div>
         <CertificateWikiSubNav />
-        <main className="mx-auto w-full max-w-265.5 py-24 text-center">
+        <main className="mx-auto w-full max-w-175 py-24 text-center">
           <p className="text-[16px] font-medium text-[#333333]">
             뿌리 에디터만 아카이브를 작성할 수 있어요.
           </p>
@@ -179,7 +179,7 @@ export default function ArchiveWritePage() {
   return (
     <div>
       <CertificateWikiSubNav />
-      <main className="mx-auto flex min-h-[calc(100vh-180px)] w-full max-w-265.5 flex-col pb-28 pt-12">
+      <main className="mx-auto flex min-h-[calc(100vh-180px)] w-full max-w-175 flex-col pb-28 pt-12">
         <section>
           <div className="grid grid-cols-[220px_minmax(0,1fr)] gap-3">
             <div className="relative">
@@ -240,7 +240,7 @@ export default function ArchiveWritePage() {
         </section>
 
         <div className="fixed inset-x-0 bottom-0 border-t border-[#E5E8EB] bg-white">
-          <div className="mx-auto flex h-18 w-full max-w-265.5 items-center justify-between">
+          <div className="mx-auto flex h-18 w-full max-w-175 items-center justify-between">
             <span className="text-[13px] text-[#8A94A6]">
               {savedAt
                 ? `${savedAt} 임시 저장됨`

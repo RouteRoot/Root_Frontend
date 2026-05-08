@@ -38,7 +38,7 @@ function getCategoryLabel(post: ArchivePost) {
 
 function PopularContentPanel({ posts }: { posts: ArchivePost[] }) {
   return (
-    <aside className="sticky top-6">
+    <aside className="sticky" style={{ top: "calc(var(--global-banner-height) + var(--gnb-height) + 1.5rem)" }}>
       <h3 className="text-[19px] font-semibold tracking-[-0.03em] text-[#1F2937]">
         실시간 인기 콘텐츠
       </h3>

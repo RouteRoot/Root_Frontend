@@ -61,6 +61,7 @@
 
 :root {
   --global-banner-height: 52px;
+  --gnb-height: 64px;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -273,6 +274,32 @@
   height: auto;
   margin: 1rem 0;
   border-radius: 8px;
+}
+
+/* 이미지 정렬 - 에디터: NodeView 외부 래퍼에 data-align 적용 */
+.rich-text-editor [data-align="center"] > [data-resize-container][data-node="image"],
+.rich-text-editor [data-align="center"][data-resize-container][data-node="image"] {
+  margin-left: auto;
+  margin-right: auto;
+}
+.rich-text-editor [data-align="right"] > [data-resize-container][data-node="image"],
+.rich-text-editor [data-align="right"][data-resize-container][data-node="image"] {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* 이미지 정렬 - 뷰어: 직렬화된 <img data-align="..."> */
+.rich-text-content img[data-align="center"] {
+  margin-left: auto;
+  margin-right: auto;
+}
+.rich-text-content img[data-align="right"] {
+  margin-left: auto;
+  margin-right: 0;
+}
+.rich-text-content img[data-align="left"] {
+  margin-left: 0;
+  margin-right: auto;
 }
 
 .rich-text-editor hr,

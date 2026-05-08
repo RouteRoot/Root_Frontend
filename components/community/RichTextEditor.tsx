@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { EditorContent, useEditor, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
@@ -47,6 +47,19 @@ import {
   Type,
   Undo2,
 } from "lucide-react";
+
+const ImageWithAlign = Image.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      align: {
+        default: "center",
+        parseHTML: (el) => (el as HTMLElement).getAttribute("data-align") ?? "center",
+        renderHTML: (attrs) => ({ "data-align": attrs.align ?? "center" }),
+      },
+    };
+  },
+});
 
 const TableWithWidth = Table.extend({
   addAttributes() {
@@ -170,6 +183,7 @@ export default function RichTextEditor({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [imageError, setImageError] = useState("");
+  const [, forceUpdate] = useReducer((n: number) => n + 1, 0);
 
   const insertImageFiles = async (
     editor: Editor,
@@ -240,7 +254,7 @@ export default function RichTextEditor({
       TableRow,
       TableHeader,
       TableCell,
-      Image.configure({
+      ImageWithAlign.configure({
         allowBase64: true,
         HTMLAttributes: {
           class: "rounded-lg",
@@ -272,6 +286,7 @@ export default function RichTextEditor({
     onUpdate: ({ editor: currentEditor }) => {
       onChange(sanitizeRichText(currentEditor.getHTML()));
     },
+    onSelectionUpdate: () => forceUpdate(),
   });
 
   useEffect(() => {
@@ -318,7 +333,10 @@ export default function RichTextEditor({
 
   return (
     <div className="w-full">
-      <div className="sticky top-0 z-10 mb-2 flex min-h-14 flex-wrap items-center gap-1 border-b border-[#E5E8EB] bg-white py-2">
+      <div
+        className="sticky z-10 mb-2 flex min-h-14 flex-wrap items-center gap-1 border-b border-[#E5E8EB] bg-white py-2"
+        style={{ top: "calc(var(--global-banner-height) + var(--gnb-height))" }}
+      >
         <ToolButton
           label="실행 취소"
           onClick={() => editor.chain().focus().undo().run()}
@@ -610,6 +628,30 @@ export default function RichTextEditor({
             event.target.value = "";
           }}
         />
+        <ToolButton
+          label="이미지 왼쪽 정렬"
+          disabled={!editor.isActive("image")}
+          active={editor.isActive("image") && editor.getAttributes("image").align === "left"}
+          onClick={() => editor.chain().focus().updateAttributes("image", { align: "left" }).run()}
+        >
+          <AlignLeft className="h-4 w-4" />
+        </ToolButton>
+        <ToolButton
+          label="이미지 가운데 정렬"
+          disabled={!editor.isActive("image")}
+          active={editor.isActive("image") && (editor.getAttributes("image").align === "center" || !editor.getAttributes("image").align)}
+          onClick={() => editor.chain().focus().updateAttributes("image", { align: "center" }).run()}
+        >
+          <AlignCenter className="h-4 w-4" />
+        </ToolButton>
+        <ToolButton
+          label="이미지 오른쪽 정렬"
+          disabled={!editor.isActive("image")}
+          active={editor.isActive("image") && editor.getAttributes("image").align === "right"}
+          onClick={() => editor.chain().focus().updateAttributes("image", { align: "right" }).run()}
+        >
+          <AlignRight className="h-4 w-4" />
+        </ToolButton>
 
         <ToolButton
           label="서식 지우기"

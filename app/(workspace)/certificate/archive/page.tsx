@@ -9,6 +9,7 @@ import {
 } from "@/app/api/archive/archive";
 import type { ArchiveBoardType, ArchivePost, ArchiveSort } from "@/app/api/archive/types";
 import CertificateWikiSubNav from "@/components/certificate/CertificateWikiSubNav";
+import { getWeightedPopularPosts } from "@/lib/archivePopularity";
 
 type ArchiveTag = {
   label: string;
@@ -166,7 +167,7 @@ function ArchiveListItem({
       className="group flex gap-5 py-5"
     >
       <div
-        className={`relative h-24 w-43 shrink-0 overflow-hidden rounded-lg ${
+        className={`relative w-50 shrink-0 self-stretch overflow-hidden rounded-lg ${
           firstImage ? "bg-[#F3F6FA]" : `bg-linear-to-br ${GRADIENTS[index % GRADIENTS.length]}`
         }`}
       >
@@ -203,7 +204,7 @@ function ArchiveListItem({
 
 function PopularContentPanel({ posts }: { posts: ArchivePost[] }) {
   return (
-    <aside className="sticky top-6">
+    <aside className="sticky" style={{ top: "calc(var(--global-banner-height) + var(--gnb-height) + 1.5rem)" }}>
       <h3 className="text-[19px] font-semibold tracking-[-0.03em] text-[#1F2937]">
         실시간 인기 콘텐츠
       </h3>
@@ -349,7 +350,8 @@ export default function CertificateArchivePage() {
     return () => { mounted = false; };
   }, [activeTag, sort]);
 
-  const featuredPosts = useMemo(() => popularPosts.slice(0, 3), [popularPosts]);
+  const weightedPosts = useMemo(() => getWeightedPopularPosts(popularPosts), [popularPosts]);
+  const featuredPosts = useMemo(() => weightedPosts.slice(0, 3), [weightedPosts]);
 
   return (
     <div>
@@ -421,7 +423,7 @@ export default function CertificateArchivePage() {
             )}
           </div>
 
-          <PopularContentPanel posts={popularPosts} />
+          <PopularContentPanel posts={weightedPosts} />
         </div>
       </main>
     </div>
