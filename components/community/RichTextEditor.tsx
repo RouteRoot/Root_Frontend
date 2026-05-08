@@ -13,21 +13,6 @@ import { Table } from "@tiptap/extension-table";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { TableRow } from "@tiptap/extension-table-row";
-
-const TableWithWidth = Table.extend({
-  addAttributes() {
-    return {
-      ...this.parent?.(),
-      width: {
-        default: null,
-        parseHTML: (el) =>
-          (el as HTMLElement).style.width || el.getAttribute("width") || null,
-        renderHTML: (attrs) =>
-          attrs.width ? { style: `width: ${attrs.width}` } : {},
-      },
-    };
-  },
-});
 import {
   BackgroundColor,
   Color,
@@ -40,6 +25,7 @@ import {
   AlignRight,
   Bold,
   Columns3,
+  Combine,
   Eraser,
   Heading1,
   Heading2,
@@ -55,11 +41,27 @@ import {
   Quote,
   Redo2,
   Rows3,
+  Split,
   Table2,
   Trash2,
   Type,
   Undo2,
 } from "lucide-react";
+
+const TableWithWidth = Table.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      width: {
+        default: null,
+        parseHTML: (el) =>
+          (el as HTMLElement).style.width || el.getAttribute("width") || null,
+        renderHTML: (attrs) =>
+          attrs.width ? { style: `width: ${attrs.width}` } : {},
+      },
+    };
+  },
+});
 
 type RichTextEditorProps = {
   value: string;
@@ -315,7 +317,7 @@ export default function RichTextEditor({
 
   return (
     <div className="w-full">
-      <div className="mb-2 flex min-h-14 flex-wrap items-center gap-1 border-b border-[#E5E8EB] py-2">
+      <div className="sticky top-0 z-10 mb-2 flex min-h-14 flex-wrap items-center gap-1 border-b border-[#E5E8EB] bg-white py-2">
         <ToolButton
           label="실행 취소"
           onClick={() => editor.chain().focus().undo().run()}
@@ -358,22 +360,31 @@ export default function RichTextEditor({
         >
           <Type className="h-4 w-4" />
           <select
-            defaultValue=""
+            value={
+              (editor.getAttributes("textStyle").fontSize as string | undefined) ?? ""
+            }
             onChange={(event) => {
               const size = event.target.value;
-              if (size) editor.chain().focus().setFontSize(size).run();
-              event.target.value = "";
+              if (size) {
+                editor.chain().focus().setFontSize(size).run();
+              } else {
+                editor.chain().focus().unsetFontSize().run();
+              }
             }}
-            className="bg-transparent text-[12px] font-semibold outline-none"
+            className="w-10 bg-transparent text-[12px] font-semibold outline-none"
             aria-label="글자 크기"
           >
-            <option value="" disabled>
-              크기
-            </option>
-            <option value="14px">작게</option>
-            <option value="16px">본문</option>
-            <option value="20px">중간</option>
-            <option value="26px">크게</option>
+            <option value="">크기</option>
+            <option value="12px">12</option>
+            <option value="14px">14</option>
+            <option value="16px">16</option>
+            <option value="18px">18</option>
+            <option value="20px">20</option>
+            <option value="24px">24</option>
+            <option value="28px">28</option>
+            <option value="32px">32</option>
+            <option value="36px">36</option>
+            <option value="48px">48</option>
           </select>
         </label>
 
@@ -528,6 +539,20 @@ export default function RichTextEditor({
           onClick={() => editor.chain().focus().deleteTable().run()}
         >
           <Trash2 className="h-4 w-4" />
+        </ToolButton>
+        <ToolButton
+          label="셀 병합"
+          disabled={!editor.can().mergeCells()}
+          onClick={() => editor.chain().focus().mergeCells().run()}
+        >
+          <Combine className="h-4 w-4" />
+        </ToolButton>
+        <ToolButton
+          label="셀 분할"
+          disabled={!editor.can().splitCell()}
+          onClick={() => editor.chain().focus().splitCell().run()}
+        >
+          <Split className="h-4 w-4" />
         </ToolButton>
         <label
           className={`flex h-8 items-center gap-1 rounded-md px-2 transition-colors ${

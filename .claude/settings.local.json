@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const { Combine, Split } = require\\('lucide-react'\\); console.log\\('Combine:', typeof Combine\\); console.log\\('Split:', typeof Split\\);\")"
+    ]
+  }
+}
