@@ -293,11 +293,19 @@
   max-width: 100%;
   margin: 1.25rem 0;
   border-collapse: collapse;
-  table-layout: fixed;
   overflow: hidden;
   border: 1px solid #DDE2EA;
   border-radius: 8px;
   background: #FFFFFF;
+}
+
+/* 에디터는 열 리사이즈를 위해 fixed, 뷰어는 내용 기준으로 auto */
+.rich-text-editor table {
+  table-layout: fixed;
+}
+
+.rich-text-content table {
+  table-layout: auto;
 }
 
 .rich-text-editor th,

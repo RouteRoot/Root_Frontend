@@ -31,9 +31,6 @@ function formatDate(value: string) {
   return value;
 }
 
-function stripHtml(content: string) {
-  return content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-}
 
 function getCategoryLabel(post: ArchivePost) {
   return post.category || BOARD_LABELS[post.boardType] || "아카이브";
@@ -247,11 +244,8 @@ export default function ArchiveDetailPage() {
               <h1 className="mt-3 pr-12 text-[32px] font-semibold leading-[1.35] tracking-[-0.04em] text-[#1F2937]">
                 {post.title}
               </h1>
-              <p className="mt-4 text-[22px] font-normal leading-[1.45] tracking-[-0.03em] text-[#1F2937]">
-                {stripHtml(post.content).slice(0, 64)}
-              </p>
 
-              <div className="mt-6 flex flex-wrap items-center gap-3 text-[12px] text-[#9AA3B2]">
+              <div className="mt-3 flex flex-wrap items-center gap-3 text-[12px] text-[#9AA3B2]">
                 <span>{formatDate(post.createdAt)}</span>
                 <span className="h-3 w-px bg-[#E5E8EB]" />
                 <span>{post.author}</span>
@@ -278,7 +272,7 @@ export default function ArchiveDetailPage() {
 
               <div className="mt-12">
                 <div
-                  className="prose prose-slate max-w-none text-[16px] leading-8 text-[#333333] prose-p:my-4"
+                  className="rich-text-content prose prose-slate max-w-none text-[16px] leading-8 text-[#333333] prose-p:my-4"
                   dangerouslySetInnerHTML={{ __html: post.content }}
                 />
               </div>
