@@ -13,6 +13,21 @@ import { Table } from "@tiptap/extension-table";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { TableRow } from "@tiptap/extension-table-row";
+
+const TableWithWidth = Table.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      width: {
+        default: null,
+        parseHTML: (el) =>
+          (el as HTMLElement).style.width || el.getAttribute("width") || null,
+        renderHTML: (attrs) =>
+          attrs.width ? { style: `width: ${attrs.width}` } : {},
+      },
+    };
+  },
+});
 import {
   BackgroundColor,
   Color,
@@ -212,7 +227,7 @@ export default function RichTextEditor({
       Placeholder.configure({
         placeholder,
       }),
-      Table.configure({
+      TableWithWidth.configure({
         resizable: true,
         HTMLAttributes: {
           class: "bburi-editor-table",
@@ -507,6 +522,36 @@ export default function RichTextEditor({
         >
           <Trash2 className="h-4 w-4" />
         </ToolButton>
+        <label
+          className={`flex h-8 items-center gap-1 rounded-md px-2 transition-colors ${
+            isTableActive
+              ? "text-[#7B8798] hover:bg-[#F3F6FA] hover:text-[#333333]"
+              : "cursor-not-allowed opacity-45"
+          }`}
+          title="표 너비"
+        >
+          <select
+            disabled={!isTableActive}
+            value=""
+            onChange={(e) => {
+              const w = e.target.value;
+              editor
+                .chain()
+                .focus()
+                .updateAttributes("table", { width: w || null })
+                .run();
+              e.target.value = "";
+            }}
+            className="bg-transparent text-[12px] font-semibold outline-none"
+            aria-label="표 너비"
+          >
+            <option value="" disabled>너비</option>
+            <option value="25%">25%</option>
+            <option value="50%">50%</option>
+            <option value="75%">75%</option>
+            <option value="100%">100%</option>
+          </select>
+        </label>
 
         <Separator />
 

@@ -235,12 +235,16 @@ function StatCard({
 function Section({
   title,
   children,
+  noBorder = false,
 }: {
   title: string;
   children: ReactNode;
+  noBorder?: boolean;
 }) {
   return (
-    <section className="mt-6 rounded-lg border border-[#E5E8EB] bg-white p-5">
+    <section
+      className={`mt-6 ${noBorder ? "" : "rounded-lg border border-[#E5E8EB] bg-white p-5"}`}
+    >
       <h2 className="text-[18px] font-semibold text-[#333333]">{title}</h2>
       {children}
     </section>
@@ -451,7 +455,7 @@ export default function CertificateManagePage() {
     });
 
   return (
-    <div className="mx-auto mt-8 w-full max-w-[1062px]">
+    <div className="mx-auto mt-8 w-full max-w-265.5">
       <div className="border-b border-[#E5E8EB] pb-6">
         <h1 className="text-[28px] font-bold tracking-tight text-[#333333]">
           자격증 데이터 관리
@@ -556,7 +560,7 @@ export default function CertificateManagePage() {
         </div>
       </Section>
 
-      <Section title="기본 정보 입력">
+      <Section title="기본 정보 입력" noBorder>
         <div className="mt-1 flex justify-end">
           <label className="flex items-center gap-2 text-[13px] font-medium text-[#667085]">
             <input
@@ -618,7 +622,7 @@ export default function CertificateManagePage() {
 
         <div className="mt-4">
           <span className="text-[13px] font-medium text-[#667085]">설명</span>
-          <div className="mt-2 rounded-lg border border-[#DDE2EA] px-3 py-2">
+          <div className="mt-2">
             <RichTextEditor
               value={certificateForm.description}
               onChange={(value) =>
