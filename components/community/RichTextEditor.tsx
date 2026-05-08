@@ -127,6 +127,7 @@ function ToolButton({
   return (
     <button
       type="button"
+      onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
       title={label}
       aria-label={label}

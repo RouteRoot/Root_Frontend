@@ -336,6 +336,13 @@
   word-break: break-word;
 }
 
+.rich-text-editor th[rowspan]:not([rowspan="1"]),
+.rich-text-editor td[rowspan]:not([rowspan="1"]),
+.rich-text-content th[rowspan]:not([rowspan="1"]),
+.rich-text-content td[rowspan]:not([rowspan="1"]) {
+  vertical-align: middle;
+}
+
 .rich-text-editor td > *,
 .rich-text-editor th > *,
 .rich-text-content td > *,
