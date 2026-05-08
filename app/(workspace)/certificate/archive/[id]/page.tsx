@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Eye, Heart, MessageCircle } from "lucide-react";
-import { useParams } from "next/navigation";
+import { Eye, Heart, MessageCircle, MoreVertical } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 import {
+  deleteArchivePost,
   getArchivePopularPosts,
   getArchivePostDetail,
 } from "@/app/api/archive/archive";
 import type { ArchiveBoardType, ArchivePost } from "@/app/api/archive/types";
 import CertificateWikiSubNav from "@/components/certificate/CertificateWikiSubNav";
+import { useWikiEditorAccess } from "@/components/certificate/useWikiEditorAccess";
 
 const BOARD_LABELS: Record<ArchiveBoardType, string> = {
   RECOMMAND: "입문자 추천",
@@ -27,6 +29,10 @@ function formatDate(value: string) {
   const date = value.slice(0, 10);
   if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return date.replace(/-/g, ". ");
   return value;
+}
+
+function stripHtml(content: string) {
+  return content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
 function getCategoryLabel(post: ArchivePost) {
@@ -106,10 +112,15 @@ function ArticleVisual() {
 
 export default function ArchiveDetailPage() {
   const params = useParams<{ id: string }>();
+  const router = useRouter();
   const postId = Number(params.id);
+  const { isEditor } = useWikiEditorAccess();
+  const menuRef = useRef<HTMLDivElement | null>(null);
   const [post, setPost] = useState<ArchivePost | null>(null);
   const [popularPosts, setPopularPosts] = useState<ArchivePost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
@@ -134,8 +145,7 @@ export default function ArchiveDetailPage() {
         if (!mounted) return;
         setPost(detail);
         setPopularPosts(popular);
-      } catch (error) {
-        console.error("archive detail load failed:", error);
+      } catch {
         if (!mounted) return;
         setErrorMessage("아카이브 콘텐츠를 불러오지 못했습니다.");
       } finally {
@@ -149,6 +159,36 @@ export default function ArchiveDetailPage() {
       mounted = false;
     };
   }, [postId]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
+
+  const handleDelete = async () => {
+    if (!post || isDeleting) return;
+    const ok = window.confirm("아카이브 글을 삭제할까요?");
+    if (!ok) return;
+
+    try {
+      setIsDeleting(true);
+      await deleteArchivePost(post.postId);
+      router.push("/certificate/archive");
+    } catch {
+      setErrorMessage("아카이브 글을 삭제하지 못했습니다.");
+    } finally {
+      setIsDeleting(false);
+      setMenuOpen(false);
+    }
+  };
 
   return (
     <div>
@@ -167,15 +207,48 @@ export default function ArchiveDetailPage() {
               {errorMessage || "콘텐츠가 없습니다."}
             </div>
           ) : (
-            <article>
-              <p className="text-[14px] font-semibold text-[#A0AEC0]">
+            <article className="relative">
+              {isEditor && (
+                <div ref={menuRef} className="absolute right-0 top-0 z-20">
+                  <button
+                    type="button"
+                    onClick={() => setMenuOpen((value) => !value)}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#9AA3B2] transition hover:bg-[#F3F6FA] hover:text-[#333333]"
+                    aria-label="관리 메뉴 열기"
+                  >
+                    <MoreVertical className="h-5 w-5" />
+                  </button>
+
+                  {menuOpen && (
+                    <div className="absolute right-0 top-10 w-[160px] overflow-hidden rounded-[14px] border border-[#E5E8EB] bg-white py-2 shadow-[0_16px_42px_rgba(15,23,42,0.14)]">
+                      <Link
+                        href={`/certificate/archive/edit/${post.postId}`}
+                        className="block px-5 py-3 text-[15px] font-semibold text-[#333333] transition hover:bg-[#F8FAFC]"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        수정하기
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={handleDelete}
+                        disabled={isDeleting}
+                        className="block w-full px-5 py-3 text-left text-[15px] font-semibold text-[#EF4444] transition hover:bg-[#FFF5F5] disabled:opacity-40"
+                      >
+                        {isDeleting ? "삭제 중" : "삭제하기"}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <p className="pr-12 text-[14px] font-semibold text-[#A0AEC0]">
                 {getCategoryLabel(post)}
               </p>
-              <h1 className="mt-3 text-[32px] font-semibold leading-[1.35] tracking-[-0.04em] text-[#1F2937]">
+              <h1 className="mt-3 pr-12 text-[32px] font-semibold leading-[1.35] tracking-[-0.04em] text-[#1F2937]">
                 {post.title}
               </h1>
               <p className="mt-4 text-[22px] font-normal leading-[1.45] tracking-[-0.03em] text-[#1F2937]">
-                {post.content.replace(/<[^>]*>/g, " ").slice(0, 64)}
+                {stripHtml(post.content).slice(0, 64)}
               </p>
 
               <div className="mt-6 flex flex-wrap items-center gap-3 text-[12px] text-[#9AA3B2]">

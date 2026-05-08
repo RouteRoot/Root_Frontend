@@ -128,7 +128,7 @@ export default function CertificateDetailPage() {
 
         {sanitizedDescription ? (
           <div
-            className="rich-text-content mt-4 max-w-175 text-[15px] leading-[1.8] text-[#667085]"
+            className="rich-text-content mt-4 max-w-175 overflow-x-auto pb-2 text-[15px] leading-[1.8] text-[#667085]"
             dangerouslySetInnerHTML={{ __html: sanitizedDescription }}
           />
         ) : (

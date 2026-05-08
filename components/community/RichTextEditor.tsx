@@ -9,6 +9,10 @@ import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import Placeholder from "@tiptap/extension-placeholder";
+import { Table } from "@tiptap/extension-table";
+import { TableCell } from "@tiptap/extension-table-cell";
+import { TableHeader } from "@tiptap/extension-table-header";
+import { TableRow } from "@tiptap/extension-table-row";
 import {
   BackgroundColor,
   Color,
@@ -20,6 +24,7 @@ import {
   AlignLeft,
   AlignRight,
   Bold,
+  Columns3,
   Eraser,
   Heading1,
   Heading2,
@@ -33,6 +38,9 @@ import {
   Palette,
   Quote,
   Redo2,
+  Rows3,
+  Table2,
+  Trash2,
   Type,
   Undo2,
 } from "lucide-react";
@@ -137,7 +145,7 @@ export function getRichTextPlainText(html: string) {
 export default function RichTextEditor({
   value,
   onChange,
-  placeholder = "내용을 입력하세요",
+  placeholder = "내용을 입력하세요.",
   onImageUpload,
 }: RichTextEditorProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -149,7 +157,9 @@ export default function RichTextEditor({
     files: File[],
     position?: number
   ) => {
-    const imageFiles = files.filter((file) => IMAGE_MIME_TYPES.includes(file.type));
+    const imageFiles = files.filter((file) =>
+      IMAGE_MIME_TYPES.includes(file.type)
+    );
     if (!imageFiles.length) return;
 
     setIsUploadingImage(true);
@@ -157,7 +167,9 @@ export default function RichTextEditor({
 
     try {
       for (const file of imageFiles) {
-        const src = onImageUpload ? await onImageUpload(file) : await fileToDataUrl(file);
+        const src = onImageUpload
+          ? await onImageUpload(file)
+          : await fileToDataUrl(file);
         const chain = editor.chain().focus();
 
         if (typeof position === "number") {
@@ -200,6 +212,15 @@ export default function RichTextEditor({
       Placeholder.configure({
         placeholder,
       }),
+      Table.configure({
+        resizable: true,
+        HTMLAttributes: {
+          class: "bburi-editor-table",
+        },
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
       Image.configure({
         allowBase64: true,
         HTMLAttributes: {
@@ -251,9 +272,11 @@ export default function RichTextEditor({
     );
   }
 
+  const isTableActive = editor.isActive("table");
+
   const setLink = () => {
     const previousUrl = editor.getAttributes("link").href as string | undefined;
-    const url = window.prompt("링크 URL을 입력하세요", previousUrl ?? "");
+    const url = window.prompt("링크 URL을 입력하세요.", previousUrl ?? "");
 
     if (url === null) return;
     if (!url.trim()) {
@@ -261,7 +284,12 @@ export default function RichTextEditor({
       return;
     }
 
-    editor.chain().focus().extendMarkRange("link").setLink({ href: url.trim() }).run();
+    editor
+      .chain()
+      .focus()
+      .extendMarkRange("link")
+      .setLink({ href: url.trim() })
+      .run();
   };
 
   const uploadSelectedImages = async (files: FileList | null) => {
@@ -292,14 +320,18 @@ export default function RichTextEditor({
         <ToolButton
           label="제목 1"
           active={editor.isActive("heading", { level: 1 })}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 1 }).run()
+          }
         >
           <Heading1 className="h-4 w-4" />
         </ToolButton>
         <ToolButton
           label="제목 2"
           active={editor.isActive("heading", { level: 2 })}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
         >
           <Heading2 className="h-4 w-4" />
         </ToolButton>
@@ -437,6 +469,43 @@ export default function RichTextEditor({
           onClick={setLink}
         >
           <LinkIcon className="h-4 w-4" />
+        </ToolButton>
+
+        <Separator />
+
+        <ToolButton
+          label="표 삽입"
+          active={isTableActive}
+          onClick={() =>
+            editor
+              .chain()
+              .focus()
+              .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+              .run()
+          }
+        >
+          <Table2 className="h-4 w-4" />
+        </ToolButton>
+        <ToolButton
+          label="행 추가"
+          disabled={!isTableActive}
+          onClick={() => editor.chain().focus().addRowAfter().run()}
+        >
+          <Rows3 className="h-4 w-4" />
+        </ToolButton>
+        <ToolButton
+          label="열 추가"
+          disabled={!isTableActive}
+          onClick={() => editor.chain().focus().addColumnAfter().run()}
+        >
+          <Columns3 className="h-4 w-4" />
+        </ToolButton>
+        <ToolButton
+          label="표 삭제"
+          disabled={!isTableActive}
+          onClick={() => editor.chain().focus().deleteTable().run()}
+        >
+          <Trash2 className="h-4 w-4" />
         </ToolButton>
 
         <Separator />
