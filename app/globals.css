@@ -275,6 +275,14 @@
   border-radius: 8px;
 }
 
+.rich-text-editor hr,
+.rich-text-content hr {
+  border: none;
+  border-top: 1.5px solid #E5E8EB;
+  margin: 1.5rem 0;
+  border-radius: 999px;
+}
+
 .rich-text-editor .tableWrapper,
 .rich-text-content .tableWrapper {
   margin: 1.25rem 0;

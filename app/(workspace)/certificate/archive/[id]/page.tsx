@@ -82,29 +82,9 @@ function PopularContentPanel({ posts }: { posts: ArchivePost[] }) {
   );
 }
 
-function ArticleVisual() {
-  return (
-    <div className="relative h-[394px] w-full overflow-hidden bg-[#1D3EAE]">
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:18px_18px]" />
-      <div className="absolute left-1/2 top-1/2 h-[210px] w-[430px] -translate-x-1/2 -translate-y-1/2 border border-dashed border-white/80 bg-white" />
-      <div className="absolute left-[150px] top-[110px] rounded bg-[#123DAE] px-3 py-1 text-[24px] font-bold text-white">
-        2026년
-      </div>
-      <div className="absolute left-[150px] top-[154px] bg-white px-3 py-1 text-[24px] font-bold text-[#1F2937]">
-        상반기
-      </div>
-      <div className="absolute left-[150px] top-[200px] bg-[#1F2937] px-3 py-1 text-[24px] font-bold text-white">
-        면접 전략
-      </div>
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[48px] font-bold tracking-[0.03em] text-[#1D3EAE]">
-        BBURI
-      </div>
-      <div className="absolute left-[214px] top-[78px] h-5 w-5 border-2 border-white bg-[#1D3EAE]" />
-      <div className="absolute right-[214px] top-[78px] h-5 w-5 border-2 border-white bg-[#1D3EAE]" />
-      <div className="absolute bottom-[78px] left-[214px] h-5 w-5 border-2 border-white bg-[#1D3EAE]" />
-      <div className="absolute bottom-[78px] right-[214px] h-5 w-5 border-2 border-white bg-[#1D3EAE]" />
-    </div>
-  );
+function extractFirstImage(html: string): string | null {
+  const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+  return match ? match[1] : null;
 }
 
 export default function ArchiveDetailPage() {
@@ -265,10 +245,6 @@ export default function ArchiveDetailPage() {
               </div>
 
               <div className="mt-10 border-t border-[#E5E8EB]" />
-
-              <div className="mt-16">
-                <ArticleVisual />
-              </div>
 
               <div className="mt-12">
                 <div

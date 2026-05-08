@@ -50,6 +50,7 @@ import {
   List,
   ListOrdered,
   Loader2,
+  Minus,
   Palette,
   Quote,
   Redo2,
@@ -477,6 +478,12 @@ export default function RichTextEditor({
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
         >
           <Quote className="h-4 w-4" />
+        </ToolButton>
+        <ToolButton
+          label="구분선"
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+        >
+          <Minus className="h-4 w-4" />
         </ToolButton>
         <ToolButton
           label="링크"

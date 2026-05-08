@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { ChevronDown, Loader2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import {
   getArchivePostDetail,
@@ -164,22 +164,25 @@ export default function ArchiveEditPage() {
       <main className="mx-auto flex min-h-[calc(100vh-180px)] w-full max-w-265.5 flex-col pb-28 pt-12">
         <section>
           <div className="grid grid-cols-[220px_minmax(0,1fr)] gap-3">
-            <select
-              value={draft.boardType}
-              onChange={(event) =>
-                setDraft((current) => ({
-                  ...current,
-                  boardType: event.target.value as ArchiveBoardType,
-                }))
-              }
-              className="h-12 rounded-[8px] border border-[#DDE2EA] bg-white px-4 text-[15px] font-normal text-[#333333] outline-none transition-colors focus:border-[#4876EF]"
-            >
-              {CATEGORY_OPTIONS.map((option) => (
-                <option key={option.boardType} value={option.boardType}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                value={draft.boardType}
+                onChange={(event) =>
+                  setDraft((current) => ({
+                    ...current,
+                    boardType: event.target.value as ArchiveBoardType,
+                  }))
+                }
+                className="h-12 w-full appearance-none rounded-lg border border-[#DDE2EA] bg-white pl-4 pr-10 text-[15px] font-normal text-[#333333] outline-none transition-colors focus:border-[#4876EF]"
+              >
+                {CATEGORY_OPTIONS.map((option) => (
+                  <option key={option.boardType} value={option.boardType}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9AA3B2]" />
+            </div>
 
             <input
               value={draft.title}

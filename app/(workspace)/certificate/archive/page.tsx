@@ -89,14 +89,26 @@ function FeaturedArchive({ posts }: { posts: ArchivePost[] }) {
         className="group grid w-fit grid-cols-[456px_220px] items-start gap-[30px]"
       >
         <div
-          className={`relative h-63.25 w-[456px] overflow-hidden rounded-[8px] bg-gradient-to-br ${
-            GRADIENTS[currentIndex % GRADIENTS.length]
+          className={`relative h-63.25 w-[456px] overflow-hidden rounded-[8px] ${
+            extractFirstImage(post.content)
+              ? "bg-[#F3F6FA]"
+              : `bg-linear-to-br ${GRADIENTS[currentIndex % GRADIENTS.length]}`
           }`}
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_52%_32%,rgba(255,255,255,0.45),transparent_22%),linear-gradient(rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.12)_1px,transparent_1px)] bg-[size:auto,18px_18px,18px_18px]" />
-          <div className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/65" />
-          <div className="absolute left-[48%] top-[42%] h-10 w-10 rounded-full bg-[#4876EF]/80" />
-          <div className="absolute bottom-8 left-8 h-10 w-36 rounded-full bg-white/45" />
+          {extractFirstImage(post.content) ? (
+            <img
+              src={extractFirstImage(post.content)!}
+              alt=""
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <>
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_52%_32%,rgba(255,255,255,0.45),transparent_22%),linear-gradient(rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.12)_1px,transparent_1px)] bg-size-[auto,18px_18px,18px_18px]" />
+              <div className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/65" />
+              <div className="absolute left-[48%] top-[42%] h-10 w-10 rounded-full bg-[#4876EF]/80" />
+              <div className="absolute bottom-8 left-8 h-10 w-36 rounded-full bg-white/45" />
+            </>
+          )}
         </div>
 
         <div className="min-w-0 pt-1">
