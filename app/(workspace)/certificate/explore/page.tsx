@@ -179,21 +179,6 @@ function getCanonicalCategoryLabel(category: string) {
   return category;
 }
 
-function getGroupCategories(groupLabel: string, availableCategories: string[]) {
-  if (groupLabel === ALL_FILTER) return [];
-  if (groupLabel === ETC_GROUP) {
-    return availableCategories.filter(
-      (category) => getGroupLabel(category) === ETC_GROUP
-    );
-  }
-
-  const group = CATEGORY_GROUPS.find((item) => item.label === groupLabel);
-  if (!group) return [];
-
-  return group.categories.filter((groupCategory) =>
-    availableCategories.some((category) => categoryMatches(category, groupCategory))
-  );
-}
 
 function CertificateCardSkeleton() {
   return (
@@ -273,38 +258,28 @@ export default function CertificateExplorePage() {
     return () => observer.disconnect();
   }, [loadMore]);
 
-  const availableCategories = useMemo(
-    () =>
-      uniqueValues(
-        certificates.map((certificate) =>
-          getCanonicalCategoryLabel(getCategoryLabel(certificate))
-        )
-      ),
-    [certificates]
-  );
+  const etcCategories = useMemo(() => {
+    const loaded = uniqueValues(
+      certificates.map((c) => getCanonicalCategoryLabel(getCategoryLabel(c)))
+    );
+    return loaded.filter((cat) => getGroupLabel(cat) === ETC_GROUP);
+  }, [certificates]);
 
   const groupOptions = useMemo(() => {
-    const availableGroups = uniqueValues(
-      availableCategories.map(getGroupLabel)
-    );
-    const orderedGroups = CATEGORY_GROUPS.map((group) => group.label).filter(
-      (groupLabel) => availableGroups.includes(groupLabel)
-    );
-
+    const allGroups = CATEGORY_GROUPS.map((g) => g.label);
     return [
       ALL_FILTER,
-      ...orderedGroups,
-      ...(availableGroups.includes(ETC_GROUP) ? [ETC_GROUP] : []),
+      ...allGroups,
+      ...(etcCategories.length > 0 ? [ETC_GROUP] : []),
     ];
-  }, [availableCategories]);
+  }, [etcCategories]);
 
-  const subCategoryOptions = useMemo(
-    () => [
-      ALL_FILTER,
-      ...getGroupCategories(selectedGroup, availableCategories),
-    ],
-    [availableCategories, selectedGroup]
-  );
+  const subCategoryOptions = useMemo(() => {
+    if (selectedGroup === ALL_FILTER) return [ALL_FILTER];
+    if (selectedGroup === ETC_GROUP) return [ALL_FILTER, ...etcCategories];
+    const group = CATEGORY_GROUPS.find((g) => g.label === selectedGroup);
+    return [ALL_FILTER, ...(group?.categories ?? [])];
+  }, [selectedGroup, etcCategories]);
 
   const groupFilteredCertificates = useMemo(() => {
     if (selectedGroup === ALL_FILTER) return certificates;

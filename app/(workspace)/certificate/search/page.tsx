@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import CertificateResultCard from "@/components/certificate/CertificateResultcard";
+import { Loader2 } from "lucide-react";
 import {
   searchCertificates,
   type CertificateSearchItem,
 } from "@/app/api/certificate/certificate";
+import CertificateResultCard from "@/components/certificate/CertificateResultcard";
+
+const PAGE_SIZE = 50;
 
 export default function CertificateSearchPage() {
   const searchParams = useSearchParams();
@@ -15,31 +18,103 @@ export default function CertificateSearchPage() {
   const [keyword, setKeyword] = useState(initialKeyword);
   const [results, setResults] = useState<CertificateSearchItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [totalElements, setTotalElements] = useState(0);
 
-  const fetchResults = async (searchedKeyword: string) => {
+  const loaderRef = useRef<HTMLDivElement>(null);
+  const pageRef = useRef(0);
+  const hasMoreRef = useRef(false);
+  const isFetchingRef = useRef(false);
+  const keywordRef = useRef(initialKeyword.trim());
+
+  const fetchResults = useCallback(async (searchedKeyword: string) => {
     const trimmedKeyword = searchedKeyword.trim();
+    keywordRef.current = trimmedKeyword;
 
     if (!trimmedKeyword) {
+      setKeyword("");
       setResults([]);
+      setTotalElements(0);
+      pageRef.current = 0;
+      hasMoreRef.current = false;
       return;
     }
 
     try {
       setLoading(true);
-      const data = await searchCertificates(trimmedKeyword, 0, 50);
-      setResults(data.content);
+      isFetchingRef.current = true;
+
+      const data = await searchCertificates(trimmedKeyword, 0, PAGE_SIZE);
       setKeyword(trimmedKeyword);
+      setResults(data.content);
+      setTotalElements(data.totalElements);
+      pageRef.current = data.number;
+      hasMoreRef.current = !data.last;
     } catch {
       setResults([]);
+      setTotalElements(0);
+      pageRef.current = 0;
+      hasMoreRef.current = false;
     } finally {
+      isFetchingRef.current = false;
       setLoading(false);
     }
-  };
+  }, []);
+
+  const loadMore = useCallback(async () => {
+    if (!keywordRef.current || !hasMoreRef.current || isFetchingRef.current) {
+      return;
+    }
+
+    try {
+      isFetchingRef.current = true;
+      setIsFetchingMore(true);
+
+      const nextPage = pageRef.current + 1;
+      const data = await searchCertificates(
+        keywordRef.current,
+        nextPage,
+        PAGE_SIZE
+      );
+
+      setResults((prev) => {
+        const seen = new Set(prev.map((item) => item.examCode));
+        const next = data.content.filter((item) => !seen.has(item.examCode));
+        return [...prev, ...next];
+      });
+      setTotalElements(data.totalElements);
+      pageRef.current = data.number;
+      hasMoreRef.current = !data.last;
+    } catch {
+      hasMoreRef.current = false;
+    } finally {
+      isFetchingRef.current = false;
+      setIsFetchingMore(false);
+    }
+  }, []);
 
   useEffect(() => {
-    if (!initialKeyword.trim()) return;
-    fetchResults(initialKeyword);
-  }, [initialKeyword]);
+    void fetchResults(initialKeyword);
+  }, [fetchResults, initialKeyword]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          void loadMore();
+        }
+      },
+      { rootMargin: "240px 0px", threshold: 0.1 }
+    );
+
+    const loader = loaderRef.current;
+    if (loader) observer.observe(loader);
+
+    return () => observer.disconnect();
+  }, [loadMore]);
+
+  const resultCountText =
+    totalElements > PAGE_SIZE ? `${PAGE_SIZE}+개` : `${totalElements}개`;
 
   return (
     <div className="mx-auto mt-8 w-full max-w-[1062px]">
@@ -55,7 +130,7 @@ export default function CertificateSearchPage() {
           </div>
           {!loading && (
             <span className="text-[13px] font-medium text-[#8A94A6]">
-              {results.length}개
+              {resultCountText}
             </span>
           )}
         </div>
@@ -87,11 +162,18 @@ export default function CertificateSearchPage() {
         )}
 
         {!loading && results.length > 0 && (
-          <div>
-            {results.map((item) => (
-              <CertificateResultCard key={item.examCode} item={item} />
-            ))}
-          </div>
+          <>
+            <div>
+              {results.map((item) => (
+                <CertificateResultCard key={item.examCode} item={item} />
+              ))}
+            </div>
+            <div ref={loaderRef} className="flex justify-center py-8">
+              {isFetchingMore && (
+                <Loader2 className="h-5 w-5 animate-spin text-[#C0C8D5]" />
+              )}
+            </div>
+          </>
         )}
       </section>
     </div>
