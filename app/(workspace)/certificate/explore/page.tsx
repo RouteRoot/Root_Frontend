@@ -521,14 +521,12 @@ export default function CertificateExplorePage() {
             </div>
           )}
 
-          {/* 무한스크롤 트리거 */}
-          {!isLoading && !errorMessage && (
-            <div ref={loaderRef} className="mt-8 flex justify-center py-4">
-              {isFetchingMore && (
-                <Loader2 className="h-5 w-5 animate-spin text-[#C0C8D5]" />
-              )}
-            </div>
-          )}
+          {/* 무한스크롤 트리거 — 항상 렌더링해야 Observer가 등록됨 */}
+          <div ref={loaderRef} className="mt-8 flex justify-center py-4">
+            {isFetchingMore && (
+              <Loader2 className="h-5 w-5 animate-spin text-[#C0C8D5]" />
+            )}
+          </div>
         </section>
       </main>
     </div>
