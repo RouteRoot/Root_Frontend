@@ -241,6 +241,11 @@
   text-decoration: underline;
 }
 
+.rich-text-content p:empty,
+.rich-text-content p:has(> br:only-child) {
+  min-height: 1.5em;
+}
+
 .rich-text-editor p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;

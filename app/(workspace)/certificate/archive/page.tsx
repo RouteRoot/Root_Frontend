@@ -202,7 +202,13 @@ function ArchiveListItem({
   );
 }
 
-function PopularContentPanel({ posts }: { posts: ArchivePost[] }) {
+function PopularContentPanel({
+  posts,
+  isLoading,
+}: {
+  posts: ArchivePost[];
+  isLoading: boolean;
+}) {
   return (
     <aside className="sticky" style={{ top: "calc(var(--global-banner-height) + var(--gnb-height) + 1.5rem)" }}>
       <h3 className="text-[19px] font-semibold tracking-[-0.03em] text-[#1F2937]">
@@ -224,12 +230,16 @@ function PopularContentPanel({ posts }: { posts: ArchivePost[] }) {
           </button>
         </div>
         <ol className="px-4 py-3">
-          {posts.length === 0 && (
+          {isLoading ? (
+            <li className="flex justify-center py-8">
+              <Loader2 className="h-5 w-5 animate-spin text-[#C0C8D5]" />
+            </li>
+          ) : posts.length === 0 ? (
             <li className="py-8 text-center text-[13px] text-[#94A3B8]">
               인기 콘텐츠가 아직 없어요.
             </li>
-          )}
-          {posts.map((post, index) => (
+          ) : null}
+          {!isLoading && posts.map((post, index) => (
             <li key={post.postId} className="flex items-center gap-3 py-2.5">
               <span className="w-5 shrink-0 text-center text-[14px] font-normal text-[#4876EF] tabular-nums">
                 {index + 1}
@@ -423,7 +433,7 @@ export default function CertificateArchivePage() {
             )}
           </div>
 
-          <PopularContentPanel posts={weightedPosts} />
+          <PopularContentPanel posts={weightedPosts} isLoading={isFeaturedLoading} />
         </div>
       </main>
     </div>

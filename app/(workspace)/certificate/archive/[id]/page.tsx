@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Eye, Heart, MessageCircle, MoreVertical } from "lucide-react";
+import { Eye, Heart, Loader2, MessageCircle, MoreVertical } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import {
   deleteArchivePost,
@@ -36,7 +36,13 @@ function getCategoryLabel(post: ArchivePost) {
   return post.category || BOARD_LABELS[post.boardType] || "아카이브";
 }
 
-function PopularContentPanel({ posts }: { posts: ArchivePost[] }) {
+function PopularContentPanel({
+  posts,
+  isLoading,
+}: {
+  posts: ArchivePost[];
+  isLoading: boolean;
+}) {
   return (
     <aside className="sticky" style={{ top: "calc(var(--global-banner-height) + var(--gnb-height) + 1.5rem)" }}>
       <h3 className="text-[19px] font-semibold tracking-[-0.03em] text-[#1F2937]">
@@ -58,12 +64,16 @@ function PopularContentPanel({ posts }: { posts: ArchivePost[] }) {
           </button>
         </div>
         <ol className="px-4 py-3">
-          {posts.length === 0 && (
+          {isLoading ? (
+            <li className="flex justify-center py-8">
+              <Loader2 className="h-5 w-5 animate-spin text-[#C0C8D5]" />
+            </li>
+          ) : posts.length === 0 ? (
             <li className="py-8 text-center text-[13px] text-[#94A3B8]">
               인기 콘텐츠가 아직 없어요.
             </li>
-          )}
-          {posts.map((post, index) => (
+          ) : null}
+          {!isLoading && posts.map((post, index) => (
             <li key={post.postId} className="flex items-center gap-3 py-2.5">
               <span className="w-5 shrink-0 text-center text-[14px] font-normal text-[#00A86B] tabular-nums">
                 {index + 1}
@@ -248,7 +258,7 @@ export default function ArchiveDetailPage() {
 
               <div className="mt-12">
                 <div
-                  className="rich-text-content prose prose-slate max-w-none text-[16px] leading-8 text-[#333333] prose-p:my-4"
+                  className="rich-text-content prose prose-slate max-w-none text-[16px] leading-[1.6] text-[#333333] prose-p:my-4"
                   dangerouslySetInnerHTML={{ __html: post.content }}
                 />
               </div>
@@ -256,7 +266,7 @@ export default function ArchiveDetailPage() {
           )}
         </div>
 
-        <PopularContentPanel posts={popularPosts} />
+        <PopularContentPanel posts={popularPosts} isLoading={isLoading} />
       </main>
     </div>
   );

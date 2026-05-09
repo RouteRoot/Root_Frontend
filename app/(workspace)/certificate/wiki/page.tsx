@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Loader2 } from "lucide-react";
 import {
   getArchivePopularPosts,
   getArchivePostDetail,
@@ -274,7 +274,13 @@ function ArchiveSection({
 }
 
 // ── popular panel ──────────────────────────────────────────────────────────
-function PopularContentPanel({ posts }: { posts: ArchivePost[] }) {
+function PopularContentPanel({
+  posts,
+  isLoading,
+}: {
+  posts: ArchivePost[];
+  isLoading: boolean;
+}) {
   return (
     <aside
       className="sticky"
@@ -301,12 +307,16 @@ function PopularContentPanel({ posts }: { posts: ArchivePost[] }) {
           </button>
         </div>
         <ol className="px-4 py-3">
-          {posts.length === 0 && (
+          {isLoading ? (
+            <li className="flex justify-center py-8">
+              <Loader2 className="h-5 w-5 animate-spin text-[#C0C8D5]" />
+            </li>
+          ) : posts.length === 0 ? (
             <li className="py-8 text-center text-[13px] text-[#94A3B8]">
               인기 콘텐츠가 아직 없어요.
             </li>
-          )}
-          {posts.map((post, index) => (
+          ) : null}
+          {!isLoading && posts.map((post, index) => (
             <li key={post.postId} className="flex items-center gap-3 py-2.5">
               <span
                 className={`w-5 shrink-0 text-center text-[14px] font-normal tabular-nums ${
@@ -431,7 +441,7 @@ export default function CertificateWikiPage() {
             />
           </div>
 
-          <PopularContentPanel posts={weightedPopular} />
+          <PopularContentPanel posts={weightedPopular} isLoading={isLoading} />
         </div>
       </main>
     </div>
