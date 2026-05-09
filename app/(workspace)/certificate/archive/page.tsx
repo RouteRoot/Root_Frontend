@@ -167,7 +167,7 @@ function ArchiveListItem({
       className="group flex gap-5 py-5"
     >
       <div
-        className={`relative w-50 shrink-0 self-stretch overflow-hidden rounded-lg ${
+        className={`relative h-[113px] w-50 shrink-0 overflow-hidden rounded-lg ${
           firstImage ? "bg-[#F3F6FA]" : `bg-linear-to-br ${GRADIENTS[index % GRADIENTS.length]}`
         }`}
       >
