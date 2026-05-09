@@ -2,6 +2,7 @@ import { axiosInstance } from "../axios/axiosInstance";
 import type {
   CertificateDetail,
   CertificateMutationPayload,
+  CertificatePage,
   CertificateSchedule,
   CertificateSchedulePayload,
   CertificateSearchItem,
@@ -10,6 +11,7 @@ import type {
 export type {
   CertificateDetail,
   CertificateMutationPayload,
+  CertificatePage,
   CertificateSchedule,
   CertificateSchedulePayload,
   CertificateScheduleSummary,
@@ -23,15 +25,16 @@ export type {
 } from "./types";
 
 export async function searchCertificates(
-  keyword: string
-): Promise<CertificateSearchItem[]> {
-  if (!keyword.trim()) return [];
+  keyword: string,
+  page = 0,
+  size = 10
+): Promise<CertificatePage<CertificateSearchItem>> {
+  if (!keyword.trim())
+    return { content: [], totalElements: 0, totalPages: 0, size, number: 0, first: true, last: true, empty: true };
 
-  const response = await axiosInstance.get<CertificateSearchItem[]>(
+  const response = await axiosInstance.get<CertificatePage<CertificateSearchItem>>(
     "/exams/search",
-    {
-      params: { keyword: keyword.trim() },
-    }
+    { params: { keyword: keyword.trim(), page, size } }
   );
 
   return response.data;
@@ -47,8 +50,14 @@ export async function getCertificateDetail(
   return response.data;
 }
 
-export async function getAllCertificates(): Promise<CertificateDetail[]> {
-  const response = await axiosInstance.get<CertificateDetail[]>("/exams/all");
+export async function getAllCertificates(
+  page = 0,
+  size = 1000
+): Promise<CertificatePage<CertificateDetail>> {
+  const response = await axiosInstance.get<CertificatePage<CertificateDetail>>(
+    "/exams/all",
+    { params: { page, size } }
+  );
 
   return response.data;
 }

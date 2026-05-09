@@ -287,12 +287,12 @@ export default function CertificateManagePage() {
   };
 
   const refreshDescriptionStats = async () => {
-    const certificates = await getAllCertificates();
-    const described = certificates.filter((item) =>
+    const page = await getAllCertificates();
+    const described = page.content.filter((item) =>
       hasMeaningfulDescription(item.description)
     ).length;
 
-    setTotalCount(certificates.length);
+    setTotalCount(page.totalElements);
     setWithDescriptionCount(described);
   };
 
@@ -340,9 +340,9 @@ export default function CertificateManagePage() {
 
       setIsSearching(true);
       try {
-        const results = await searchCertificates(keyword);
-        setSearchResults(results);
-        setMessage(`${results.length}개의 자격증을 찾았습니다.`);
+        const page = await searchCertificates(keyword, 0, 50);
+        setSearchResults(page.content);
+        setMessage(`${page.totalElements}개의 자격증을 찾았습니다.`);
       } finally {
         setIsSearching(false);
       }

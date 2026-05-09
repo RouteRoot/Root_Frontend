@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { CalendarDays, ChevronRight } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { CalendarDays, ChevronRight, Loader2 } from "lucide-react";
 import {
   getAllCertificates,
   type CertificateDetail,
 } from "@/app/api/certificate/certificate";
 import CertificateWikiSubNav from "@/components/certificate/CertificateWikiSubNav";
+
+const PAGE_SIZE = 30;
 
 const ALL_FILTER = "전체";
 const ETC_GROUP = "기타";
@@ -209,17 +211,26 @@ export default function CertificateExplorePage() {
   const [selectedGroup, setSelectedGroup] = useState(ALL_FILTER);
   const [selectedCategory, setSelectedCategory] = useState(ALL_FILTER);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const loaderRef = useRef<HTMLDivElement>(null);
+  const pageRef = useRef(0);
+  const hasMoreRef = useRef(true);
+  const isFetchingRef = useRef(false);
 
   useEffect(() => {
     let mounted = true;
 
-    async function loadCertificates() {
+    async function loadInitial() {
       try {
         setIsLoading(true);
         setErrorMessage("");
-        const data = await getAllCertificates();
-        if (mounted) setCertificates(data);
+        const data = await getAllCertificates(0, PAGE_SIZE);
+        if (mounted) {
+          setCertificates(data.content);
+          hasMoreRef.current = !data.last;
+          pageRef.current = 0;
+        }
       } catch {
         if (mounted) {
           setCertificates([]);
@@ -230,12 +241,37 @@ export default function CertificateExplorePage() {
       }
     }
 
-    loadCertificates();
-
-    return () => {
-      mounted = false;
-    };
+    loadInitial();
+    return () => { mounted = false; };
   }, []);
+
+  const loadMore = useCallback(async () => {
+    if (!hasMoreRef.current || isFetchingRef.current) return;
+    isFetchingRef.current = true;
+    setIsFetchingMore(true);
+    try {
+      const nextPage = pageRef.current + 1;
+      const data = await getAllCertificates(nextPage, PAGE_SIZE);
+      setCertificates((prev) => [...prev, ...data.content]);
+      hasMoreRef.current = !data.last;
+      pageRef.current = nextPage;
+    } catch {
+      // 추가 로드 실패는 조용히 무시
+    } finally {
+      isFetchingRef.current = false;
+      setIsFetchingMore(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => { if (entries[0].isIntersecting) loadMore(); },
+      { threshold: 0.1 }
+    );
+    const el = loaderRef.current;
+    if (el) observer.observe(el);
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   const availableCategories = useMemo(
     () =>
@@ -482,6 +518,15 @@ export default function CertificateExplorePage() {
               <p className="mt-2 text-[13px] text-[#9AA3B2]">
                 다른 분야나 유형을 선택해보세요.
               </p>
+            </div>
+          )}
+
+          {/* 무한스크롤 트리거 */}
+          {!isLoading && !errorMessage && (
+            <div ref={loaderRef} className="mt-8 flex justify-center py-4">
+              {isFetchingMore && (
+                <Loader2 className="h-5 w-5 animate-spin text-[#C0C8D5]" />
+              )}
             </div>
           )}
         </section>

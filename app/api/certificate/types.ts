@@ -68,6 +68,17 @@ export type CertificateSchedulePayload = Partial<{
   pracPassDate: string;
 }>;
 
+export type CertificatePage<T> = {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
+};
+
 export type ExamScheduleSummary = CertificateScheduleSummary;
 export type ExamSearchItem = CertificateSearchItem;
 export type ExamSchedule = CertificateSchedule;

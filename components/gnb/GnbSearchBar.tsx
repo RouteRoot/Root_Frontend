@@ -97,8 +97,8 @@ export default function GnbSearchBar({ compact = false }: GnbSearchBarProps) {
     const timer = window.setTimeout(async () => {
       try {
         setIsSearching(true);
-        const results = await searchCertificates(keyword);
-        if (!cancelled) setSearchResults(results.slice(0, 6));
+        const results = await searchCertificates(keyword, 0, 6);
+        if (!cancelled) setSearchResults(results.content);
       } catch {
         if (!cancelled) setSearchResults([]);
       } finally {

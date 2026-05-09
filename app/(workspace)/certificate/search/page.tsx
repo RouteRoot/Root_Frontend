@@ -26,8 +26,8 @@ export default function CertificateSearchPage() {
 
     try {
       setLoading(true);
-      const data = await searchCertificates(trimmedKeyword);
-      setResults(data);
+      const data = await searchCertificates(trimmedKeyword, 0, 50);
+      setResults(data.content);
       setKeyword(trimmedKeyword);
     } catch {
       setResults([]);
