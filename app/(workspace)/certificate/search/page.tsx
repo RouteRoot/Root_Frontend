@@ -114,7 +114,7 @@ export default function CertificateSearchPage() {
   }, [loadMore]);
 
   const resultCountText =
-    totalElements > PAGE_SIZE ? `${PAGE_SIZE}+개` : `${totalElements}개`;
+    totalElements > results.length ? `${results.length}+개` : `${results.length}개`;
 
   return (
     <div className="mx-auto mt-8 w-full max-w-[1062px]">

@@ -10,6 +10,7 @@ import {
 import type { ArchiveBoardType, ArchivePost, ArchiveSort } from "@/app/api/archive/types";
 import CertificateWikiSubNav from "@/components/certificate/CertificateWikiSubNav";
 import { getWeightedPopularPosts } from "@/lib/archivePopularity";
+import { trendingCertificates } from "@/components/gnb/gnb-data";
 
 type ArchiveTag = {
   label: string;
@@ -67,6 +68,26 @@ function formatDate(value: string) {
 
 function getCategoryLabel(post: ArchivePost) {
   return post.category || BOARD_LABELS[post.boardType] || "아카이브";
+}
+
+function getPageNumbers(currentPage: number, totalPages: number): (number | "…")[] {
+  const current = currentPage + 1;
+
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  const delta = 2;
+  const left = Math.max(2, current - delta);
+  const right = Math.min(totalPages - 1, current + delta);
+  const pages: (number | "…")[] = [1];
+
+  if (left > 2) pages.push("…");
+  for (let i = left; i <= right; i++) pages.push(i);
+  if (right < totalPages - 1) pages.push("…");
+  pages.push(totalPages);
+
+  return pages;
 }
 
 function FeaturedArchive({ posts }: { posts: ArchivePost[] }) {
@@ -209,6 +230,8 @@ function PopularContentPanel({
   posts: ArchivePost[];
   isLoading: boolean;
 }) {
+  const [activeTab, setActiveTab] = useState<"아티클" | "자격증">("아티클");
+
   return (
     <aside className="sticky" style={{ top: "calc(var(--global-banner-height) + var(--gnb-height) + 1.5rem)" }}>
       <h3 className="text-[19px] font-semibold tracking-[-0.03em] text-[#1F2937]">
@@ -216,43 +239,72 @@ function PopularContentPanel({
       </h3>
       <div className="mt-7 overflow-hidden rounded-[14px] border border-[#E5E8EB] bg-white">
         <div className="grid grid-cols-2 border-b border-[#E5E8EB] text-center">
-          <button
-            type="button"
-            className="h-14 border-b-2 border-[#1F2937] text-[15px] font-semibold text-[#1F2937]"
-          >
-            아티클
-          </button>
-          <button
-            type="button"
-            className="h-14 text-[15px] font-medium text-[#9AA3B2]"
-          >
-            영상
-          </button>
-        </div>
-        <ol className="px-4 py-3">
-          {isLoading ? (
-            <li className="flex justify-center py-8">
-              <Loader2 className="h-5 w-5 animate-spin text-[#C0C8D5]" />
-            </li>
-          ) : posts.length === 0 ? (
-            <li className="py-8 text-center text-[13px] text-[#94A3B8]">
-              인기 콘텐츠가 아직 없어요.
-            </li>
-          ) : null}
-          {!isLoading && posts.map((post, index) => (
-            <li key={post.postId} className="flex items-center gap-3 py-2.5">
-              <span className="w-5 shrink-0 text-center text-[14px] font-normal text-[#4876EF] tabular-nums">
-                {index + 1}
-              </span>
-              <Link
-                href={`/certificate/archive/${post.postId}`}
-                className="min-w-0 flex-1 truncate text-[13px] font-normal text-[#334155] transition-colors hover:text-[#4876EF]"
-              >
-                {post.title}
-              </Link>
-            </li>
+          {(["아티클", "자격증"] as const).map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={`h-14 text-[15px] transition-colors ${
+                activeTab === tab
+                  ? "border-b-2 border-[#1F2937] font-semibold text-[#1F2937]"
+                  : "font-medium text-[#9AA3B2] hover:text-[#667085]"
+              }`}
+            >
+              {tab}
+            </button>
           ))}
-        </ol>
+        </div>
+
+        {activeTab === "아티클" ? (
+          <ol className="px-4 py-3">
+            {isLoading ? (
+              <li className="flex justify-center py-8">
+                <Loader2 className="h-5 w-5 animate-spin text-[#C0C8D5]" />
+              </li>
+            ) : posts.length === 0 ? (
+              <li className="py-8 text-center text-[13px] text-[#94A3B8]">
+                인기 콘텐츠가 아직 없어요.
+              </li>
+            ) : (
+              posts.map((post, index) => (
+                <li key={post.postId} className="flex items-center gap-3 py-2.5">
+                  <span className="w-5 shrink-0 text-center text-[14px] font-normal text-[#4876EF] tabular-nums">
+                    {index + 1}
+                  </span>
+                  <Link
+                    href={`/certificate/archive/${post.postId}`}
+                    className="min-w-0 flex-1 truncate text-[13px] font-normal text-[#334155] transition-colors hover:text-[#4876EF]"
+                  >
+                    {post.title}
+                  </Link>
+                </li>
+              ))
+            )}
+          </ol>
+        ) : (
+          <ol className="px-4 py-3">
+            {trendingCertificates.map((cert, index) => (
+              <li key={cert.name} className="flex items-center gap-3 py-2.5">
+                <span
+                  className={`w-5 shrink-0 text-center text-[13px] font-bold tabular-nums ${
+                    index < 3 ? "text-[#4876EF]" : "text-[#C0C8D5]"
+                  }`}
+                >
+                  {index + 1}
+                </span>
+                <Link
+                  href={`/certificate/search?keyword=${encodeURIComponent(cert.name)}`}
+                  className="min-w-0 flex-1 truncate text-[13px] font-normal text-[#334155] transition-colors hover:text-[#4876EF]"
+                >
+                  {cert.name}
+                </Link>
+                {cert.isNew && (
+                  <span className="shrink-0 text-[11px] font-bold text-[#16a34a]">NEW</span>
+                )}
+              </li>
+            ))}
+          </ol>
+        )}
       </div>
     </aside>
   );
@@ -312,14 +364,81 @@ function SortDropdown({
   );
 }
 
+function Pagination({
+  currentPage,
+  totalPages,
+  onChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onChange: (page: number) => void;
+}) {
+  if (totalPages === 0) return null;
+
+  const pages = getPageNumbers(currentPage, totalPages);
+
+  return (
+    <div className="flex items-center justify-center gap-1 pt-12">
+      <button
+        type="button"
+        onClick={() => onChange(currentPage - 1)}
+        disabled={currentPage === 0}
+        className="flex h-9 w-9 items-center justify-center rounded-lg text-[#9AA3B2] transition-colors hover:bg-[#F3F6FA] hover:text-[#4876EF] disabled:cursor-not-allowed disabled:opacity-30"
+        aria-label="이전 페이지"
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </button>
+
+      {pages.map((page, i) =>
+        page === "…" ? (
+          <span
+            key={`ellipsis-${i}`}
+            className="flex h-9 w-9 items-center justify-center text-[13px] text-[#C0C8D5]"
+          >
+            …
+          </span>
+        ) : (
+          <button
+            key={page}
+            type="button"
+            onClick={() => onChange((page as number) - 1)}
+            className={`flex h-9 w-9 items-center justify-center rounded-lg text-[14px] transition-colors ${
+              page === currentPage + 1
+                ? "bg-[#4876EF] font-semibold text-white"
+                : "font-normal text-[#334155] hover:bg-[#F3F6FA] hover:text-[#4876EF]"
+            }`}
+          >
+            {page}
+          </button>
+        )
+      )}
+
+      <button
+        type="button"
+        onClick={() => onChange(currentPage + 1)}
+        disabled={currentPage === totalPages - 1}
+        className="flex h-9 w-9 items-center justify-center rounded-lg text-[#9AA3B2] transition-colors hover:bg-[#F3F6FA] hover:text-[#4876EF] disabled:cursor-not-allowed disabled:opacity-30"
+        aria-label="다음 페이지"
+      >
+        <ChevronRight className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
+const PAGE_SIZE = 8;
+
 export default function CertificateArchivePage() {
   const [activeTag, setActiveTag] = useState<ArchiveTag>(ARCHIVE_TAGS[0]);
   const [sort, setSort] = useState<ArchiveSort>("latest");
+  const [currentPage, setCurrentPage] = useState(0);
   const [posts, setPosts] = useState<ArchivePost[]>([]);
+  const [totalPages, setTotalPages] = useState(0);
   const [popularPosts, setPopularPosts] = useState<ArchivePost[]>([]);
   const [isFeaturedLoading, setIsFeaturedLoading] = useState(true);
   const [isListLoading, setIsListLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const listRef = useRef<HTMLDivElement>(null);
 
   // 인기 콘텐츠는 최초 1회만 fetch
   useEffect(() => {
@@ -331,7 +450,7 @@ export default function CertificateArchivePage() {
     return () => { mounted = false; };
   }, []);
 
-  // 리스트는 tag/sort 변경 시마다 fetch
+  // 리스트는 tag/sort/page 변경 시마다 fetch
   useEffect(() => {
     let mounted = true;
 
@@ -342,11 +461,12 @@ export default function CertificateArchivePage() {
         const archivePage = await getArchivePosts({
           boardType: activeTag.boardType,
           sort,
-          page: 0,
-          size: 12,
+          page: currentPage,
+          size: PAGE_SIZE,
         });
         if (!mounted) return;
         setPosts(archivePage.content);
+        setTotalPages(archivePage.totalPages);
       } catch (error) {
         console.error("archive list load failed:", error);
         if (!mounted) return;
@@ -358,7 +478,22 @@ export default function CertificateArchivePage() {
 
     void loadList();
     return () => { mounted = false; };
-  }, [activeTag, sort]);
+  }, [activeTag, sort, currentPage]);
+
+  const handleTagChange = (tag: ArchiveTag) => {
+    setActiveTag(tag);
+    setCurrentPage(0);
+  };
+
+  const handleSortChange = (newSort: ArchiveSort) => {
+    setSort(newSort);
+    setCurrentPage(0);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const weightedPosts = useMemo(() => getWeightedPopularPosts(popularPosts), [popularPosts]);
   const featuredPosts = useMemo(() => weightedPosts.slice(0, 3), [weightedPosts]);
@@ -375,7 +510,6 @@ export default function CertificateArchivePage() {
               </h1>
             </div>
 
-            {/* 이번주 인기 콘텐츠 — tag/sort 변경과 무관하게 유지 */}
             {isFeaturedLoading ? (
               <div className="flex h-63.25 items-center justify-center text-[#94A3B8]">
                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -385,7 +519,7 @@ export default function CertificateArchivePage() {
             )}
 
             {/* 리스트 영역 */}
-            <div className="mt-16">
+            <div ref={listRef} className="mt-16">
               <div className="flex flex-wrap items-center gap-2.5">
                 {ARCHIVE_TAGS.map((tag) => {
                   const active = activeTag.label === tag.label;
@@ -393,7 +527,7 @@ export default function CertificateArchivePage() {
                     <button
                       key={tag.label}
                       type="button"
-                      onClick={() => setActiveTag(tag)}
+                      onClick={() => handleTagChange(tag)}
                       className={`h-10 rounded-full border px-5 text-[14px] transition-colors ${
                         active
                           ? "border-[#DDE7FF] bg-[#EEF4FF] font-medium text-[#4876EF]"
@@ -405,7 +539,7 @@ export default function CertificateArchivePage() {
                   );
                 })}
                 <div className="ml-auto">
-                  <SortDropdown value={sort} onChange={setSort} />
+                  <SortDropdown value={sort} onChange={handleSortChange} />
                 </div>
               </div>
             </div>
@@ -419,17 +553,24 @@ export default function CertificateArchivePage() {
                 <Loader2 className="h-5 w-5 animate-spin" />
               </div>
             ) : (
-              <div className="mt-10 divide-y divide-[#F1F3F6]">
-                {posts.length === 0 ? (
-                  <div className="py-16 text-center text-[14px] text-[#94A3B8]">
-                    등록된 아카이브 콘텐츠가 아직 없어요.
-                  </div>
-                ) : (
-                  posts.map((post, index) => (
-                    <ArchiveListItem key={post.postId} post={post} index={index} />
-                  ))
-                )}
-              </div>
+              <>
+                <div className="mt-10 divide-y divide-[#F1F3F6]">
+                  {posts.length === 0 ? (
+                    <div className="py-16 text-center text-[14px] text-[#94A3B8]">
+                      등록된 아카이브 콘텐츠가 아직 없어요.
+                    </div>
+                  ) : (
+                    posts.map((post, index) => (
+                      <ArchiveListItem key={post.postId} post={post} index={index} />
+                    ))
+                  )}
+                </div>
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onChange={handlePageChange}
+                />
+              </>
             )}
           </div>
 

@@ -11,6 +11,7 @@ import {
 import type { ArchiveBoardType, ArchivePost } from "@/app/api/archive/types";
 import CertificateWikiSubNav from "@/components/certificate/CertificateWikiSubNav";
 import { getWeightedPopularPosts } from "@/lib/archivePopularity";
+import { trendingCertificates } from "@/components/gnb/gnb-data";
 
 // ── helpers ────────────────────────────────────────────────────────────────
 const GRADIENTS = [
@@ -281,6 +282,8 @@ function PopularContentPanel({
   posts: ArchivePost[];
   isLoading: boolean;
 }) {
+  const [activeTab, setActiveTab] = useState<"아티클" | "자격증">("아티클");
+
   return (
     <aside
       className="sticky"
@@ -293,47 +296,76 @@ function PopularContentPanel({
       </h3>
       <div className="mt-7 overflow-hidden rounded-[14px] border border-[#E5E8EB] bg-white">
         <div className="grid grid-cols-2 border-b border-[#E5E8EB] text-center">
-          <button
-            type="button"
-            className="h-14 border-b-2 border-[#1F2937] text-[15px] font-semibold text-[#1F2937]"
-          >
-            아티클
-          </button>
-          <button
-            type="button"
-            className="h-14 text-[15px] font-medium text-[#9AA3B2]"
-          >
-            영상
-          </button>
-        </div>
-        <ol className="px-4 py-3">
-          {isLoading ? (
-            <li className="flex justify-center py-8">
-              <Loader2 className="h-5 w-5 animate-spin text-[#C0C8D5]" />
-            </li>
-          ) : posts.length === 0 ? (
-            <li className="py-8 text-center text-[13px] text-[#94A3B8]">
-              인기 콘텐츠가 아직 없어요.
-            </li>
-          ) : null}
-          {!isLoading && posts.map((post, index) => (
-            <li key={post.postId} className="flex items-center gap-3 py-2.5">
-              <span
-                className={`w-5 shrink-0 text-center text-[14px] font-normal tabular-nums ${
-                  index < 3 ? "text-[#4876EF]" : "text-[#7B9CF5]"
-                }`}
-              >
-                {index + 1}
-              </span>
-              <Link
-                href={`/certificate/archive/${post.postId}`}
-                className="min-w-0 flex-1 truncate text-[13px] font-normal text-[#334155] transition-colors hover:text-[#4876EF]"
-              >
-                {post.title}
-              </Link>
-            </li>
+          {(["아티클", "자격증"] as const).map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={`h-14 text-[15px] transition-colors ${
+                activeTab === tab
+                  ? "border-b-2 border-[#1F2937] font-semibold text-[#1F2937]"
+                  : "font-medium text-[#9AA3B2] hover:text-[#667085]"
+              }`}
+            >
+              {tab}
+            </button>
           ))}
-        </ol>
+        </div>
+
+        {activeTab === "아티클" ? (
+          <ol className="px-4 py-3">
+            {isLoading ? (
+              <li className="flex justify-center py-8">
+                <Loader2 className="h-5 w-5 animate-spin text-[#C0C8D5]" />
+              </li>
+            ) : posts.length === 0 ? (
+              <li className="py-8 text-center text-[13px] text-[#94A3B8]">
+                인기 콘텐츠가 아직 없어요.
+              </li>
+            ) : (
+              posts.map((post, index) => (
+                <li key={post.postId} className="flex items-center gap-3 py-2.5">
+                  <span
+                    className={`w-5 shrink-0 text-center text-[14px] font-normal tabular-nums ${
+                      index < 3 ? "text-[#4876EF]" : "text-[#7B9CF5]"
+                    }`}
+                  >
+                    {index + 1}
+                  </span>
+                  <Link
+                    href={`/certificate/archive/${post.postId}`}
+                    className="min-w-0 flex-1 truncate text-[13px] font-normal text-[#334155] transition-colors hover:text-[#4876EF]"
+                  >
+                    {post.title}
+                  </Link>
+                </li>
+              ))
+            )}
+          </ol>
+        ) : (
+          <ol className="px-4 py-3">
+            {trendingCertificates.map((cert, index) => (
+              <li key={cert.name} className="flex items-center gap-3 py-2.5">
+                <span
+                  className={`w-5 shrink-0 text-center text-[13px] font-bold tabular-nums ${
+                    index < 3 ? "text-[#4876EF]" : "text-[#C0C8D5]"
+                  }`}
+                >
+                  {index + 1}
+                </span>
+                <Link
+                  href={`/certificate/search?keyword=${encodeURIComponent(cert.name)}`}
+                  className="min-w-0 flex-1 truncate text-[13px] font-normal text-[#334155] transition-colors hover:text-[#4876EF]"
+                >
+                  {cert.name}
+                </Link>
+                {cert.isNew && (
+                  <span className="shrink-0 text-[11px] font-bold text-[#16a34a]">NEW</span>
+                )}
+              </li>
+            ))}
+          </ol>
+        )}
       </div>
     </aside>
   );

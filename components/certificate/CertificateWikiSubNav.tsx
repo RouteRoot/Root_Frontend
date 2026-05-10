@@ -16,7 +16,7 @@ export default function CertificateWikiSubNav() {
   const { isEditor } = useWikiEditorAccess();
   const writeHref = pathname.startsWith("/certificate/archive")
     ? "/certificate/archive/write"
-    : "/certificate/wiki/write";
+    : "/certificate/archive/write";
 
   return (
     <nav className="border-b border-[#E5E8EB]">
