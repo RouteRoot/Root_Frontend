@@ -98,9 +98,9 @@ const modalContent: Record<FooterModalKey, FooterModalContent> = {
   },
 };
 
-const footerLinks: { label: string; key: FooterModalKey; highlighted?: boolean }[] =
+const footerLinks: { label: string; key: FooterModalKey; href?: string; highlighted?: boolean }[] =
   [
-    { label: "회사소개", key: "company" },
+    { label: "회사소개", key: "company", href: "/about" },
     { label: "이용약관", key: "terms", highlighted: true },
     { label: "개인정보처리방침", key: "privacy" },
     { label: "리뷰 운영 정책", key: "review" },
@@ -141,17 +141,24 @@ export default function Footer() {
             >
               {footerLinks.map((item, index) => (
                 <span key={item.key} className="flex items-center">
-                  <button
-                    type="button"
-                    onClick={() => setActiveModal(item.key)}
-                    className={`transition-colors hover:text-[#4876EF] ${
-                      item.highlighted
-                        ? "font-bold text-[#4876EF]"
-                        : "text-[#344054]"
-                    }`}
-                  >
-                    {item.label}
-                  </button>
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`transition-colors hover:text-[#4876EF] ${item.highlighted ? "font-bold text-[#4876EF]" : "text-[#344054]"}`}
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setActiveModal(item.key)}
+                      className={`transition-colors hover:text-[#4876EF] ${item.highlighted ? "font-bold text-[#4876EF]" : "text-[#344054]"}`}
+                    >
+                      {item.label}
+                    </button>
+                  )}
                   {index < footerLinks.length - 1 && (
                     <span className="mx-4 h-[10px] w-px bg-[#D9DDE3]" />
                   )}

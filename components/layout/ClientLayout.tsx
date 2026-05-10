@@ -54,7 +54,7 @@ export default function ClientLayout({
 
   return (
     <>
-      <GlobalBannerPopup />
+      {pathname !== "/about" && <GlobalBannerPopup />}
       {children}
     </>
   );
