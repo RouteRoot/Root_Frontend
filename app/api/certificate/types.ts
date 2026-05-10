@@ -84,8 +84,9 @@ export type CertificatePage<T> = {
 };
 
 export type ExamCategoryDto = {
-  id: number;
+  examCategoryId: number;
   examCategoryName: string;
+  examCount: number;
   subCategories: ExamCategoryDto[];
 };
 
