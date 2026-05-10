@@ -257,7 +257,7 @@ export default function CertificateExplorePage() {
   const [selectedCategory, setSelectedCategory] = useState(ALL_FILTER);
   const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>(CATEGORY_GROUPS);
   const [sortBy, setSortBy] = useState<SortBy>("recommended");
-  const [apiCategoryCountMap, setApiCategoryCountMap] = useState<Record<string, number>>({});
+  const [apiGroupCountMap, setApiGroupCountMap] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const topRef = useRef<HTMLDivElement>(null);
@@ -299,14 +299,15 @@ export default function CertificateExplorePage() {
           }));
         if (groups.length > 0) setCategoryGroups(groups);
 
-        const countMap: Record<string, number> = {};
+        const groupMap: Record<string, number> = {};
+        const subMap: Record<string, number> = {};
         for (const parent of tree) {
-          countMap[parent.examCategoryName] = parent.examCount;
+          groupMap[parent.examCategoryName] = parent.examCount;
           for (const sub of parent.subCategories) {
-            countMap[sub.examCategoryName] = sub.examCount;
+            subMap[sub.examCategoryName] = sub.examCount;
           }
         }
-        setApiCategoryCountMap(countMap);
+        setApiGroupCountMap(groupMap);
       })
       .catch(() => {});
     return () => { mounted = false; };
@@ -428,7 +429,7 @@ export default function CertificateExplorePage() {
                           <span className={`text-[11px] ${active ? "text-[#4876EF]" : "text-[#9AA3B2]"}`}>
                             {group === ALL_FILTER
                               ? (groupCounts[ALL_FILTER] ?? 0)
-                              : (apiCategoryCountMap[group] ?? groupCounts[group] ?? 0)}
+                              : (apiGroupCountMap[group] ?? groupCounts[group] ?? 0)}
                           </span>
                         </button>
                       );
@@ -458,8 +459,8 @@ export default function CertificateExplorePage() {
                           {category}
                           <span className={`ml-1.5 text-[11px] ${active ? "text-[#4876EF]" : "text-[#9AA3B2]"}`}>
                             {category === ALL_FILTER
-                              ? (apiCategoryCountMap[selectedGroup] ?? categoryCounts[ALL_FILTER] ?? 0)
-                              : (apiCategoryCountMap[category] ?? categoryCounts[category] ?? 0)}
+                              ? (apiGroupCountMap[selectedGroup] ?? categoryCounts[ALL_FILTER] ?? 0)
+                              : (categoryCounts[category] ?? 0)}
                           </span>
                         </button>
                       );
