@@ -146,7 +146,7 @@ export default function CertificateDetailPage() {
           </h2>
           <div className="flex items-end gap-3">
             <span className="text-[13px] font-medium text-[#8A94A6]">
-              {certificate.schedules.length}개 일정
+              {certificate.schedules?.length ?? 0}개 일정
             </span>
             {certificate.officialUrl && (
               <a
@@ -162,7 +162,7 @@ export default function CertificateDetailPage() {
           </div>
         </div>
 
-        {certificate.schedules.length === 0 ? (
+        {(certificate.schedules?.length ?? 0) === 0 ? (
           <div className="py-16 text-center text-[14px] text-[#98A2B3]">
             등록된 시험 일정이 없습니다.
           </div>
@@ -181,7 +181,7 @@ export default function CertificateDetailPage() {
                 </tr>
               </thead>
               <tbody>
-                {certificate.schedules.map((schedule) => (
+                {(certificate.schedules ?? []).map((schedule) => (
                   <tr
                     key={schedule.id}
                     className="border-b border-[#F1F3F6] text-[13px] text-[#575757]"

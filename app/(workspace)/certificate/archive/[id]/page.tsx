@@ -12,7 +12,7 @@ import {
 import type { ArchiveBoardType, ArchivePost } from "@/app/api/archive/types";
 import CertificateWikiSubNav from "@/components/certificate/CertificateWikiSubNav";
 import { useWikiEditorAccess } from "@/components/certificate/useWikiEditorAccess";
-import { trendingCertificates } from "@/components/gnb/gnb-data";
+import { getAllCertificates, type CertificateDetail } from "@/app/api/certificate/certificate";
 
 const BOARD_LABELS: Record<ArchiveBoardType, string> = {
   RECOMMAND: "입문자 추천",
@@ -40,9 +40,13 @@ function getCategoryLabel(post: ArchivePost) {
 function PopularContentPanel({
   posts,
   isLoading,
+  topCertificates,
+  isCertLoading,
 }: {
   posts: ArchivePost[];
   isLoading: boolean;
+  topCertificates: CertificateDetail[];
+  isCertLoading: boolean;
 }) {
   const [activeTab, setActiveTab] = useState<"아티클" | "자격증">("아티클");
 
@@ -97,26 +101,33 @@ function PopularContentPanel({
           </ol>
         ) : (
           <ol className="px-4 py-3">
-            {trendingCertificates.map((cert, index) => (
-              <li key={cert.name} className="flex items-center gap-3 py-2.5">
-                <span
-                  className={`w-5 shrink-0 text-center text-[13px] font-bold tabular-nums ${
-                    index < 3 ? "text-[#4876EF]" : "text-[#C0C8D5]"
-                  }`}
-                >
-                  {index + 1}
-                </span>
-                <Link
-                  href={`/certificate/search?keyword=${encodeURIComponent(cert.name)}`}
-                  className="min-w-0 flex-1 truncate text-[13px] font-normal text-[#334155] transition-colors hover:text-[#4876EF]"
-                >
-                  {cert.name}
-                </Link>
-                {cert.isNew && (
-                  <span className="shrink-0 text-[11px] font-bold text-[#16a34a]">NEW</span>
-                )}
+            {isCertLoading ? (
+              <li className="flex justify-center py-8">
+                <Loader2 className="h-5 w-5 animate-spin text-[#C0C8D5]" />
               </li>
-            ))}
+            ) : topCertificates.length === 0 ? (
+              <li className="py-8 text-center text-[13px] text-[#94A3B8]">
+                인기 자격증이 아직 없어요.
+              </li>
+            ) : (
+              topCertificates.map((cert, index) => (
+                <li key={cert.examCode} className="flex items-center gap-3 py-2.5">
+                  <span
+                    className={`w-5 shrink-0 text-center text-[13px] font-bold tabular-nums ${
+                      index < 3 ? "text-[#4876EF]" : "text-[#C0C8D5]"
+                    }`}
+                  >
+                    {index + 1}
+                  </span>
+                  <Link
+                    href={`/certificate/${encodeURIComponent(cert.examCode)}`}
+                    className="min-w-0 flex-1 truncate text-[13px] font-normal text-[#334155] transition-colors hover:text-[#4876EF]"
+                  >
+                    {cert.examName}
+                  </Link>
+                </li>
+              ))
+            )}
           </ol>
         )}
       </div>
@@ -137,10 +148,25 @@ export default function ArchiveDetailPage() {
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [post, setPost] = useState<ArchivePost | null>(null);
   const [popularPosts, setPopularPosts] = useState<ArchivePost[]>([]);
+  const [topCertificates, setTopCertificates] = useState<CertificateDetail[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCertLoading, setIsCertLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+    getAllCertificates(0, 500)
+      .then((page) => {
+        if (!mounted) return;
+        const sorted = [...page.content].sort((a, b) => (b.viewCount ?? 0) - (a.viewCount ?? 0));
+        setTopCertificates(sorted.slice(0, 10));
+      })
+      .catch(console.error)
+      .finally(() => { if (mounted) setIsCertLoading(false); });
+    return () => { mounted = false; };
+  }, []);
 
   useEffect(() => {
     if (!Number.isFinite(postId) || postId <= 0) {
@@ -298,7 +324,12 @@ export default function ArchiveDetailPage() {
           )}
         </div>
 
-        <PopularContentPanel posts={popularPosts} isLoading={isLoading} />
+        <PopularContentPanel
+          posts={popularPosts}
+          isLoading={isLoading}
+          topCertificates={topCertificates}
+          isCertLoading={isCertLoading}
+        />
       </main>
     </div>
   );

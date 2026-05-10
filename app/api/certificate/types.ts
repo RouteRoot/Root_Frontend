@@ -13,6 +13,8 @@ export type CertificateSearchItem = {
   category: string | null;
   organization: string | null;
   description: string | null;
+  imageUrl: string | null;
+  viewCount: number | null;
   schedules: CertificateScheduleSummary[];
 };
 
@@ -38,8 +40,10 @@ export type CertificateDetail = {
   category: string | null;
   organization: string | null;
   description: string | null;
+  imageUrl: string | null;
   officialUrl: string | null;
   isActive: boolean;
+  viewCount: number | null;
   schedules: CertificateSchedule[];
 };
 
@@ -77,6 +81,12 @@ export type CertificatePage<T> = {
   first: boolean;
   last: boolean;
   empty: boolean;
+};
+
+export type ExamCategoryDto = {
+  id: number;
+  examCategoryName: string;
+  subCategories: ExamCategoryDto[];
 };
 
 export type ExamScheduleSummary = CertificateScheduleSummary;

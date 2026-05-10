@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { CalendarDays, ChevronRight, Loader2 } from "lucide-react";
+import { CalendarDays, ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 import {
   getAllCertificates,
+  getExamCategories,
   type CertificateDetail,
 } from "@/app/api/certificate/certificate";
 import CertificateWikiSubNav from "@/components/certificate/CertificateWikiSubNav";
@@ -157,9 +158,9 @@ function categoryMatches(source: string, target: string) {
   return normalizeCategory(source) === normalizeCategory(target);
 }
 
-function getGroupLabel(category: string) {
+function getGroupLabel(category: string, groups: CategoryGroup[]) {
   return (
-    CATEGORY_GROUPS.find((group) =>
+    groups.find((group) =>
       group.categories.some((groupCategory) =>
         categoryMatches(category, groupCategory)
       )
@@ -167,8 +168,8 @@ function getGroupLabel(category: string) {
   );
 }
 
-function getCanonicalCategoryLabel(category: string) {
-  for (const group of CATEGORY_GROUPS) {
+function getCanonicalCategoryLabel(category: string, groups: CategoryGroup[]) {
+  for (const group of groups) {
     const matchedCategory = group.categories.find((groupCategory) =>
       categoryMatches(category, groupCategory)
     );
@@ -179,6 +180,57 @@ function getCanonicalCategoryLabel(category: string) {
   return category;
 }
 
+
+type SortBy = "recommended" | "viewCount" | "name";
+
+const SORT_OPTIONS: { label: string; value: SortBy }[] = [
+  { label: "추천순", value: "recommended" },
+  { label: "조회순", value: "viewCount" },
+  { label: "이름순", value: "name" },
+];
+
+function SortDropdown({ value, onChange }: { value: SortBy; onChange: (v: SortBy) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const selected = SORT_OPTIONS.find((o) => o.value === value)!;
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="inline-flex h-9 items-center gap-1.5 px-1 text-[13px] text-[#667085] transition-colors hover:text-[#4876EF]"
+      >
+        {selected.label}
+        <ChevronDown className={`h-3.5 w-3.5 text-[#9AA3B2] transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-[calc(100%+4px)] z-10 min-w-25 overflow-hidden rounded-xl border border-[#E5E8EB] bg-white shadow-lg">
+          {SORT_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => { onChange(opt.value); setOpen(false); }}
+              className={`w-full px-4 py-2.5 text-left text-[13px] transition-colors hover:bg-[#F5F7FA] ${
+                opt.value === value ? "font-semibold text-[#4876EF]" : "font-normal text-[#334155]"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function CertificateCardSkeleton() {
   return (
@@ -195,6 +247,8 @@ export default function CertificateExplorePage() {
   const [certificates, setCertificates] = useState<CertificateDetail[]>([]);
   const [selectedGroup, setSelectedGroup] = useState(ALL_FILTER);
   const [selectedCategory, setSelectedCategory] = useState(ALL_FILTER);
+  const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>(CATEGORY_GROUPS);
+  const [sortBy, setSortBy] = useState<SortBy>("recommended");
   const [isLoading, setIsLoading] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -258,36 +312,53 @@ export default function CertificateExplorePage() {
     return () => observer.disconnect();
   }, [loadMore]);
 
+  useEffect(() => {
+    let mounted = true;
+    getExamCategories()
+      .then((tree) => {
+        if (!mounted) return;
+        const groups = tree
+          .filter((item) => item.subCategories.length > 0)
+          .map((item) => ({
+            label: item.examCategoryName,
+            categories: item.subCategories.map((sub) => sub.examCategoryName),
+          }));
+        if (groups.length > 0) setCategoryGroups(groups);
+      })
+      .catch(() => {});
+    return () => { mounted = false; };
+  }, []);
+
   const etcCategories = useMemo(() => {
     const loaded = uniqueValues(
-      certificates.map((c) => getCanonicalCategoryLabel(getCategoryLabel(c)))
+      certificates.map((c) => getCanonicalCategoryLabel(getCategoryLabel(c), categoryGroups))
     );
-    return loaded.filter((cat) => getGroupLabel(cat) === ETC_GROUP);
-  }, [certificates]);
+    return loaded.filter((cat) => getGroupLabel(cat, categoryGroups) === ETC_GROUP);
+  }, [certificates, categoryGroups]);
 
   const groupOptions = useMemo(() => {
-    const allGroups = CATEGORY_GROUPS.map((g) => g.label);
+    const allGroups = categoryGroups.map((g) => g.label);
     return [
       ALL_FILTER,
       ...allGroups,
       ...(etcCategories.length > 0 ? [ETC_GROUP] : []),
     ];
-  }, [etcCategories]);
+  }, [categoryGroups, etcCategories]);
 
   const subCategoryOptions = useMemo(() => {
     if (selectedGroup === ALL_FILTER) return [ALL_FILTER];
     if (selectedGroup === ETC_GROUP) return [ALL_FILTER, ...etcCategories];
-    const group = CATEGORY_GROUPS.find((g) => g.label === selectedGroup);
+    const group = categoryGroups.find((g) => g.label === selectedGroup);
     return [ALL_FILTER, ...(group?.categories ?? [])];
-  }, [selectedGroup, etcCategories]);
+  }, [selectedGroup, categoryGroups, etcCategories]);
 
   const groupFilteredCertificates = useMemo(() => {
     if (selectedGroup === ALL_FILTER) return certificates;
     return certificates.filter(
       (certificate) =>
-        getGroupLabel(getCategoryLabel(certificate)) === selectedGroup
+        getGroupLabel(getCategoryLabel(certificate), categoryGroups) === selectedGroup
     );
-  }, [certificates, selectedGroup]);
+  }, [certificates, selectedGroup, categoryGroups]);
 
   const filteredCertificates = useMemo(() => {
     const filtered = groupFilteredCertificates.filter((certificate) => {
@@ -296,36 +367,40 @@ export default function CertificateExplorePage() {
     });
 
     return filtered.sort((a, b) => {
+      if (sortBy === "viewCount") {
+        return (b.viewCount ?? 0) - (a.viewCount ?? 0);
+      }
+      if (sortBy === "name") {
+        return a.examName.localeCompare(b.examName, "ko");
+      }
       const activeScore = Number(b.isActive) - Number(a.isActive);
       if (activeScore !== 0) return activeScore;
-
       const scheduleScore = b.schedules.length - a.schedules.length;
       if (scheduleScore !== 0) return scheduleScore;
-
       return a.examName.localeCompare(b.examName, "ko");
     });
-  }, [groupFilteredCertificates, selectedCategory]);
+  }, [groupFilteredCertificates, selectedCategory, sortBy]);
 
   const groupCounts = useMemo(() => {
     return certificates.reduce<Record<string, number>>((acc, certificate) => {
-      const groupLabel = getGroupLabel(getCategoryLabel(certificate));
+      const groupLabel = getGroupLabel(getCategoryLabel(certificate), categoryGroups);
       acc[groupLabel] = (acc[groupLabel] ?? 0) + 1;
       acc[ALL_FILTER] = (acc[ALL_FILTER] ?? 0) + 1;
       return acc;
     }, {});
-  }, [certificates]);
+  }, [certificates, categoryGroups]);
 
   const categoryCounts = useMemo(() => {
     return groupFilteredCertificates.reduce<Record<string, number>>(
       (acc, certificate) => {
-        const category = getCanonicalCategoryLabel(getCategoryLabel(certificate));
+        const category = getCanonicalCategoryLabel(getCategoryLabel(certificate), categoryGroups);
         acc[category] = (acc[category] ?? 0) + 1;
         acc[ALL_FILTER] = (acc[ALL_FILTER] ?? 0) + 1;
         return acc;
       },
       {}
     );
-  }, [groupFilteredCertificates]);
+  }, [groupFilteredCertificates, categoryGroups]);
 
   const hasSubCategories = subCategoryOptions.length > 1;
 
@@ -373,13 +448,7 @@ export default function CertificateExplorePage() {
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  className="inline-flex h-9 items-center gap-2 px-1 text-[13px] text-[#667085] transition-colors hover:text-[#4876EF]"
-                >
-                  추천순
-                  <ChevronRight className="h-3.5 w-3.5 rotate-90 text-[#9AA3B2]" />
-                </button>
+                <SortDropdown value={sortBy} onChange={setSortBy} />
               </div>
 
               {hasSubCategories && (

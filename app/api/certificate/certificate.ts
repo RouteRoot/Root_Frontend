@@ -6,6 +6,7 @@ import type {
   CertificateSchedule,
   CertificateSchedulePayload,
   CertificateSearchItem,
+  ExamCategoryDto,
 } from "./types";
 
 export type {
@@ -16,6 +17,7 @@ export type {
   CertificateSchedulePayload,
   CertificateScheduleSummary,
   CertificateSearchItem,
+  ExamCategoryDto,
   ExamDetail,
   ExamMutationPayload,
   ExamSchedule,
@@ -144,6 +146,11 @@ export async function testFetchCertificateSchedules(
 export async function fetchAllCertificateSchedules(): Promise<string> {
   const response = await axiosInstance.get<string>("/exams/test-fetch-all");
 
+  return response.data;
+}
+
+export async function getExamCategories(): Promise<ExamCategoryDto[]> {
+  const response = await axiosInstance.get<ExamCategoryDto[]>("/exam-categories");
   return response.data;
 }
 
