@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Sparkles } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import AcquiredCertificateInput from "@/components/roadmap/generate/AcquiredCertificateInput";
 import RoadmapFieldSection from "@/components/roadmap/generate/RoadmapFieldSection";
 import RoadmapGenerateLoading from "@/components/roadmap/generate/RoadmapGenerateLoading";
@@ -35,11 +35,6 @@ export default function RoadmapGeneratePage() {
       {loading && <RoadmapGenerateLoading />}
 
       <div className="mx-auto max-w-[1062px] px-0 pb-0">
-        <div className="mb-2.5 inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#0FA9CC]">
-          <Sparkles className="h-3 w-3" />
-          AI 맞춤 로드맵 생성
-        </div>
-
         <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1fr_344px] lg:gap-12">
           <section>
             <div className="mb-5">
@@ -98,8 +93,8 @@ export default function RoadmapGeneratePage() {
                     onClick={() => updateField("isMajorRelated", item.value)}
                     className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition ${
                       form.isMajorRelated === item.value
-                        ? "border-[#0FA9CC] bg-[#EAF9FC] text-[#0FA9CC]"
-                        : "border-[#E8EDF5] bg-white text-[#7B8798] hover:border-[#BDEAF3]"
+                        ? "border-[#4876EF] bg-[#EEF4FF] text-[#4876EF]"
+                        : "border-[#E8EDF5] bg-white text-[#7B8798] hover:border-[#C7D7FA]"
                     }`}
                   >
                     {item.label}
@@ -171,7 +166,7 @@ export default function RoadmapGeneratePage() {
                 value={form.personalStory}
                 onChange={handleChange}
                 placeholder="예: 비전공자라 어떤 자격증부터 시작해야 할지 모르겠어요."
-                className="min-h-[96px] w-full resize-none rounded-[10px] border border-[#E8EDF5] bg-white px-4 py-3 text-[14px] leading-6 text-[#333333] outline-none transition placeholder:text-[#C5CFDA] focus:border-[#0FA9CC]"
+                className="min-h-[96px] w-full resize-none rounded-[10px] border border-[#E8EDF5] bg-white px-4 py-3 text-[14px] leading-6 text-[#333333] outline-none transition placeholder:text-[#C5CFDA] focus:border-[#4876EF]"
               />
             </section>
 
@@ -185,7 +180,7 @@ export default function RoadmapGeneratePage() {
               type="button"
               onClick={handleGenerate}
               disabled={loading || !isValid}
-              className="inline-flex h-[50px] w-full items-center justify-center rounded-[12px] bg-[#0FA9CC] text-[15px] font-semibold text-white transition hover:bg-[#0d98b8] disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-[50px] w-full items-center justify-center rounded-[12px] bg-[#4876EF] text-[15px] font-semibold text-white transition hover:bg-[#3565e0] disabled:cursor-not-allowed disabled:opacity-40"
             >
               로드맵 생성하기
             </button>

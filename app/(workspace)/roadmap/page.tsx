@@ -73,7 +73,7 @@ export default function Page() {
 
         <Link
           href="/roadmap/generate"
-          className="mt-8 inline-flex h-[46px] items-center gap-2 rounded-[12px] bg-[#0075c3]/80 px-6 text-[14px] font-semibold text-white transition hover:opacity-90"
+          className="mt-8 inline-flex h-[46px] items-center gap-2 rounded-[12px] bg-[#4876EF] px-6 text-[14px] font-semibold text-white transition hover:opacity-90"
         >
           로드맵 생성하기
         </Link>

@@ -5,7 +5,7 @@ export default function RoadmapGenerateLoading() {
         {[0, 1, 2].map((i) => (
           <span
             key={i}
-            className="h-2 w-2 rounded-full bg-[#0075c3] opacity-80"
+            className="h-2 w-2 rounded-full bg-[#4876EF] opacity-80"
             style={{ animation: `bounce 1s ${i * 0.18}s infinite` }}
           />
         ))}

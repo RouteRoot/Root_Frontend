@@ -20,13 +20,13 @@ export default function SkillLevelSelector({
             onClick={() => onChange(level)}
             className={`flex flex-col items-center justify-center gap-1 rounded-[10px] border py-3 transition ${
               value === level
-                ? "border-[#0FA9CC] bg-[#EAF9FC]"
-                : "border-[#E8EDF5] bg-white hover:border-[#BDEAF3]"
+                ? "border-[#4876EF] bg-[#EEF4FF]"
+                : "border-[#E8EDF5] bg-white hover:border-[#C7D7FA]"
             }`}
           >
             <span
               className={`text-[15px] font-bold ${
-                value === level ? "text-[#0FA9CC]" : "text-[#7B8798]"
+                value === level ? "text-[#4876EF]" : "text-[#7B8798]"
               }`}
             >
               {level}

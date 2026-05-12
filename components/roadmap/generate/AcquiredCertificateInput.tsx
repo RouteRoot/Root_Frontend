@@ -38,7 +38,7 @@ export default function AcquiredCertificateInput({
         <button
           type="button"
           onClick={onAdd}
-          className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-[10px] border border-[#E8EDF5] text-[#0FA9CC] transition hover:border-[#0FA9CC]"
+          className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-[10px] border border-[#E8EDF5] text-[#4876EF] transition hover:border-[#4876EF]"
           aria-label="자격증 추가"
         >
           <Plus className="h-4 w-4" />
@@ -59,7 +59,7 @@ export default function AcquiredCertificateInput({
               <button
                 type="button"
                 onClick={() => onRemove(item)}
-                className="text-[#94A3B8] transition hover:text-[#0FA9CC]"
+                className="text-[#94A3B8] transition hover:text-[#4876EF]"
                 aria-label={`${item} 삭제`}
               >
                 <X className="h-3.5 w-3.5" />
