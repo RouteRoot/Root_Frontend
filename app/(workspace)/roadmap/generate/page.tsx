@@ -31,7 +31,7 @@ export default function RoadmapGeneratePage() {
   } = useRoadmapGenerateForm();
 
   return (
-    <main className="pt-9 -mb-40 -mt-2 h-[calc(100vh-8rem-var(--global-banner-height))] overflow-hidden bg-white">
+    <main className="pt-9 pb-20 bg-white">
       {loading && <RoadmapGenerateLoading />}
 
       <div className="mx-auto max-w-[1062px] px-0 pb-0">

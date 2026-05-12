@@ -34,54 +34,38 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-white font-sans antialiased">
       {/* Header */}
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-white/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <Link href="/" className="text-[20px] font-extrabold tracking-tight text-[#4876EF]">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-[#E1E5EA] bg-white">
+        <div className="mx-auto flex h-15 max-w-6xl items-center justify-between px-6">
+          <Link
+            href="/"
+            className="text-[28px] font-bold leading-none tracking-[-0.04em] text-[#4876EF]"
+          >
             bburi
           </Link>
-          <nav className="flex items-center gap-8 text-[14px] font-medium text-[#334155]">
-            <a href="#mission" className="transition-colors hover:text-[#4876EF]">Mission</a>
-            <a href="#service" className="transition-colors hover:text-[#4876EF]">서비스</a>
-            <a href="#team" className="transition-colors hover:text-[#4876EF]">팀 소개</a>
-            <Link
-              href="/"
-              className="rounded-full bg-[#4876EF] px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-90"
-            >
-              서비스 바로가기
-            </Link>
-          </nav>
+          <Link
+            href="/"
+            className="text-[14px] font-normal text-[#111827] transition-colors hover:text-[#4876EF]"
+          >
+            서비스 바로가기
+          </Link>
         </div>
       </header>
 
       {/* Hero */}
       <section
-        className="relative flex min-h-screen items-center justify-center overflow-hidden"
+        className="relative min-h-screen overflow-hidden"
         style={{
-          background:
-            "linear-gradient(160deg, #0c1b3b 0%, #1a3566 25%, #2563c0 55%, #7c9fd4 78%, #b8cce8 90%, #dde8f4 100%)",
+          backgroundImage: "url('/about1.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
-        {/* 장식용 원형 블러 */}
-        <div className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5 blur-3xl" />
-        <div className="absolute bottom-20 left-1/2 h-[300px] w-[900px] -translate-x-1/2 rounded-full bg-[#4876EF]/10 blur-2xl" />
+        <div className="absolute inset-0 bg-black/30" />
 
-        <div className="relative z-10 px-6 text-center">
-          <p className="mb-4 text-[15px] font-semibold uppercase tracking-[0.2em] text-white/60">
-            About bburi
-          </p>
-          <h1 className="text-[48px] font-extrabold leading-[1.2] tracking-tight text-white md:text-[64px]">
-            bburi 팀은<br />모두가 합격하는<br />세상을 만듭니다
+        <div className="relative z-10 px-6 text-center" style={{ paddingTop: "250px" }}>
+          <h1 className="text-[48px] font-extrabold leading-[1.5] tracking-[-0.05em] text-white">
+            뿌리는 막막한 시작을<br /> 성장의 흐름으로 바꿉니다
           </h1>
-          <p className="mt-6 text-[17px] leading-relaxed text-white/70">
-            자격증 탐색부터 학습 플랜까지, 한 곳에서.
-          </p>
-          <a
-            href="#mission"
-            className="mt-10 inline-flex items-center gap-2 rounded-full bg-white/15 px-6 py-3 text-[14px] font-semibold text-white backdrop-blur-sm transition hover:bg-white/25"
-          >
-            더 알아보기
-            <span className="text-[18px]">↓</span>
-          </a>
         </div>
       </section>
 

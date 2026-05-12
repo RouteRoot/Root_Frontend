@@ -429,8 +429,8 @@ export default function RoadmapTimelineSection() {
                       }`}
                     >
                       <div className="flex flex-wrap items-center gap-3">
-                        {phase.tasks.length > 0 ? (
-                          phase.tasks.map((task) => {
+                        {(phase.tasks ?? []).length > 0 ? (
+                          (phase.tasks ?? []).map((task) => {
                             const hasPlan = hasGeneratedPlan(
                               task.taskId,
                               planTabs
