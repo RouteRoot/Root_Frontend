@@ -1,5 +1,5 @@
 import { Plus, X } from "lucide-react";
-import { inputClass, labelClass } from "./roadmapGenerateConfig";
+import { inputClass } from "./roadmapGenerateConfig";
 
 type AcquiredCertificateInputProps = {
   items: string[];
@@ -17,11 +17,7 @@ export default function AcquiredCertificateInput({
   onRemove,
 }: AcquiredCertificateInputProps) {
   return (
-    <section>
-      <h2 className={labelClass}>
-        보유 자격증{" "}
-        <span className="text-[13px] font-normal text-[#94A3B8]">(선택)</span>
-      </h2>
+    <div>
       <div className="flex gap-2">
         <input
           value={inputValue}
@@ -38,36 +34,36 @@ export default function AcquiredCertificateInput({
         <button
           type="button"
           onClick={onAdd}
-          className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-[10px] border border-[#E8EDF5] text-[#4876EF] transition hover:border-[#4876EF]"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#E8EDF5] text-[#4876EF] transition hover:border-[#4876EF] hover:bg-[#EEF4FF]"
           aria-label="자격증 추가"
         >
           <Plus className="h-4 w-4" />
         </button>
       </div>
-      <div className="mt-2 flex flex-wrap gap-2">
+      <div className="mt-2.5 flex flex-wrap gap-1.5">
         {items.length === 0 ? (
-          <p className="text-[13px] text-[#94A3B8]">
+          <p className="text-[12px] text-[#94A3B8]">
             취득 완료된 로드맵 자격증은 자동으로 불러와요.
           </p>
         ) : (
           items.map((item) => (
             <span
               key={item}
-              className="inline-flex items-center gap-1 rounded-full bg-[#F3F6FA] px-3 py-1.5 text-[13px] font-medium text-[#333333]"
+              className="inline-flex items-center gap-1 rounded-full bg-[#EEF4FF] px-3 py-1 text-[12px] font-medium text-[#4876EF]"
             >
               {item}
               <button
                 type="button"
                 onClick={() => onRemove(item)}
-                className="text-[#94A3B8] transition hover:text-[#4876EF]"
+                className="opacity-60 transition hover:opacity-100"
                 aria-label={`${item} 삭제`}
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="h-3 w-3" />
               </button>
             </span>
           ))
         )}
       </div>
-    </section>
+    </div>
   );
 }

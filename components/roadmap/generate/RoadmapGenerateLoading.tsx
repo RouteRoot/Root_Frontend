@@ -1,12 +1,17 @@
+import { Sparkles } from "lucide-react";
+
 export default function RoadmapGenerateLoading() {
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-5 bg-white/90 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-white/90 backdrop-blur-sm">
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#EEF4FF]">
+        <Sparkles className="h-7 w-7 text-[#4876EF]" />
+      </div>
       <div className="flex gap-1.5">
         {[0, 1, 2].map((i) => (
           <span
             key={i}
-            className="h-2 w-2 rounded-full bg-[#4876EF] opacity-80"
-            style={{ animation: `bounce 1s ${i * 0.18}s infinite` }}
+            className="h-2 w-2 rounded-full bg-[#4876EF]"
+            style={{ animation: `roadmap-bounce 1s ${i * 0.18}s infinite` }}
           />
         ))}
       </div>
