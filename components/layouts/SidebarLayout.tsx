@@ -22,7 +22,7 @@ export default function SidebarLayout({
             }}
           >
             <div
-              className="w-55"
+              className="w-full max-w-[210px]"
               style={{
                 position: "sticky",
                 top: "calc(129px + var(--global-banner-height))",
