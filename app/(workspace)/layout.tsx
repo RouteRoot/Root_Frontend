@@ -1,5 +1,7 @@
 import Gnb from "@/components/gnb/Gnb";
 import Footer from "@/components/common/Footer";
+import MobileBottomNav from "@/mobile/components/MobileBottomNav";
+import MobileHeader from "@/mobile/components/MobileHeader";
 
 export default function WorkspaceLayout({
   children,
@@ -8,9 +10,15 @@ export default function WorkspaceLayout({
 }) {
   return (
     <div className="min-h-screen bg-white">
-      <Gnb />
+      <div className="hidden lg:block">
+        <Gnb />
+      </div>
+      <MobileHeader />
       {children}
-      <Footer />
+      <div className="hidden lg:block">
+        <Footer />
+      </div>
+      <MobileBottomNav />
     </div>
   );
 }
