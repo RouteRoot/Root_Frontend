@@ -13,6 +13,7 @@ import DailyPlanSection, {
 } from "@/components/plan/DailyPlanSection";
 import ConfirmModal from "@/components/common/ConfirmModal";
 import { ToastContainer, useToast } from "@/components/common/Toast";
+import MobilePlanPage from "@/mobile/pages/plan/MobilePlanPage";
 import {
   getPlanTabs,
   getPlanByExamTaskId,
@@ -484,7 +485,12 @@ export default function PlannerPage() {
   };
 
   return (
-    <main className="min-h-screen bg-white pb-14 sm:px-6 lg:px-0">
+    <>
+    <div className="lg:hidden">
+      <MobilePlanPage />
+    </div>
+
+    <main className="hidden min-h-screen bg-white pb-14 sm:px-6 lg:block lg:px-0">
       <div className="mx-auto max-w-[1600px]">
         <section className="mb-8">
             <PlanTabs
@@ -592,5 +598,6 @@ export default function PlannerPage() {
 
       <ToastContainer />
     </main>
+    </>
   );
 }

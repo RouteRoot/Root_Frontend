@@ -54,7 +54,7 @@ export default function RoadmapGeneratePage() {
   } = useRoadmapGenerateForm();
 
   return (
-    <main className="pb-28 pt-12">
+    <main className="pb-24 pt-0 lg:pb-28 lg:pt-12">
       {loading && <RoadmapGenerateLoading />}
 
       <div className="mx-auto max-w-[1062px] px-4">

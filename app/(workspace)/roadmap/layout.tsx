@@ -14,7 +14,7 @@ export default function RoadmapLayout({
   if (pathname === "/roadmap/generate") {
     return (
       <div
-        style={{ paddingTop: "calc(8rem + var(--global-banner-height))" }}
+        className="pt-[calc(4.5rem+var(--global-banner-height))] lg:pt-[calc(8rem+var(--global-banner-height))]"
       >
         {children}
       </div>
