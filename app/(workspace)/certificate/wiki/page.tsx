@@ -401,16 +401,16 @@ export default function CertificateWikiPage() {
     let mounted = true;
 
     Promise.all([
-      ...HERO_POST_IDS.map((id) => getCachedArchivePostDetail(id).catch(() => null)),
+      Promise.all(HERO_POST_IDS.map((id) => getCachedArchivePostDetail(id).catch(() => null))),
       getCachedArchivePosts({ boardType: "CERT_ANALYSIS", sort: "popular", size: 6 }),
       getCachedArchivePosts({ boardType: "JOB_ANALYSIS", sort: "popular", size: 6 }),
       getCachedArchivePosts({ boardType: "EXPERT_INSIGHT", sort: "popular", size: 6 }),
       getCachedArchivePopularPosts(10),
     ])
-      .then(([hero30, hero29, hero28, certAnalysis, jobAnalysis, expertInsight, popular]) => {
+      .then(([heroPostResults, certAnalysis, jobAnalysis, expertInsight, popular]) => {
         if (!mounted) return;
         setHeroPosts(
-          [hero30, hero29, hero28].filter((p): p is ArchivePost => p !== null)
+          heroPostResults.filter((p): p is ArchivePost => p !== null)
         );
         setCertAnalysisPosts(certAnalysis.content);
         setJobAnalysisPosts(jobAnalysis.content);
