@@ -44,7 +44,7 @@ type TodayPlan = {
 const recommendationCards = [
   {
     href: "/community/1",
-    src: "/Group 48 (2).svg",
+    src: "/Group 48.png",
     alt: "오늘의 추천",
     priority: true,
   },
@@ -486,7 +486,7 @@ function RecommendationSection({ guest }: { guest: boolean }) {
           <Link
             key={card.href}
             href={card.href}
-            className="relative block aspect-[2.1/1] w-full shrink-0 overflow-hidden rounded-[8px] bg-white shadow-sm"
+            className="relative block aspect-[1.85/1] w-full shrink-0 overflow-hidden rounded-[8px] bg-white shadow-sm"
           >
             <Image
               src={card.src}
