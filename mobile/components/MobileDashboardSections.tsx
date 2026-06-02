@@ -4,6 +4,8 @@ import { getPlanByExamTaskId, getPlanTabs } from "@/app/api/plan/plan";
 import type { PlanResponse } from "@/app/api/plan/types";
 import { getPopularPosts } from "@/app/api/community/post";
 import type { Post } from "@/app/api/community/types";
+import { getArchivePostDetail } from "@/app/api/archive/archive";
+import type { ArchivePost } from "@/app/api/archive/types";
 import { getMe } from "@/app/api/service/user";
 import { dashboardCertificates } from "@/components/dashboard/dashboardCertificateData";
 import { getPostPreviewContent } from "@/components/community/postContentPreview";
@@ -59,6 +61,19 @@ const recommendationCards = [
   },
 ];
 
+const WIKI_HERO_POST_IDS = [30, 29, 28] as const;
+const wikiFallbackGradients = [
+  "linear-gradient(135deg,#4876EF,#93C5FD)",
+  "linear-gradient(135deg,#0F766E,#5EEAD4)",
+  "linear-gradient(135deg,#6D28D9,#C4B5FD)",
+];
+
+const wikiFallbackCards = WIKI_HERO_POST_IDS.map((id, index) => ({
+  id,
+  title: ["자격증 위키 추천 콘텐츠", "합격 전략 아카이브", "커리어에 도움되는 자격증 이야기"][index],
+  excerpt: "자격증 위키에서 더 자세히 살펴보세요.",
+}));
+
 function toMobilePost(post: Post): MobilePost {
   return {
     id: post.postId,
@@ -67,6 +82,15 @@ function toMobilePost(post: Post): MobilePost {
     likeCount: post.likeCount,
     commentCount: post.commentCount,
   };
+}
+
+function extractFirstImage(html: string) {
+  const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+  return match?.[1] ?? "";
+}
+
+function stripHtml(content: string) {
+  return content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
 function getTodayInSeoul() {
@@ -305,16 +329,33 @@ function TodayPlanCard({ guest }: { guest: boolean }) {
   );
 }
 
-function RecommendationSection() {
+function RecommendationSection({ guest }: { guest: boolean }) {
+  const [wikiPosts, setWikiPosts] = useState<ArchivePost[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    Promise.all(
+      WIKI_HERO_POST_IDS.map((id) => getArchivePostDetail(id).catch(() => null))
+    ).then((posts) => {
+      if (!mounted) return;
+      setWikiPosts(posts.filter((post): post is ArchivePost => post !== null));
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <section>
       <SectionTitle title="오늘의 추천" />
-      <div className="flex snap-x gap-3 overflow-x-auto pb-1 scrollbar-hide">
-        {recommendationCards.map((card, index) => (
+      <div className="flex overflow-hidden pb-1">
+        {recommendationCards.slice(0, 1).map((card, index) => (
           <Link
             key={card.href}
             href={card.href}
-            className="relative block aspect-[1.72/1] w-[82%] shrink-0 snap-start overflow-hidden rounded-[8px] bg-white shadow-sm"
+            className="relative block aspect-[2.1/1] w-full shrink-0 overflow-hidden rounded-[8px] bg-white shadow-sm"
           >
             <Image
               src={card.src}
@@ -332,6 +373,56 @@ function RecommendationSection() {
           </Link>
         ))}
       </div>
+      {guest && (
+        <div className="mt-3 flex snap-x gap-3 overflow-x-auto pb-1 scrollbar-hide">
+          {(wikiPosts.length > 0 ? wikiPosts : wikiFallbackCards).map((item, index) => {
+            const isPost = "postId" in item;
+            const postId = isPost ? item.postId : item.id;
+            const title = item.title;
+            const excerpt = isPost ? stripHtml(item.content) : item.excerpt;
+            const imageUrl = isPost ? extractFirstImage(item.content) : "";
+
+            return (
+              <Link
+                key={postId}
+                href={`/certificate/archive/${postId}`}
+                className="relative block aspect-[1.72/1] w-[72%] shrink-0 snap-start overflow-hidden rounded-[8px] bg-white shadow-sm"
+                style={{
+                  backgroundImage: imageUrl
+                    ? undefined
+                    : wikiFallbackGradients[index % wikiFallbackGradients.length],
+                  backgroundPosition: "center",
+                  backgroundSize: "cover",
+                }}
+              >
+                {imageUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={imageUrl}
+                    alt=""
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                )}
+                <div className="absolute inset-0 bg-linear-to-t from-black/72 via-black/20 to-transparent" />
+                {!imageUrl && (
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.11)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.11)_1px,transparent_1px)] bg-size-[16px_16px]" />
+                )}
+                <div className="relative z-10 flex h-full flex-col justify-end px-3.5 py-3.5">
+                  <span className="w-fit rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur">
+                  자격증 위키
+                </span>
+                <h3 className="mt-2 line-clamp-2 text-[14px] font-semibold leading-[1.35] text-white">
+                  {title}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-[11px] font-medium text-white/75">
+                  {excerpt}
+                </p>
+              </div>
+            </Link>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }
@@ -487,7 +578,7 @@ export default function MobileDashboardSections({
 }: MobileDashboardSectionsProps) {
   return (
     <div className="mx-auto flex w-full max-w-[430px] flex-col gap-7 pb-7">
-      <RecommendationSection />
+      <RecommendationSection guest={guest} />
       <MobileHero guest={guest} />
       <TodayPlanCard guest={guest} />
       <CommunitySection />
