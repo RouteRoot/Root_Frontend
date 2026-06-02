@@ -189,7 +189,7 @@ function MobileHero({ guest }: { guest: boolean }) {
 
 function TodayPlanCard({ guest }: { guest: boolean }) {
   const [userName, setUserName] = useState("");
-  const [plan, setPlan] = useState<TodayPlan | null>(null);
+  const [plans, setPlans] = useState<TodayPlan[]>([]);
   const [isLoading, setIsLoading] = useState(!guest);
 
   useEffect(() => {
@@ -205,20 +205,18 @@ function TodayPlanCard({ guest }: { guest: boolean }) {
 
         setUserName(me?.name ?? "");
 
-        for (const tab of tabs) {
-          try {
-            const detail = await getPlanByExamTaskId(tab.examTaskId);
-            const todayPlan = findTodayPlan(detail);
-            if (todayPlan) {
-              if (mounted) setPlan(todayPlan);
-              return;
+        const loadedPlans = await Promise.all(
+          tabs.map(async (tab) => {
+            try {
+              const detail = await getPlanByExamTaskId(tab.examTaskId);
+              return findTodayPlan(detail);
+            } catch {
+              return null;
             }
-          } catch {
-            // Keep looking through other plans.
-          }
-        }
+          })
+        );
 
-        if (mounted) setPlan(null);
+        if (mounted) setPlans(loadedPlans.filter(Boolean) as TodayPlan[]);
       } finally {
         if (mounted) setIsLoading(false);
       }
@@ -249,42 +247,49 @@ function TodayPlanCard({ guest }: { guest: boolean }) {
   }
 
   return (
-    <section className="rounded-[8px] border border-[#E5E8EB] bg-white px-4 py-4">
+    <section>
       <p className="text-[12px] font-medium text-[#8A94A6]">
         {userName ? `${userName}님의 오늘 플랜` : "오늘의 플랜"}
       </p>
 
       {isLoading ? (
-        <div className="mt-3 space-y-2">
+        <div className="mt-3 rounded-[8px] border border-[#E5E8EB] bg-white px-4 py-4">
           <div className="h-5 w-3/4 animate-pulse rounded bg-[#EEF2F7]" />
-          <div className="h-4 w-full animate-pulse rounded bg-[#F3F6FA]" />
-          <div className="h-4 w-2/3 animate-pulse rounded bg-[#F3F6FA]" />
+          <div className="mt-3 h-4 w-full animate-pulse rounded bg-[#F3F6FA]" />
+          <div className="mt-2 h-4 w-2/3 animate-pulse rounded bg-[#F3F6FA]" />
         </div>
-      ) : plan ? (
-        <>
-          <div className="mt-2 flex items-center gap-2">
-            <span className="rounded-full bg-[#EEF4FF] px-2.5 py-1 text-[11px] font-semibold text-[#4876EF]">
-              W{plan.weekNumber} / D{plan.dayNumber}
-            </span>
-            <span className="text-[12px] font-medium text-[#8A94A6]">
-              {plan.hours}시간
-            </span>
-          </div>
-          <h2 className="mt-3 line-clamp-2 text-[15px] font-semibold leading-snug text-[#252A32]">
-            {plan.topic}
-          </h2>
-          <p className="mt-2 line-clamp-3 text-[13px] leading-[1.6] text-[#667085]">
-            {plan.description}
-          </p>
-          <Link
-            href="/plan"
-            className="mt-4 flex min-h-10 items-center justify-center rounded-[8px] bg-[#4876EF] text-[12px] font-medium text-white"
-          >
-            오늘 플랜 보기
-          </Link>
-        </>
+      ) : plans.length > 0 ? (
+        <div className="mt-3 flex snap-x gap-3 overflow-x-auto pb-1 scrollbar-hide">
+          {plans.map((plan) => (
+            <article
+              key={`${plan.taskName}-${plan.weekNumber}-${plan.dayNumber}`}
+              className="w-[88%] shrink-0 snap-start rounded-[8px] border border-[#E5E8EB] bg-white px-4 py-4"
+            >
+              <div className="flex items-center gap-2">
+                <span className="rounded-full bg-[#EEF4FF] px-2.5 py-1 text-[11px] font-medium text-[#4876EF]">
+                  W{plan.weekNumber} / D{plan.dayNumber}
+                </span>
+                <span className="text-[12px] font-medium text-[#8A94A6]">
+                  {plan.hours}시간
+                </span>
+              </div>
+              <h2 className="mt-3 line-clamp-2 text-[15px] font-medium leading-snug text-[#252A32]">
+                {plan.topic}
+              </h2>
+              <p className="mt-2 line-clamp-3 text-[13px] leading-[1.6] text-[#667085]">
+                {plan.description}
+              </p>
+              <Link
+                href="/plan"
+                className="mt-4 flex min-h-10 items-center justify-center rounded-[8px] bg-[#4876EF] text-[12px] font-medium text-white"
+              >
+                오늘 플랜 보기
+              </Link>
+            </article>
+          ))}
+        </div>
       ) : (
-        <>
+        <div className="mt-3 rounded-[8px] border border-[#E5E8EB] bg-white px-4 py-4">
           <h2 className="mt-2 text-[15px] font-semibold text-[#252A32]">
             아직 오늘 진행할 플랜이 없어요.
           </h2>
@@ -294,7 +299,7 @@ function TodayPlanCard({ guest }: { guest: boolean }) {
           >
             로드맵에서 플랜 만들기
           </Link>
-        </>
+        </div>
       )}
     </section>
   );

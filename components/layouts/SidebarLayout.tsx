@@ -7,15 +7,14 @@ export default function SidebarLayout({
 }) {
   return (
     <div
-      style={{ paddingTop: "calc(8rem + var(--global-banner-height))" }}
-      className="pb-40"
+      className="pb-24 pt-[calc(4.5rem+var(--global-banner-height))] lg:pb-40 lg:pt-[calc(8rem+var(--global-banner-height))]"
     >
-      <div className="mx-auto w-full max-w-[1375px] px-40">
+      <div className="mx-auto w-full max-w-[1375px] px-4 lg:px-40">
         {/* relative wrapper — sidebar anchors to this, content keeps StandardLayout alignment */}
         <div className="relative">
           {/* Sidebar: centered in the full left gutter */}
           <div
-            className="absolute top-0 h-full flex justify-center"
+            className="absolute top-0 hidden h-full justify-center lg:flex"
             style={{
               right: "100%",
               width: "calc((100vw - 1375px) / 2 + 160px)",

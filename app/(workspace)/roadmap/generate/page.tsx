@@ -63,7 +63,9 @@ export default function RoadmapGeneratePage() {
           <section>
             <div className="mb-12">
               <h1 className="text-[26px] font-bold tracking-[-0.04em] text-[#1A1F2E]">
-                목표 직무까지 필요한 자격증 로드맵을 만들어요
+                목표 직무까지 필요한
+                <br />
+                자격증 로드맵을 만들어요
               </h1>
               <p className="mt-2 text-[14px] leading-6 text-[#94A3B8]">
                 학력, 전공, 희망 직무를 바탕으로 지금부터 어떤 순서로 준비하면

@@ -4,12 +4,20 @@ import { getRoadmapByToken } from "@/app/api/roadmap/roadmap";
 import type { RoadmapResponse } from "@/app/api/roadmap/types";
 import RoadmapKanbanBoard from "@/components/roadmap/RoadmapKanbanboard";
 import RoadmapTimelineSection from "@/components/roadmap/RoadmapTimelineSection.tsx";
+import MobileRoadmapPage from "@/mobile/pages/roadmap/MobileRoadmapPage";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 function RoadmapPageLoading() {
-  return <div className="min-h-[calc(100vh-260px)] w-full" />;
+  return (
+    <>
+      <div className="lg:hidden">
+        <MobileRoadmapPage />
+      </div>
+      <div className="hidden min-h-[calc(100vh-260px)] w-full lg:block" />
+    </>
+  );
 }
 
 export default function Page() {
@@ -38,7 +46,12 @@ export default function Page() {
 
   if (!hasRoadmap) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 py-20">
+      <>
+      <div className="lg:hidden">
+        <MobileRoadmapPage />
+      </div>
+
+      <div className="hidden min-h-[60vh] flex-col items-center justify-center px-6 py-20 lg:flex">
         <Image
           src="/image 62.png"
           alt="bubu"
@@ -78,11 +91,17 @@ export default function Page() {
           로드맵 생성하기
         </Link>
       </div>
+      </>
     );
   }
 
   return (
-    <div className="flex flex-col gap-10">
+    <>
+    <div className="lg:hidden">
+      <MobileRoadmapPage />
+    </div>
+
+    <div className="hidden flex-col gap-10 lg:flex">
                  {/* <Image
         src="/Group 13.png"
         alt="커뮤니티 이미지"
@@ -93,5 +112,6 @@ export default function Page() {
       <RoadmapTimelineSection />
       <RoadmapKanbanBoard />
     </div>
+    </>
   );
 }
