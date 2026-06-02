@@ -81,7 +81,7 @@ export default function AboutPage() {
           </h2>
           <div className="mt-6 space-y-4 text-[16px] leading-[1.9] text-[#475569]">
             <p>
-              bburi는 "필요한 자격증 정보를 더 빠르고 쉽게 찾을 수 없을까?"라는 질문에서 시작되었습니다.
+              bburi는 필요한 자격증 정보를 더 빠르고 쉽게 찾을 수 없을까?라는 질문에서 시작되었습니다.
             </p>
             <p>
               사람들이 자격증에 대한 정확하고 투명한 정보를 갖게 되면 더 나은 선택을 할 수 있고,
