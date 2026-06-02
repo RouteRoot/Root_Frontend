@@ -4,11 +4,21 @@ import {
   checkDailyPlan,
   deletePlan,
   getPlanByExamTaskId,
+  getPlanSettings,
   getPlanTabs,
+  redistributePlan,
 } from "@/app/api/plan/plan";
-import type { DailyPlan, PlanResponse, PlanTab, WeeklyPlan } from "@/app/api/plan/types";
+import type {
+  DailyPlan,
+  PlanRedistributeRequest,
+  PlanResponse,
+  PlanSettingsResponse,
+  PlanTab,
+  WeeklyPlan,
+} from "@/app/api/plan/types";
 import { completeTask } from "@/app/api/roadmap/roadmap";
 import { ToastContainer, useToast } from "@/components/common/Toast";
+import PlanRegenerateModal from "@/components/plan/PlanRegenerateModal";
 import {
   ArrowRight,
   CalendarCheck,
@@ -190,10 +200,12 @@ function SummaryCard({
   plan,
   onDelete,
   onComplete,
+  onRegenerate,
 }: {
   plan: PlanResponse;
   onDelete: () => void;
   onComplete: () => void;
+  onRegenerate: () => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const progress = getProgress(plan);
@@ -236,13 +248,17 @@ function SummaryCard({
 
             {menuOpen && (
               <div className="absolute right-0 top-10 z-20 w-32 overflow-hidden rounded-[8px] border border-[#E5E8EB] bg-white p-1 shadow-[0_12px_28px_rgba(15,23,42,0.12)]">
-                <Link
-                  href="/plan/generate"
-                  onClick={() => setMenuOpen(false)}
-                  className="flex min-h-9 items-center rounded-[6px] px-3 text-[12px] font-medium text-[#344054] active:bg-[#F7F9FB]"
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onRegenerate();
+                  }}
+                  className="relative flex min-h-9 w-full items-center rounded-[6px] px-3 text-left text-[12px] font-medium text-transparent active:bg-[#F7F9FB]"
                 >
+                  <span className="absolute left-3 text-[#344054]">재생성하기</span>
                   재설정하기
-                </Link>
+                </button>
                 <button
                   type="button"
                   onClick={() => {
@@ -450,6 +466,11 @@ export default function MobilePlanPage() {
   const [loadState, setLoadState] = useState<LoadState>("loading");
   const [planLoading, setPlanLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [regenerateOpen, setRegenerateOpen] = useState(false);
+  const [regenerateSettings, setRegenerateSettings] =
+    useState<PlanSettingsResponse | null>(null);
+  const [regenerateLoading, setRegenerateLoading] = useState(false);
+  const [regenerateSubmitting, setRegenerateSubmitting] = useState(false);
   const { show: showToast } = useToast();
 
   useEffect(() => {
@@ -559,6 +580,46 @@ export default function MobilePlanPage() {
     }
   };
 
+  const handleRegenerate = async () => {
+    if (selectedExamTaskId == null) return;
+
+    try {
+      setRegenerateOpen(true);
+      setRegenerateLoading(true);
+      setRegenerateSettings(null);
+      const settings = await getPlanSettings(selectedExamTaskId);
+      setRegenerateSettings(settings);
+    } catch {
+      setRegenerateOpen(false);
+      showToast("플랜 재생성 정보를 불러오지 못했어요.", "error");
+    } finally {
+      setRegenerateLoading(false);
+    }
+  };
+
+  const closeRegenerateModal = () => {
+    if (regenerateSubmitting) return;
+    setRegenerateOpen(false);
+    setRegenerateSettings(null);
+  };
+
+  const handleSubmitRegenerate = async (payload: PlanRedistributeRequest) => {
+    try {
+      setRegenerateSubmitting(true);
+      await redistributePlan(payload);
+      const refreshedPlan = await getPlanByExamTaskId(payload.examTaskId);
+      setPlan(refreshedPlan);
+      setSelectedWeek(getWeekContainingToday(refreshedPlan));
+      setRegenerateOpen(false);
+      setRegenerateSettings(null);
+      showToast("플랜을 다시 생성했어요.");
+    } catch {
+      showToast("플랜 재생성 중 오류가 발생했어요.", "error");
+    } finally {
+      setRegenerateSubmitting(false);
+    }
+  };
+
   if (loadState === "loading") return <PlanSkeleton />;
 
   if (loadState === "error") {
@@ -594,6 +655,7 @@ export default function MobilePlanPage() {
             plan={plan}
             onDelete={handleDelete}
             onComplete={handleCompletePlan}
+            onRegenerate={handleRegenerate}
           />
           <TodayCard plan={plan} onToggleComplete={handleToggleComplete} />
 
@@ -624,6 +686,14 @@ export default function MobilePlanPage() {
       )}
 
       <ToastContainer />
+      <PlanRegenerateModal
+        open={regenerateOpen}
+        settings={regenerateSettings}
+        loading={regenerateLoading}
+        submitting={regenerateSubmitting}
+        onClose={closeRegenerateModal}
+        onSubmit={handleSubmitRegenerate}
+      />
     </div>
   );
 }
