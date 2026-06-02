@@ -68,15 +68,23 @@ function ImageSurface({
 
   return (
     <div
-      className={`relative overflow-hidden bg-[#F3F6FA] ${className}`}
+      className={`overflow-hidden bg-[#F3F6FA] ${className}`}
       style={{
         backgroundImage: imageUrl
-          ? `url("${imageUrl}")`
+          ? undefined
           : fallbackGradients[index % fallbackGradients.length],
         backgroundPosition: "center",
         backgroundSize: "cover",
       }}
     >
+      {imageUrl && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={imageUrl}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      )}
       <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
       {!imageUrl && (
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.11)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.11)_1px,transparent_1px)] bg-size-[16px_16px]" />
@@ -93,43 +101,74 @@ function HeroCarousel({
   isLoading: boolean;
 }) {
   const [current, setCurrent] = useState(0);
-  const post = posts.length > 0 ? posts[current % posts.length] : null;
 
   if (isLoading) {
     return (
-      <section className="h-55 animate-pulse rounded-[8px] bg-white" />
+      <section className="space-y-2">
+        <div className="h-55 animate-pulse rounded-[8px] bg-white" />
+        <div className="grid grid-cols-2 gap-2">
+          <div className="h-32 animate-pulse rounded-[8px] bg-white" />
+          <div className="h-32 animate-pulse rounded-[8px] bg-white" />
+        </div>
+      </section>
     );
   }
 
-  if (!post) return null;
+  const heroItems = posts.slice(0, 3);
+
+  if (heroItems.length === 0) return null;
+
+  const [featured, ...secondaryItems] = heroItems;
 
   return (
-    <section className="overflow-hidden rounded-[8px] border border-[#E5E8EB] bg-white">
+    <section className="space-y-2">
       <Link
-        href={`/certificate/archive/${post.postId}`}
-        className="relative block h-55 overflow-hidden"
+        href={`/certificate/archive/${featured.postId}`}
+        className="relative block h-55 overflow-hidden rounded-[8px] border border-[#E5E8EB] bg-white"
       >
-        <ImageSurface post={post} index={current} className="absolute inset-0" />
+        <ImageSurface post={featured} index={0} className="absolute inset-0" />
         <div className="relative z-10 flex h-full flex-col justify-end px-4 py-4">
           <div className="flex items-center gap-2">
             <span className="w-fit rounded-full bg-white/18 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur">
-              {getCategoryLabel(post)}
+              {getCategoryLabel(featured)}
             </span>
             <span className="text-[11px] font-medium text-white/70">
-              {post.author}
+              {featured.author}
             </span>
           </div>
           <h1 className="mt-3 line-clamp-2 text-[20px] font-semibold leading-[1.35] text-white">
-            {post.title}
+            {featured.title}
           </h1>
           <p className="mt-2 line-clamp-2 text-[12px] leading-[1.55] text-white/80">
-            {stripHtml(post.content)}
+            {stripHtml(featured.content)}
           </p>
         </div>
       </Link>
 
+      {secondaryItems.length > 0 && (
+        <div className="grid grid-cols-2 gap-2">
+          {secondaryItems.map((post, index) => (
+            <Link
+              key={post.postId}
+              href={`/certificate/archive/${post.postId}`}
+              className="relative block h-32 overflow-hidden rounded-[8px] border border-[#E5E8EB] bg-white"
+            >
+              <ImageSurface post={post} index={index + 1} className="absolute inset-0" />
+              <div className="relative z-10 flex h-full flex-col justify-end px-3 py-3">
+                <span className="w-fit rounded-full bg-white/18 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur">
+                  {getCategoryLabel(post)}
+                </span>
+                <h2 className="mt-2 line-clamp-2 text-[13px] font-semibold leading-[1.35] text-white">
+                  {post.title}
+                </h2>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+
       {posts.length > 1 && (
-        <div className="flex items-center justify-between border-t border-[#EEF1F5] px-4 py-3">
+        <div className="hidden items-center justify-between border-t border-[#EEF1F5] px-4 py-3">
           <div className="flex items-center gap-1.5">
             {posts.map((item, index) => (
               <button
@@ -228,12 +267,12 @@ function WikiSection({
         </div>
       </Link>
 
-      <div className="mt-2 space-y-2">
+      <div className="mt-1 divide-y divide-[#D9DEE8]">
         {items.slice(0, 4).map((post) => (
           <Link
             key={post.postId}
             href={`/certificate/archive/${post.postId}`}
-            className="flex min-h-13 items-center rounded-[8px] border border-[#E5E8EB] bg-white px-4 py-3 active:bg-[#F7F9FB]"
+            className="flex min-h-12 items-center px-1 py-3 active:bg-[#F7F9FB]"
           >
             <p className="line-clamp-2 text-[13px] font-medium leading-[1.5] text-[#344054]">
               {post.title}
@@ -335,7 +374,7 @@ export default function MobileWikiPage({
   isCertLoading,
 }: MobileWikiPageProps) {
   return (
-    <div className="mx-auto flex w-full max-w-[430px] flex-col gap-4 pb-8">
+    <div className="mx-auto flex w-full max-w-[430px] flex-col gap-8 pb-8">
       <nav className="-mx-4 border-b border-[#E5E8EB] bg-white px-4">
         <div className="flex gap-6 overflow-x-auto scrollbar-hide">
           {wikiTabs.map((tab) => {

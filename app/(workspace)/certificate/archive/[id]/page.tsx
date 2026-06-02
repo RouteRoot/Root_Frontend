@@ -13,6 +13,10 @@ import type { ArchiveBoardType, ArchivePost } from "@/app/api/archive/types";
 import CertificateWikiSubNav from "@/components/certificate/CertificateWikiSubNav";
 import { useWikiEditorAccess } from "@/components/certificate/useWikiEditorAccess";
 import { getAllCertificates, type CertificateDetail } from "@/app/api/certificate/certificate";
+import MobileArchiveDetailPage, {
+  MobileArchiveDetailError,
+  MobileArchiveDetailSkeleton,
+} from "@/mobile/pages/archive/MobileArchiveDetailPage";
 
 const BOARD_LABELS: Record<ArchiveBoardType, string> = {
   RECOMMAND: "입문자 추천",
@@ -236,7 +240,28 @@ export default function ArchiveDetailPage() {
   };
 
   return (
-    <div>
+    <>
+      <div className="lg:hidden">
+        {isLoading ? (
+          <MobileArchiveDetailSkeleton />
+        ) : errorMessage || !post ? (
+          <MobileArchiveDetailError
+            message={errorMessage || "콘텐츠가 없습니다."}
+          />
+        ) : (
+          <MobileArchiveDetailPage
+            post={post}
+            categoryLabel={getCategoryLabel(post)}
+            formattedDate={formatDate(post.createdAt)}
+            isEditor={isEditor}
+            isDeleting={isDeleting}
+            onEdit={() => router.push(`/certificate/archive/edit/${post.postId}`)}
+            onDelete={handleDelete}
+          />
+        )}
+      </div>
+
+    <div className="hidden lg:block">
       <CertificateWikiSubNav />
       <main className="mx-auto grid w-full max-w-[1066px] grid-cols-[700px_300px] items-start gap-[60px] pb-24 pt-12">
         <div>
@@ -332,5 +357,6 @@ export default function ArchiveDetailPage() {
         />
       </main>
     </div>
+    </>
   );
 }

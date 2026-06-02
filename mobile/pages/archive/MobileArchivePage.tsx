@@ -137,9 +137,15 @@ function FeaturedSection({
   }
 
   return (
-    <section className="overflow-hidden rounded-[8px] border border-[#E5E8EB] bg-white">
-      <Link href={`/certificate/archive/${post.postId}`} className="block">
-        <ArchiveThumb post={post} index={current} className="h-40 w-full" />
+    <section className="-mx-4 overflow-x-auto px-4 pb-1 scrollbar-hide">
+      <div className="flex snap-x snap-mandatory gap-3">
+        {posts.map((post, index) => (
+          <Link
+            key={post.postId}
+            href={`/certificate/archive/${post.postId}`}
+            className="block w-full shrink-0 snap-start overflow-hidden rounded-[8px] border border-[#E5E8EB] bg-white"
+          >
+        <ArchiveThumb post={post} index={index} className="h-40 w-full" />
         <div className="px-4 py-4">
           <p className="text-[12px] font-semibold text-[#4876EF]">
             {getCategoryLabel(post)}
@@ -151,9 +157,11 @@ function FeaturedSection({
             {stripHtml(post.content)}
           </p>
         </div>
-      </Link>
+          </Link>
+        ))}
+      </div>
 
-      {posts.length > 1 && (
+      {false && posts.length > 1 && (
         <div className="flex items-center justify-between border-t border-[#EEF1F5] px-4 py-3">
           <span className="text-[12px] font-medium text-[#98A2B3]">
             {current + 1} / {posts.length}
@@ -242,6 +250,13 @@ export default function MobileArchivePage({
   onSortChange,
   onPageChange,
 }: MobileArchivePageProps) {
+  const visiblePages = Array.from({ length: totalPages }, (_, index) => index)
+    .filter((page) => {
+      if (totalPages <= 5) return true;
+      if (page === 0 || page === totalPages - 1) return true;
+      return Math.abs(page - currentPage) <= 1;
+    });
+
   return (
     <div className="mx-auto flex w-full max-w-[430px] flex-col gap-4 pb-8">
       <nav className="-mx-4 border-b border-[#E5E8EB] bg-white px-4">
@@ -366,7 +381,39 @@ export default function MobileArchivePage({
         )}
 
         {totalPages > 1 && (
-          <div className="mt-4 grid grid-cols-2 gap-2">
+          <div className="mt-5 flex items-center justify-center gap-1.5">
+            {visiblePages.map((page, index) => {
+              const previousPage = visiblePages[index - 1];
+              const showGap = index > 0 && page - previousPage > 1;
+              const active = page === currentPage;
+
+              return (
+                <div key={page} className="flex items-center gap-1.5">
+                  {showGap && (
+                    <span className="px-1 text-[12px] font-medium text-[#98A2B3]">
+                      ...
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => onPageChange(page)}
+                    className={`flex h-9 min-w-9 items-center justify-center rounded-[8px] px-2 text-[13px] font-semibold ${
+                      active
+                        ? "bg-[#252A32] text-white"
+                        : "border border-[#E5E8EB] bg-white text-[#667085]"
+                    }`}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    {page + 1}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {totalPages > 1 && (
+          <div className="hidden">
             <button
               type="button"
               onClick={() => onPageChange(currentPage - 1)}
@@ -387,7 +434,7 @@ export default function MobileArchivePage({
         )}
       </section>
 
-      <section className="rounded-[8px] border border-[#E5E8EB] bg-white px-4 py-4">
+      <section className="hidden">
         <h2 className="text-[15px] font-semibold text-[#252A32]">인기 자격증</h2>
         <div className="mt-3 space-y-2">
           {isCertLoading ? (
