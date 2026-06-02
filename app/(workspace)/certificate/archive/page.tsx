@@ -3,14 +3,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronDown, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
-import {
-  getArchivePopularPosts,
-  getArchivePosts,
-} from "@/app/api/archive/archive";
 import type { ArchiveBoardType, ArchivePost, ArchiveSort } from "@/app/api/archive/types";
 import CertificateWikiSubNav from "@/components/certificate/CertificateWikiSubNav";
 import { getWeightedPopularPosts } from "@/lib/archivePopularity";
-import { getAllCertificates, type CertificateDetail } from "@/app/api/certificate/certificate";
+import type { CertificateDetail } from "@/app/api/certificate/certificate";
+import MobileArchivePage, { type MobileArchiveTag } from "@/mobile/pages/archive/MobileArchivePage";
+import {
+  getCachedArchivePopularPosts,
+  getCachedArchivePosts,
+  getCachedTopCertificates,
+} from "@/lib/archivePageCache";
 
 type ArchiveTag = {
   label: string;
@@ -18,6 +20,18 @@ type ArchiveTag = {
 };
 
 const ARCHIVE_TAGS: ArchiveTag[] = [
+  { label: "전체" },
+  { label: "입문자 추천", boardType: "RECOMMAND" },
+  { label: "자격증 분석", boardType: "CERT_ANALYSIS" },
+  { label: "직무 분석", boardType: "JOB_ANALYSIS" },
+  { label: "시험 정보", boardType: "EXAM_INFO" },
+  { label: "공부법", boardType: "STUDY_METHOD" },
+  { label: "합격 전략", boardType: "PASS_STRATEGY" },
+  { label: "취업 전략", boardType: "JOB_STRATEGY" },
+  { label: "전문가 인사이트", boardType: "EXPERT_INSIGHT" },
+];
+
+const MOBILE_ARCHIVE_TAGS: MobileArchiveTag[] = [
   { label: "전체" },
   { label: "입문자 추천", boardType: "RECOMMAND" },
   { label: "자격증 분석", boardType: "CERT_ANALYSIS" },
@@ -456,15 +470,14 @@ export default function CertificateArchivePage() {
   // 인기 콘텐츠 + 인기 자격증은 최초 1회만 fetch
   useEffect(() => {
     let mounted = true;
-    getArchivePopularPosts(10)
+    getCachedArchivePopularPosts(10)
       .then((popular) => { if (mounted) setPopularPosts(popular); })
       .catch(console.error)
       .finally(() => { if (mounted) setIsFeaturedLoading(false); });
-    getAllCertificates(0, 500)
-      .then((page) => {
+    getCachedTopCertificates()
+      .then((certificates) => {
         if (!mounted) return;
-        const sorted = [...page.content].sort((a, b) => (b.viewCount ?? 0) - (a.viewCount ?? 0));
-        setTopCertificates(sorted.slice(0, 10));
+        setTopCertificates(certificates);
       })
       .catch(console.error)
       .finally(() => { if (mounted) setIsCertLoading(false); });
@@ -479,7 +492,7 @@ export default function CertificateArchivePage() {
       try {
         setIsListLoading(true);
         setErrorMessage("");
-        const archivePage = await getArchivePosts({
+        const archivePage = await getCachedArchivePosts({
           boardType: activeTag.boardType,
           sort,
           page: currentPage,
@@ -520,7 +533,29 @@ export default function CertificateArchivePage() {
   const featuredPosts = useMemo(() => weightedPosts.slice(0, 3), [weightedPosts]);
 
   return (
-    <div>
+    <>
+    <div className="lg:hidden">
+      <MobileArchivePage
+        tags={MOBILE_ARCHIVE_TAGS}
+        activeTag={activeTag}
+        sort={sort}
+        posts={posts}
+        featuredPosts={featuredPosts}
+        popularPosts={weightedPosts}
+        topCertificates={topCertificates}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        isFeaturedLoading={isFeaturedLoading}
+        isListLoading={isListLoading}
+        isCertLoading={isCertLoading}
+        errorMessage={errorMessage}
+        onTagChange={handleTagChange}
+        onSortChange={handleSortChange}
+        onPageChange={handlePageChange}
+      />
+    </div>
+
+    <div className="hidden lg:block">
       <CertificateWikiSubNav />
       <main className="mx-auto w-full max-w-265.5 pb-24 pt-16">
         <div className="grid grid-cols-[minmax(0,850px)_300px] items-start gap-10">
@@ -604,5 +639,6 @@ export default function CertificateArchivePage() {
         </div>
       </main>
     </div>
+    </>
   );
 }

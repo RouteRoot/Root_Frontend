@@ -3,15 +3,17 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Loader2 } from "lucide-react";
-import {
-  getArchivePopularPosts,
-  getArchivePostDetail,
-  getArchivePosts,
-} from "@/app/api/archive/archive";
 import type { ArchiveBoardType, ArchivePost } from "@/app/api/archive/types";
 import CertificateWikiSubNav from "@/components/certificate/CertificateWikiSubNav";
 import { getWeightedPopularPosts } from "@/lib/archivePopularity";
-import { getAllCertificates, type CertificateDetail } from "@/app/api/certificate/certificate";
+import type { CertificateDetail } from "@/app/api/certificate/certificate";
+import MobileWikiPage from "@/mobile/pages/wiki/MobileWikiPage";
+import {
+  getCachedArchivePopularPosts,
+  getCachedArchivePostDetail,
+  getCachedArchivePosts,
+  getCachedTopCertificates,
+} from "@/lib/archivePageCache";
 
 // ── helpers ────────────────────────────────────────────────────────────────
 const GRADIENTS = [
@@ -399,20 +401,20 @@ export default function CertificateWikiPage() {
     let mounted = true;
 
     Promise.all([
-      ...HERO_POST_IDS.map((id) => getArchivePostDetail(id).catch(() => null)),
-      getArchivePosts({ boardType: "CERT_ANALYSIS", sort: "popular", size: 6 }),
-      getArchivePosts({ boardType: "JOB_ANALYSIS", sort: "popular", size: 6 }),
-      getArchivePosts({ boardType: "EXPERT_INSIGHT", sort: "popular", size: 6 }),
-      getArchivePopularPosts(10),
+      ...HERO_POST_IDS.map((id) => getCachedArchivePostDetail(id).catch(() => null)),
+      getCachedArchivePosts({ boardType: "CERT_ANALYSIS", sort: "popular", size: 6 }),
+      getCachedArchivePosts({ boardType: "JOB_ANALYSIS", sort: "popular", size: 6 }),
+      getCachedArchivePosts({ boardType: "EXPERT_INSIGHT", sort: "popular", size: 6 }),
+      getCachedArchivePopularPosts(10),
     ])
       .then(([hero30, hero29, hero28, certAnalysis, jobAnalysis, expertInsight, popular]) => {
         if (!mounted) return;
         setHeroPosts(
           [hero30, hero29, hero28].filter((p): p is ArchivePost => p !== null)
         );
-        setCertAnalysisPosts((certAnalysis as Awaited<ReturnType<typeof getArchivePosts>>).content);
-        setJobAnalysisPosts((jobAnalysis as Awaited<ReturnType<typeof getArchivePosts>>).content);
-        setExpertInsightPosts((expertInsight as Awaited<ReturnType<typeof getArchivePosts>>).content);
+        setCertAnalysisPosts(certAnalysis.content);
+        setJobAnalysisPosts(jobAnalysis.content);
+        setExpertInsightPosts(expertInsight.content);
         setPopularPosts(popular as ArchivePost[]);
       })
       .catch(console.error)
@@ -420,11 +422,10 @@ export default function CertificateWikiPage() {
         if (mounted) setIsLoading(false);
       });
 
-    getAllCertificates(0, 500)
-      .then((page) => {
+    getCachedTopCertificates()
+      .then((certificates) => {
         if (!mounted) return;
-        const sorted = [...page.content].sort((a, b) => (b.viewCount ?? 0) - (a.viewCount ?? 0));
-        setTopCertificates(sorted.slice(0, 10));
+        setTopCertificates(certificates);
       })
       .catch(console.error)
       .finally(() => { if (mounted) setIsCertLoading(false); });
@@ -452,7 +453,21 @@ export default function CertificateWikiPage() {
   );
 
   return (
-    <div>
+    <>
+    <div className="lg:hidden">
+      <MobileWikiPage
+        heroPosts={heroPosts}
+        certAnalysisPosts={weightedCertAnalysis}
+        jobAnalysisPosts={weightedJobAnalysis}
+        expertInsightPosts={weightedExpertInsight}
+        popularPosts={weightedPopular}
+        topCertificates={topCertificates}
+        isLoading={isLoading}
+        isCertLoading={isCertLoading}
+      />
+    </div>
+
+    <div className="hidden lg:block">
       <CertificateWikiSubNav />
       <main className="mx-auto w-full max-w-265.5 pb-24 pt-8">
         {/* Hero — 아카이브 포스트 30, 29, 28 */}
@@ -504,5 +519,6 @@ export default function CertificateWikiPage() {
         </div>
       </main>
     </div>
+    </>
   );
 }
