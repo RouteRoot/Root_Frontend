@@ -4,10 +4,16 @@ import ProgressCard from "@/components/dashboard/ProgressCard";
 import DashboardCommunitySection from "@/components/dashboard/DashboardCommunitySection";
 import DashboardCertificateSection from "@/components/dashboard/DashboardCertificateSection";
 import DashboardCertificateReviewSection from "@/components/dashboard/DashboardCertificateReviewSection";
+import MobileDashboardPage from "@/mobile/pages/dashboard/MobileDashboardPage";
 
 export default function Page() {
   return (
-    <div className="flex flex-col gap-6">
+    <>
+    <div className="lg:hidden">
+      <MobileDashboardPage />
+    </div>
+
+    <div className="hidden flex-col gap-6 lg:flex">
       {/* 오늘의 추천 */}
       <section>
         <p className="mb-8 font-semibold text-[22px] font-black tracking-tight text-[#333333] mt-14">
@@ -77,5 +83,6 @@ export default function Page() {
 
       <DashboardCertificateReviewSection />
     </div>
+    </>
   );
 }
