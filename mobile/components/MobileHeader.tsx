@@ -5,11 +5,46 @@ import {
   type CertificateSearchItem,
 } from "@/app/api/certificate/certificate";
 import { getMe } from "@/app/api/service/user";
-import { certificateCategories, trendingCertificates } from "@/components/gnb/gnb-data";
-import { Bell, LogIn, Menu, Search, User, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Bell,
+  LogIn,
+  Menu,
+  Search,
+  User,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
+const mobileSearchCategories = [
+  { label: "IT/개발", icon: "💻" },
+  { label: "데이터", icon: "📊" },
+  { label: "디자인", icon: "🎨" },
+  { label: "마케팅", icon: "📢" },
+  { label: "회계/세무", icon: "🧾" },
+  { label: "전기/전자", icon: "⚡" },
+  { label: "안전/보건", icon: "🛡️" },
+  { label: "건축/토목", icon: "🚧" },
+  { label: "물류/유통", icon: "📦" },
+  { label: "교육", icon: "🎓" },
+  { label: "금융", icon: "💰" },
+  { label: "외국어", icon: "🌐" },
+];
+
+const mobileTrendingCertificates = [
+  { name: "정보처리기사", isNew: true },
+  { name: "컴퓨터활용능력 1급", isNew: true },
+  { name: "산업안전기사", isNew: false },
+  { name: "전기기사", isNew: false },
+  { name: "빅데이터분석기사", isNew: true },
+  { name: "SQL 개발자(SQLD)", isNew: false },
+  { name: "데이터분석 준전문가(ADsP)", isNew: true },
+  { name: "한국사능력검정시험", isNew: false },
+  { name: "직업상담사 2급", isNew: false },
+  { name: "GTQ 포토샵 1급", isNew: true },
+];
 
 export default function MobileHeader() {
   const router = useRouter();
@@ -109,7 +144,11 @@ export default function MobileHeader() {
       className="fixed inset-x-0 z-[70] border-b border-[#E5E8EB] bg-white/95 backdrop-blur lg:hidden"
       style={{ top: "var(--global-banner-height)" }}
     >
-      <div className="mx-auto flex h-14 max-w-[430px] items-center justify-between px-4">
+      <div
+        className={`mx-auto h-14 max-w-[430px] items-center justify-between px-4 ${
+          searchOpen ? "hidden" : "flex"
+        }`}
+      >
         <Link
           href={isLoggedIn ? "/dashboard" : "/"}
           className="text-[28px] font-bold leading-none tracking-[-0.04em] text-[#4876EF]"
@@ -130,10 +169,7 @@ export default function MobileHeader() {
 
           <button
             type="button"
-            onClick={() => {
-              setSearchOpen(false);
-              setMenuOpen((prev) => !prev);
-            }}
+            onClick={() => setMenuOpen((prev) => !prev)}
             aria-label="mobile menu"
             aria-expanded={menuOpen}
             className="flex h-11 w-11 items-center justify-center rounded-[8px] text-[#475467] transition-colors active:bg-[#F3F6FA]"
@@ -148,18 +184,31 @@ export default function MobileHeader() {
       </div>
 
       {searchOpen && (
-        <div className="border-t border-[#EEF1F5] bg-white shadow-[0_16px_32px_rgba(15,23,42,0.12)]">
-          <div className="mx-auto max-h-[calc(100vh-112px-var(--global-banner-height))] max-w-[430px] overflow-y-auto px-4 pb-5 pt-3">
+        <div
+          className="absolute inset-x-0 top-0 z-[90] bg-white lg:hidden"
+          style={{
+            minHeight: "calc(100vh - var(--global-banner-height))",
+          }}
+        >
+          <div className="mx-auto flex min-h-[calc(100vh-var(--global-banner-height))] max-w-[430px] flex-col px-4 pb-8 pt-3">
             <form
               onSubmit={handleSearchSubmit}
-              className="flex h-12 items-center gap-2 rounded-[8px] border border-[#4876EF] bg-white px-3"
+              className="flex h-11 items-center gap-2 bg-white"
             >
+              <button
+                type="button"
+                onClick={closeSearch}
+                aria-label="back"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] text-[#172033] active:bg-[#F3F6FA]"
+              >
+                <ArrowLeft className="h-5 w-5" strokeWidth={2.1} />
+              </button>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder="원하는 자격증, 분야 검색"
-                className="min-w-0 flex-1 bg-transparent text-[15px] text-[#2F3743] outline-none placeholder:text-[#B3BBC8]"
+                className="h-full min-w-0 flex-1 border-b border-[#E5E8EB] bg-transparent text-[14px] font-medium text-[#252A32] outline-none placeholder:text-[#98A2B3]"
                 autoFocus
               />
               <button
@@ -169,55 +218,42 @@ export default function MobileHeader() {
               >
                 <Search className="h-4.5 w-4.5" strokeWidth={2.4} />
               </button>
-              <button
-                type="button"
-                onClick={closeSearch}
-                aria-label="close search"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] text-[#8A94A6] active:bg-[#F3F6FA]"
-              >
-                <X className="h-4.5 w-4.5" strokeWidth={2.2} />
-              </button>
             </form>
 
             {searchQuery.trim() ? (
-              <section className="mt-5">
+              <section className="mt-7">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-[15px] font-bold text-[#2F3743]">
+                  <h2 className="text-[14px] font-bold text-[#252A32]">
                     검색 결과
                   </h2>
                   {isSearching && (
-                    <span className="text-[12px] font-semibold text-[#98A2B3]">
+                    <span className="text-[12px] font-medium text-[#98A2B3]">
                       검색 중
                     </span>
                   )}
                 </div>
-
                 <div className="mt-3 space-y-2">
                   {!isSearching && searchResults.length === 0 && (
-                    <p className="rounded-[8px] bg-[#F7F9FB] px-4 py-5 text-center text-[14px] font-medium text-[#98A2B3]">
-                      검색 결과가 없습니다.
+                    <p className="py-4 text-[13px] font-medium text-[#98A2B3]">
+                      검색 결과가 없어요.
                     </p>
                   )}
-
                   {searchResults.map((certificate) => (
                     <button
                       key={certificate.examCode}
                       type="button"
                       onClick={() => handleResultClick(certificate.examCode)}
-                      className="flex w-full items-start justify-between gap-3 rounded-[8px] border border-[#EEF1F5] bg-white px-4 py-3 text-left active:bg-[#F7F9FB]"
+                      className="flex w-full items-center justify-between gap-3 rounded-[8px] border border-[#EEF1F5] bg-white px-3 py-3 text-left active:bg-[#F7F9FB]"
                     >
                       <span className="min-w-0">
-                        <span className="block line-clamp-2 text-[15px] font-bold leading-[1.45] text-[#2F3743]">
+                        <span className="block truncate text-[14px] font-semibold text-[#252A32]">
                           {certificate.examName}
                         </span>
-                        <span className="mt-1 block line-clamp-1 text-[12px] font-medium text-[#7B8798]">
+                        <span className="mt-1 block truncate text-[12px] font-medium text-[#98A2B3]">
                           {[certificate.category, certificate.organization]
                             .filter(Boolean)
                             .join(" · ") || "자격증 정보"}
                         </span>
-                      </span>
-                      <span className="shrink-0 rounded-full bg-[#EEF4FF] px-2.5 py-1 text-[11px] font-bold text-[#4876EF]">
-                        {certificate.examGroup ?? "자격증"}
                       </span>
                     </button>
                   ))}
@@ -225,60 +261,59 @@ export default function MobileHeader() {
               </section>
             ) : (
               <>
-                <section className="mt-5">
-                  <h2 className="text-[15px] font-bold text-[#2F3743]">
+                <section className="mt-8">
+                  <h2 className="text-[14px] font-bold text-[#252A32]">
                     자격증 분야
                   </h2>
-                  <div className="mt-3 grid grid-cols-2 gap-2">
-                    {certificateCategories.slice(0, 8).map(({ label, icon }) => (
+                  <div className="mt-4 grid grid-cols-3 gap-2.5">
+                    {mobileSearchCategories.map((category) => (
                       <Link
-                        key={label}
-                        href="/certificate"
+                        key={category.label}
+                        href={`/certificate/search?keyword=${encodeURIComponent(
+                          category.label
+                        )}`}
                         onClick={closeSearch}
-                        className="flex min-h-11 items-center gap-2 rounded-[8px] bg-[#F7F9FB] px-3 text-[13px] font-semibold text-[#344054] active:bg-[#EEF4FF]"
+                        className="flex min-h-10 items-center justify-center gap-2 rounded-[8px] bg-[#F7F9FB] px-2 text-[12px] font-semibold text-[#344054] active:bg-[#EEF4FF]"
                       >
-                        <span className="shrink-0">{icon}</span>
-                        <span className="min-w-0 truncate">{label}</span>
+                        <span className="shrink-0 text-[13px]">{category.icon}</span>
+                        <span className="min-w-0 truncate">{category.label}</span>
                       </Link>
                     ))}
                   </div>
                 </section>
 
-                <section className="mt-5">
-                  <div className="flex items-end justify-between">
-                    <h2 className="text-[15px] font-bold text-[#2F3743]">
-                      인기 검색어
+                <section className="mt-8">
+                  <div className="flex items-end gap-2">
+                    <h2 className="text-[14px] font-bold text-[#252A32]">
+                      자격증 검색 상승 순위
                     </h2>
-                    <span className="text-[12px] font-semibold text-[#98A2B3]">
+                    <span className="text-[12px] font-semibold text-[#B3BBC8]">
                       실시간 기준
                     </span>
                   </div>
-
-                  <div className="mt-3 space-y-1">
-                    {trendingCertificates.slice(0, 8).map((certificate, index) => (
+                  <div className="mt-4 grid grid-cols-2 gap-x-6">
+                    {mobileTrendingCertificates.map((certificate, index) => (
                       <Link
                         key={certificate.name}
                         href={`/certificate/search?keyword=${encodeURIComponent(
                           certificate.name
                         )}`}
                         onClick={closeSearch}
-                        className="flex min-h-10 items-center gap-3 rounded-[8px] px-2 text-[14px] active:bg-[#F7F9FB]"
+                        className="flex min-h-9 items-center gap-3 text-[13px] active:bg-[#F7F9FB]"
                       >
                         <span
-                          className={`w-5 shrink-0 text-center font-extrabold ${
-                            index < 3 ? "text-[#4876EF]" : "text-[#B3BBC8]"
+                          className={`w-5 shrink-0 text-center font-bold ${
+                            index < 3 ? "text-[#4876EF]" : "text-[#C3C8D0]"
                           }`}
                         >
                           {index + 1}
                         </span>
-                        <span className="min-w-0 flex-1 truncate font-semibold text-[#2F3743]">
+                        <span className="min-w-0 flex-1 truncate font-medium text-[#344054]">
                           {certificate.name}
                         </span>
-                        {certificate.isNew && (
-                          <span className="shrink-0 text-[11px] font-extrabold text-[#16A34A]">
-                            NEW
-                          </span>
-                        )}
+                        <span className="w-8 shrink-0 text-right text-[10px] font-bold text-[#16A34A]">
+                          {certificate.isNew ? "NEW" : "-"}
+                        </span>
                       </Link>
                     ))}
                   </div>
@@ -289,7 +324,7 @@ export default function MobileHeader() {
         </div>
       )}
 
-      {menuOpen && (
+      {menuOpen && !searchOpen && (
         <div className="border-t border-[#EEF1F5] bg-white shadow-[0_16px_32px_rgba(15,23,42,0.12)]">
           <div className="mx-auto max-w-[430px] px-4 py-3">
             {isLoggedIn ? (
