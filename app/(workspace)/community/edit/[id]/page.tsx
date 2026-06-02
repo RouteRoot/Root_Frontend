@@ -12,6 +12,10 @@ import RichTextEditor, {
 } from "@/components/community/RichTextEditor";
 import { useWikiEditorAccess } from "@/components/certificate/useWikiEditorAccess";
 import { BBURI_PICK_CATEGORY } from "@/components/certificate/wikiPost";
+import MobileCommunityEditorPage, {
+  MobileCommunityEditorAccessDenied,
+  MobileCommunityEditorSkeleton,
+} from "@/mobile/pages/community/MobileCommunityEditorPage";
 
 type CategoryOption = {
   label: string;
@@ -134,33 +138,70 @@ export default function Page() {
 
   if (isChecking || isLoading) {
     return (
-      <main className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-185 flex-col pb-28 pt-12">
-        <div className="h-5 w-24 animate-pulse rounded bg-[#EEF2F7]" />
-        <div className="mt-10 h-12 animate-pulse rounded-lg bg-[#EEF2F7]" />
-        <div className="mt-3 h-12 animate-pulse rounded-lg bg-[#F3F6FA]" />
-      </main>
+      <>
+        <div className="lg:hidden">
+          <MobileCommunityEditorSkeleton />
+        </div>
+        <main className="hidden mx-auto min-h-[calc(100vh-80px)] w-full max-w-185 flex-col pb-28 pt-12 lg:flex">
+          <div className="h-5 w-24 animate-pulse rounded bg-[#EEF2F7]" />
+          <div className="mt-10 h-12 animate-pulse rounded-lg bg-[#EEF2F7]" />
+          <div className="mt-3 h-12 animate-pulse rounded-lg bg-[#F3F6FA]" />
+        </main>
+      </>
     );
   }
 
   if (!canManagePost) {
     return (
-      <main className="mx-auto w-full max-w-185 py-24 text-center">
-        <p className="text-[16px] font-medium text-[#333333]">
-          수정 권한이 없어요.
-        </p>
-        <button
-          type="button"
-          onClick={() => router.push(`/community/${postId}`)}
-          className="mt-6 h-10 rounded-[8px] border border-[#DDE2EA] px-5 text-[14px] font-medium text-[#667085] transition-colors hover:border-[#BFD0FF] hover:text-[#4876EF]"
-        >
-          게시글로 돌아가기
-        </button>
-      </main>
+      <>
+        <div className="lg:hidden">
+          <MobileCommunityEditorAccessDenied
+            onBack={() => router.push(`/community/${postId}`)}
+          />
+        </div>
+        <main className="hidden mx-auto w-full max-w-185 py-24 text-center lg:block">
+          <p className="text-[16px] font-medium text-[#333333]">
+            수정 권한이 없어요.
+          </p>
+          <button
+            type="button"
+            onClick={() => router.push(`/community/${postId}`)}
+            className="mt-6 h-10 rounded-[8px] border border-[#DDE2EA] px-5 text-[14px] font-medium text-[#667085] transition-colors hover:border-[#BFD0FF] hover:text-[#4876EF]"
+          >
+            게시글로 돌아가기
+          </button>
+        </main>
+      </>
     );
   }
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-185 flex-col pb-28 pt-12">
+    <>
+    <div className="lg:hidden">
+      <MobileCommunityEditorPage
+        mode="edit"
+        category={category}
+        title={title}
+        content={content}
+        categoryOptions={categoryOptions}
+        plainContentLength={plainContent.length}
+        maxContentLength={MAX_CONTENT_LENGTH}
+        canSubmit={canSubmit}
+        isSubmitting={isSubmitting}
+        errorMessage={errorMessage}
+        onCategoryChange={setCategory}
+        onTitleChange={setTitle}
+        onContentChange={setContent}
+        onImageUpload={async (file) => {
+          const result = await uploadPostImage(file);
+          return result.imageUrl;
+        }}
+        onSubmit={handleSubmit}
+        onCancel={() => router.push(`/community/${postId}`)}
+      />
+    </div>
+
+    <main className="hidden mx-auto min-h-[calc(100vh-80px)] w-full max-w-185 flex-col pb-28 pt-12 lg:flex">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-[17px] font-black tracking-tight text-[#4876EF]">
@@ -343,5 +384,6 @@ export default function Page() {
         </div>
       )}
     </main>
+    </>
   );
 }

@@ -10,6 +10,7 @@ import type { BoardType, Post } from "@/app/api/community/types";
 import AuthenticatedImage from "@/components/community/AuthenticatedImage";
 import { getPostPreviewContent } from "@/components/community/postContentPreview";
 import { isWikiPost } from "@/components/certificate/wikiPost";
+import MobileCommunityPage from "@/mobile/pages/community/MobileCommunityPage";
 
 type CategoryTab =
   | "전체"
@@ -409,7 +410,12 @@ export default function Page() {
   );
 
   return (
-    <main className="mx-auto w-full max-w-[1060px] pb-24 pt-8">
+    <>
+      <div className="lg:hidden">
+        <MobileCommunityPage />
+      </div>
+
+      <main className="hidden mx-auto w-full max-w-[1060px] pb-24 pt-8 lg:block">
       <h1 className="text-[31px] font-semibold tracking-[-0.04em] text-[#333333]">
         커뮤니티
       </h1>
@@ -558,6 +564,7 @@ export default function Page() {
               ))}
         </aside>
       </div>
-    </main>
+      </main>
+    </>
   );
 }

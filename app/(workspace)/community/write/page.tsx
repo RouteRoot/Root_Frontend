@@ -11,6 +11,7 @@ import RichTextEditor, {
 } from "@/components/community/RichTextEditor";
 import { useWikiEditorAccess } from "@/components/certificate/useWikiEditorAccess";
 import { BBURI_PICK_CATEGORY } from "@/components/certificate/wikiPost";
+import MobileCommunityEditorPage from "@/mobile/pages/community/MobileCommunityEditorPage";
 
 type CategoryOption = {
   label: string;
@@ -101,7 +102,31 @@ export default function Page() {
   };
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-185 flex-col pb-28 pt-16">
+    <>
+    <div className="lg:hidden">
+      <MobileCommunityEditorPage
+        mode="write"
+        category={category}
+        title={title}
+        content={content}
+        categoryOptions={categoryOptions}
+        plainContentLength={plainContent.length}
+        maxContentLength={MAX_CONTENT_LENGTH}
+        canSubmit={canSubmit}
+        isSubmitting={isSubmitting}
+        errorMessage={errorMessage}
+        onCategoryChange={setCategory}
+        onTitleChange={setTitle}
+        onContentChange={setContent}
+        onImageUpload={async (file) => {
+          const result = await uploadPostImage(file);
+          return result.imageUrl;
+        }}
+        onSubmit={handleSubmit}
+      />
+    </div>
+
+    <main className="hidden mx-auto min-h-[calc(100vh-80px)] w-full max-w-185 flex-col pb-28 pt-16 lg:flex">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-[17px] font-black tracking-tight text-[#4876EF]">
@@ -310,5 +335,6 @@ export default function Page() {
         </div>
       )}
     </main>
+    </>
   );
 }

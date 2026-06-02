@@ -24,6 +24,10 @@ import type { Comment, Post } from "@/app/api/community/types";
 import { sanitizeRichText } from "@/components/community/RichTextEditor";
 import { useWikiEditorAccess } from "@/components/certificate/useWikiEditorAccess";
 import { BBURI_PICK_CATEGORY } from "@/components/certificate/wikiPost";
+import MobileCommunityDetailPage, {
+  MobileCommunityDetailError,
+  MobileCommunityDetailSkeleton,
+} from "@/mobile/pages/community/MobileCommunityDetailPage";
 
 const AVATAR_COLORS = ["#D7F2FF", "#FFE1EA", "#DDF7EC", "#E7E2FF", "#FFECCA"];
 
@@ -449,19 +453,36 @@ export default function Page() {
     );
   };
 
+  const handleShare = async () => {
+    await navigator.clipboard?.writeText(window.location.href);
+    setShowCopiedToast(true);
+    setTimeout(() => setShowCopiedToast(false), 2500);
+  };
+
   if (isLoading) {
     return (
-      <main className="mx-auto w-full max-w-215 pb-24 pt-14">
-        <div className="h-5 w-20 animate-pulse rounded bg-[#EEF2F7]" />
-        <div className="mt-8 h-7 w-2/3 animate-pulse rounded bg-[#EEF2F7]" />
-        <div className="mt-4 h-4 w-full animate-pulse rounded bg-[#F3F6FA]" />
-      </main>
+      <>
+        <div className="lg:hidden">
+          <MobileCommunityDetailSkeleton />
+        </div>
+        <main className="hidden mx-auto w-full max-w-215 pb-24 pt-14 lg:block">
+          <div className="h-5 w-20 animate-pulse rounded bg-[#EEF2F7]" />
+          <div className="mt-8 h-7 w-2/3 animate-pulse rounded bg-[#EEF2F7]" />
+          <div className="mt-4 h-4 w-full animate-pulse rounded bg-[#F3F6FA]" />
+        </main>
+      </>
     );
   }
 
   if (!post || errorMessage) {
     return (
-      <main className="mx-auto w-full max-w-215 pb-24 pt-14 text-center">
+      <>
+      <div className="lg:hidden">
+        <MobileCommunityDetailError
+          message={errorMessage || "게시글이 없어요."}
+        />
+      </div>
+      <main className="hidden mx-auto w-full max-w-215 pb-24 pt-14 text-center lg:block">
         <p className="text-[15px] text-[#94A3B8]">
           {errorMessage || "게시글이 없어요."}
         </p>
@@ -472,6 +493,7 @@ export default function Page() {
           커뮤니티로 돌아가기
         </Link>
       </main>
+      </>
     );
   }
 
@@ -497,7 +519,33 @@ export default function Page() {
         onCancel={() => setShowDeletePostConfirm(false)}
       />
     )}
-    <main className="relative mx-auto w-full max-w-230 pb-24 pt-14">
+    <div className="lg:hidden">
+      <MobileCommunityDetailPage
+        post={post}
+        comments={comments}
+        liked={liked}
+        commentText={commentText}
+        isSubmittingComment={isSubmittingComment}
+        myName={myName}
+        canManagePost={canManagePost}
+        isEditor={isEditor}
+        isPicked={isPicked}
+        categoryLabel={getCategoryLabel(post)}
+        pickLabel={isPicked ? "PICK 해제" : "PICK 지정"}
+        errorMessage={errorMessage}
+        onLike={handleLike}
+        onShare={handleShare}
+        onCommentTextChange={setCommentText}
+        onCreateComment={handleCreateComment}
+        onRequestDeleteComment={setPendingDeleteCommentId}
+        onUpdateComment={handleUpdateComment}
+        onEditPost={() => router.push(`/community/edit/${post.postId}`)}
+        onRequestDeletePost={() => setShowDeletePostConfirm(true)}
+        onTogglePick={handleTogglePick}
+      />
+    </div>
+
+    <main className="relative hidden mx-auto w-full max-w-230 pb-24 pt-14 lg:block">
       <section className="mx-auto w-full max-w-180">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
@@ -658,8 +706,8 @@ export default function Page() {
       </aside>
     </main>
     {showCopiedToast && createPortal(
-      <div className="fixed bottom-8 left-1/2 z-50 -translate-x-1/2 rounded-full bg-[#323438] px-5 py-3 text-[14px] font-medium text-white shadow-lg">
-        URL 링크가 복사 되었습니다
+      <div className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] left-1/2 z-[120] max-w-[calc(100vw-32px)] -translate-x-1/2 whitespace-nowrap rounded-full bg-[#323438] px-5 py-3 text-[13px] font-medium text-white shadow-lg lg:bottom-8 lg:text-[14px]">
+        URL 링크가 복사되었어요
       </div>,
       document.body
     )}
