@@ -348,6 +348,16 @@
   table-layout: auto;
 }
 
+.rich-text-content {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.rich-text-content table {
+  min-width: 640px;
+  max-width: none;
+}
+
 .rich-text-editor th,
 .rich-text-content th {
   background: #F7F9FC;

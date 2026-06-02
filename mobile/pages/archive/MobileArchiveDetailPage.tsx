@@ -1,7 +1,7 @@
 "use client";
 
 import type { ArchivePost } from "@/app/api/archive/types";
-import { Eye, Heart, MessageCircle, MoreVertical } from "lucide-react";
+import { Eye, Heart, MoreVertical } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -133,23 +133,19 @@ export default function MobileArchiveDetailPage({
           <span>{formattedDate}</span>
         </div>
 
-        <div className="mt-5 grid grid-cols-3 rounded-[8px] bg-[#F7F9FB] px-2 py-3 text-center">
-          <div className="flex flex-col items-center gap-1 text-[11px] font-medium text-[#8A94A6]">
+        <div className="mt-4 flex items-center gap-3 text-[12px] font-medium text-[#98A2B3]">
+          <span className="inline-flex items-center gap-1">
             <Eye className="h-4 w-4" />
             <span>{post.viewCount}</span>
-          </div>
-          <div className="flex flex-col items-center gap-1 text-[11px] font-medium text-[#8A94A6]">
+          </span>
+          <span className="inline-flex items-center gap-1">
             <Heart className="h-4 w-4" />
             <span>{post.likeCount}</span>
-          </div>
-          <div className="flex flex-col items-center gap-1 text-[11px] font-medium text-[#8A94A6]">
-            <MessageCircle className="h-4 w-4" />
-            <span>{post.commentCount}</span>
-          </div>
+          </span>
         </div>
 
         <div
-          className="rich-text-content mt-7 text-[15px] leading-[1.75] text-[#344054]"
+          className="rich-text-content mt-7 overflow-x-auto pb-2 text-[15px] leading-[1.75] text-[#344054]"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
       </article>
