@@ -349,13 +349,27 @@
 }
 
 .rich-text-content {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.rich-text-content table {
+  width: max-content;
+  min-width: 100%;
+  max-width: none;
+}
+
+.rich-text-table-scroll {
+  max-width: 100%;
+  margin: 1.25rem 0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-.rich-text-content table {
-  min-width: 640px;
-  max-width: none;
+.rich-text-table-scroll table {
+  display: table;
+  margin: 0;
 }
 
 .rich-text-editor th,

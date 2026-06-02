@@ -329,7 +329,7 @@ export default function MobileArchivePage({
                 onClick={() => onTagChange(tag)}
                 className={`min-h-9 shrink-0 snap-start rounded-[8px] px-3 text-[12px] font-medium ${
                   active
-                    ? "bg-[#252A32] text-white"
+                    ? "bg-[#4876EF] text-white"
                     : "border border-[#E5E8EB] bg-white text-[#667085]"
                 }`}
               >
@@ -399,7 +399,7 @@ export default function MobileArchivePage({
                     onClick={() => onPageChange(page)}
                     className={`flex h-9 min-w-9 items-center justify-center rounded-[8px] px-2 text-[13px] font-semibold ${
                       active
-                        ? "bg-[#252A32] text-white"
+                        ? "bg-[#4876EF] text-white"
                         : "border border-[#E5E8EB] bg-white text-[#667085]"
                     }`}
                     aria-current={active ? "page" : undefined}

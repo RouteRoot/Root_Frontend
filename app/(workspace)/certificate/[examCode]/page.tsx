@@ -12,6 +12,179 @@ function formatDate(date: string | null) {
   return date;
 }
 
+function wrapTables(html: string) {
+  return html
+    .replace(/<table([\s\S]*?)>/gi, '<div class="rich-text-table-scroll"><table$1>')
+    .replace(/<\/table>/gi, "</table></div>");
+}
+
+function MobileCertificateDetailSkeleton() {
+  return (
+    <div className="mx-auto w-full max-w-[430px] pb-8">
+      <div className="rounded-[8px] border border-[#E5E8EB] bg-white px-4 py-5">
+        <div className="h-4 w-24 animate-pulse rounded bg-[#EEF2F7]" />
+        <div className="mt-4 h-7 w-5/6 animate-pulse rounded bg-[#F3F6FA]" />
+        <div className="mt-3 h-4 w-48 animate-pulse rounded bg-[#F3F6FA]" />
+        <div className="mt-7 h-32 animate-pulse rounded bg-[#F3F6FA]" />
+      </div>
+    </div>
+  );
+}
+
+function MobileCertificateDetailPage({
+  certificate,
+  sanitizedDescription,
+  onBack,
+}: {
+  certificate: CertificateDetail;
+  sanitizedDescription: string;
+  onBack: () => void;
+}) {
+  return (
+    <div className="mx-auto flex w-full max-w-[430px] flex-col gap-4 pb-8">
+      <button
+        type="button"
+        onClick={onBack}
+        className="inline-flex w-fit items-center gap-1.5 px-1 text-[13px] font-semibold text-[#8A94A6]"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        뒤로가기
+      </button>
+
+      <article className="rounded-[8px] border border-[#E5E8EB] bg-white px-4 py-5">
+        <div className="flex flex-wrap items-center gap-2">
+          {certificate.category && (
+            <span className="rounded-sm bg-[#F7F9FB] px-2.5 py-1 text-[11px] font-medium text-[#667085]">
+              {certificate.category}
+            </span>
+          )}
+          {certificate.examGroup && (
+            <span className="rounded-sm bg-[#EEF4FF] px-2.5 py-1 text-[11px] font-semibold text-[#4876EF]">
+              {certificate.examGroup}
+            </span>
+          )}
+          <span
+            className={`rounded-sm px-2.5 py-1 text-[11px] font-semibold ${
+              certificate.isActive
+                ? "bg-[#ECFDF5] text-[#059669]"
+                : "bg-[#F3F4F6] text-[#8A94A6]"
+            }`}
+          >
+            {certificate.isActive ? "운영 중" : "비활성"}
+          </span>
+        </div>
+
+        <h1 className="mt-4 text-[22px] font-semibold leading-[1.38] text-[#252A32]">
+          {certificate.examName}
+        </h1>
+
+        <div className="mt-3 flex flex-col gap-1 text-[12px] font-medium text-[#98A2B3]">
+          <span>{certificate.examType || "유형 정보 없음"}</span>
+          <span>{certificate.organization || "기관 정보 없음"}</span>
+        </div>
+
+        {sanitizedDescription ? (
+          <div
+            className="rich-text-content mt-6 pb-2 text-[15px] leading-[1.75] text-[#344054]"
+            dangerouslySetInnerHTML={{ __html: wrapTables(sanitizedDescription) }}
+          />
+        ) : (
+          <p className="mt-6 text-[14px] leading-[1.75] text-[#667085]">
+            자격증 설명이 아직 등록되지 않았습니다. 시험 일정과 주관 기관
+            정보를 확인해보세요.
+          </p>
+        )}
+      </article>
+
+      <section className="rounded-[8px] border border-[#E5E8EB] bg-white px-4 py-5">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-[17px] font-semibold text-[#252A32]">
+              시험 일정
+            </h2>
+            <p className="mt-1 text-[12px] font-medium text-[#98A2B3]">
+              {certificate.schedules?.length ?? 0}개 일정
+            </p>
+          </div>
+          {certificate.officialUrl && (
+            <a
+              href={certificate.officialUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-9 items-center gap-1.5 rounded-[8px] border border-[#E5E8EB] px-3 text-[12px] font-semibold text-[#667085]"
+            >
+              공식 사이트
+              <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          )}
+        </div>
+
+        {(certificate.schedules?.length ?? 0) === 0 ? (
+          <div className="py-10 text-center text-[13px] text-[#98A2B3]">
+            등록된 시험 일정이 없습니다.
+          </div>
+        ) : (
+          <div className="-mx-4 mt-4 overflow-x-auto px-4 pb-2">
+            <table className="min-w-[680px] border-collapse text-left text-[12px]">
+              <thead>
+                <tr className="border-y border-[#E5E8EB] bg-[#F7F9FB] text-[11px] font-semibold text-[#8A94A6]">
+                  <th className="whitespace-nowrap px-3 py-3">회차</th>
+                  <th className="whitespace-nowrap px-3 py-3">필기 접수</th>
+                  <th className="whitespace-nowrap px-3 py-3">필기 시험</th>
+                  <th className="whitespace-nowrap px-3 py-3">필기 발표</th>
+                  <th className="whitespace-nowrap px-3 py-3">실기 접수</th>
+                  <th className="whitespace-nowrap px-3 py-3">실기 시험</th>
+                  <th className="whitespace-nowrap px-3 py-3">실기 발표</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(certificate.schedules ?? []).map((schedule) => (
+                  <tr
+                    key={schedule.id}
+                    className="border-b border-[#EEF1F5] text-[#575757]"
+                  >
+                    <td className="whitespace-nowrap px-3 py-3 font-semibold text-[#252A32]">
+                      {schedule.round || "일정 정보"}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3">
+                      {formatDate(schedule.docRegStart)} - {formatDate(schedule.docRegEnd)}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3">
+                      {formatDate(schedule.docExamStart)}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3">
+                      {formatDate(schedule.docPassDate)}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3">
+                      {formatDate(schedule.pracRegStart)} - {formatDate(schedule.pracRegEnd)}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3">
+                      {formatDate(schedule.pracExamStart)}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3">
+                      {formatDate(schedule.pracPassDate)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      <div className="rounded-[8px] bg-[#F8FAFF] p-4">
+        <div className="flex gap-3">
+          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#4876EF]" />
+          <p className="text-[12px] leading-[1.7] text-[#667085]">
+            시험 일정은 기관 공지에 따라 변경될 수 있어요. 접수 전 공식
+            사이트에서 최종 일정을 확인해주세요.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function CertificateDetailPage() {
   const params = useParams<{ examCode: string }>();
   const router = useRouter();
@@ -55,12 +228,17 @@ export default function CertificateDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto mt-8 w-full max-w-[1062px] animate-pulse">
+      <>
+      <div className="lg:hidden">
+        <MobileCertificateDetailSkeleton />
+      </div>
+      <div className="mx-auto mt-8 hidden w-full max-w-[1062px] animate-pulse lg:block">
         <div className="h-5 w-24 rounded bg-[#EEF2F7]" />
         <div className="mt-8 h-10 w-2/3 rounded bg-[#EEF2F7]" />
         <div className="mt-4 h-4 w-full rounded bg-[#F3F6FA]" />
         <div className="mt-10 h-80 rounded-lg bg-[#F3F6FA]" />
       </div>
+      </>
     );
   }
 
@@ -82,7 +260,15 @@ export default function CertificateDetailPage() {
   }
 
   return (
-    <div className="mx-auto mt-8 w-full max-w-[1062px]">
+    <>
+    <div className="lg:hidden">
+      <MobileCertificateDetailPage
+        certificate={certificate}
+        sanitizedDescription={sanitizedDescription}
+        onBack={() => router.back()}
+      />
+    </div>
+    <div className="mx-auto mt-8 hidden w-full max-w-[1062px] lg:block">
       <button
         type="button"
         onClick={() => router.back()}
@@ -227,5 +413,6 @@ export default function CertificateDetailPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
