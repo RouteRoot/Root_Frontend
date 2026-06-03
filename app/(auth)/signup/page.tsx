@@ -102,14 +102,14 @@ export default function SignupPage() {
           </Link>
         </header>
 
-        <section className="flex flex-1 flex-col pt-10">
+        <section className="flex flex-1 flex-col pt-10 lg:pt-32">
           <div className="text-center">
-            <p className="text-[13px] font-semibold text-[#252A32]">
+            <p className="text-[13px] font-medium text-[#252A32]">
               자격증 준비는 하나로 통한다!
             </p>
             <Link
               href="/"
-              className="mt-3 inline-block text-[44px] font-extrabold leading-none tracking-[-0.06em] text-[#4876EF]"
+              className="mt-3 inline-block text-[44px] font-bold leading-none tracking-[-0.06em] text-[#4876EF]"
             >
               bburi
             </Link>
@@ -200,15 +200,15 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="mt-4 h-[48px] w-full rounded-[8px] bg-[#0B4DFF] text-[15px] font-semibold text-white active:bg-[#083FD2] disabled:opacity-60"
+              className="mt-4 h-[48px] w-full rounded-[8px] bg-[#4876EF] text-[15px] font-medium text-white active:bg-[#3F68D8] disabled:opacity-60"
             >
               {isLoading ? "가입 중..." : "회원가입"}
             </button>
           </form>
 
-          <div className="mt-8 text-center text-[14px] font-medium text-[#667085]">
+          <div className="mt-8 text-center text-[14px] font-normal text-[#667085]">
             이미 계정이 있으신가요?
-            <Link href="/login" className="ml-2 font-semibold text-[#4876EF]">
+            <Link href="/login" className="ml-2 font-medium text-[#4876EF]">
               로그인
             </Link>
           </div>

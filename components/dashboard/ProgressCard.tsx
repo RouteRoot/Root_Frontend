@@ -124,7 +124,7 @@ function GuestProgressCard() {
 
       <div className="mt-6 flex flex-col gap-2">
         <Link
-          href="/register"
+          href="/signup"
           className="inline-flex h-11 items-center justify-center gap-2 rounded-[10px] bg-[#0075C3] px-4 text-[14px] font-bold text-white transition hover:bg-[#0069AF]"
         >
           무료로 시작하기

@@ -107,7 +107,7 @@ export default function Gnb() {
                     로그인
                   </Link>
                   <Link
-                    href="/register"
+                    href="/signup"
                     className="px-4 text-[13px] text-[#344054] hover:text-[#4876EF]"
                   >
                     회원가입

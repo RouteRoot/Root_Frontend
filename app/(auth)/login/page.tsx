@@ -3,6 +3,7 @@
 import { login } from "@/app/api/auth/authApi";
 import type { LoginRequest } from "@/app/api/auth/authTypes";
 import { ArrowLeft, Eye, EyeOff, Lock, User, X } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -118,20 +119,34 @@ export default function LoginPage() {
           </Link>
         </header>
 
-        <section className="flex flex-1 flex-col pt-16">
+        <section className="flex flex-1 flex-col pt-10 lg:pt-28">
+          <div className="contents">
           <div className="text-center">
-            <p className="text-[13px] font-semibold text-[#252A32]">
+            <Image
+              src="/Group 55 (2).png"
+              alt="로그인 안내 이미지"
+              width={2508}
+              height={1296}
+              className="mx-auto h-auto w-1/2"
+              priority
+            />
+            <p className="mt-3 text-center text-[14px] font-normal leading-[1.65] text-[#686A6D]">
+              뿌리는 회원님의 익명성을 보장하기 위해
+              <br />
+              어떠한 개인정보도 노출하지 않습니다.
+            </p>
+            <p className="hidden text-[13px] font-medium text-[#252A32]">
               자격증 준비는 하나로 통한다!
             </p>
             <Link
               href="/"
-              className="mt-3 inline-block text-[44px] font-extrabold leading-none tracking-[-0.06em] text-[#4876EF]"
+              className="hidden mt-3 text-[44px] font-bold leading-none tracking-[-0.06em] text-[#4876EF]"
             >
               bburi
             </Link>
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-12">
+          <form onSubmit={handleSubmit} className="mt-9">
             <div className="space-y-2">
               <label className="relative block">
                 <User className="absolute left-4 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-[#C3C8D0]" />
@@ -173,12 +188,37 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="mt-4 h-[48px] w-full rounded-[8px] bg-[#0B4DFF] text-[15px] font-semibold text-white active:bg-[#083FD2] disabled:opacity-60"
+              className="mt-4 h-[48px] w-full rounded-[8px] bg-[#4876EF] text-[15px] font-medium text-white active:bg-[#3F68D8] disabled:opacity-60"
             >
               {isLoading ? "로그인 중..." : "로그인"}
             </button>
 
-            <div className="mt-5 flex items-center justify-end gap-3 text-[13px] font-medium text-[#252A32]">
+            <Link
+              href="/signup"
+              className="hidden"
+            >
+              회원가입
+            </Link>
+
+            <div className="mt-3 flex items-center justify-between gap-3 text-[13px] font-normal text-[#252A32]">
+              <Link
+                href="/signup"
+                className="font-medium text-[#4876EF] active:text-[#3F68D8]"
+              >
+                회원가입
+              </Link>
+              <div className="flex items-center gap-3">
+                <Link href="/find-id" className="active:text-[#4876EF]">
+                  아이디 찾기
+                </Link>
+                <span className="h-3 w-px bg-[#D8DDE6]" />
+                <Link href="/find-password" className="active:text-[#4876EF]">
+                  비밀번호 찾기
+                </Link>
+              </div>
+            </div>
+
+            <div className="hidden mt-5 items-center justify-end gap-3 text-[13px] font-normal text-[#252A32]">
               <Link href="/find-id" className="active:text-[#4876EF]">
                 아이디 찾기
               </Link>
@@ -189,10 +229,11 @@ export default function LoginPage() {
             </div>
           </form>
 
-          <div className="mt-12 text-center">
+          <div className="hidden mt-10 text-center">
             <Link href="/signup" className="text-[14px] font-medium text-[#475467]">
               회원가입
             </Link>
+          </div>
           </div>
         </section>
       </div>
