@@ -200,14 +200,14 @@ export default function LoginPage() {
               회원가입
             </Link>
 
-            <div className="mt-3 flex items-center justify-between gap-3 text-[13px] font-normal text-[#252A32]">
+            <div className="mt-3 flex items-center justify-between gap-2 text-[12px] font-normal text-[#252A32]">
               <Link
                 href="/signup"
                 className="font-medium text-[#4876EF] active:text-[#3F68D8]"
               >
                 회원가입
               </Link>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 whitespace-nowrap">
                 <Link href="/find-id" className="active:text-[#4876EF]">
                   아이디 찾기
                 </Link>

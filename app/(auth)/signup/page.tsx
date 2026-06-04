@@ -12,6 +12,7 @@ import {
   User,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -80,7 +81,7 @@ export default function SignupPage() {
 
   return (
     <main className="min-h-screen bg-white">
-      <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col px-4">
+      <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col px-4 lg:max-w-[1120px]">
         <header className="grid h-12 grid-cols-[40px_1fr_40px] items-center border-b border-[#EEF1F5]">
           <button
             type="button"
@@ -103,7 +104,7 @@ export default function SignupPage() {
         </header>
 
         <section className="flex flex-1 flex-col pt-10 lg:pt-32">
-          <div className="text-center">
+          <div className="hidden text-center md:block lg:hidden">
             <p className="text-[13px] font-medium text-[#252A32]">
               자격증 준비는 하나로 통한다!
             </p>
@@ -115,7 +116,25 @@ export default function SignupPage() {
             </Link>
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-10">
+          <div className="mt-10 lg:grid lg:grid-cols-[320px_480px] lg:items-start lg:justify-center lg:gap-20">
+          <div className="hidden max-w-[250px] flex-col items-center pt-2 lg:flex">
+            <Image
+              src="/Group 55 (2).png"
+              alt="회원가입 안내 이미지"
+              width={2508}
+              height={1296}
+              className="h-auto w-full"
+              priority
+            />
+            <p className="mt-5 text-center text-[14px] font-normal leading-[1.65] text-[#686A6D]">
+              뿌리는 회원님의 익명성을 보장하기 위해
+              <br />
+              어떠한 개인정보도 노출하지 않습니다.
+            </p>
+          </div>
+
+          <div>
+          <form onSubmit={handleSubmit}>
             <div className="space-y-2">
               <label className="relative block">
                 <User className="absolute left-4 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-[#C3C8D0]" />
@@ -211,6 +230,8 @@ export default function SignupPage() {
             <Link href="/login" className="ml-2 font-medium text-[#4876EF]">
               로그인
             </Link>
+          </div>
+          </div>
           </div>
         </section>
       </div>
