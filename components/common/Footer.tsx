@@ -8,6 +8,7 @@ import {
   Play,
   X,
 } from "lucide-react";
+import AboutCompanyModal from "@/components/common/AboutCompanyModal";
 
 type FooterModalKey =
   | "company"
@@ -100,7 +101,7 @@ const modalContent: Record<FooterModalKey, FooterModalContent> = {
 
 const footerLinks: { label: string; key: FooterModalKey; href?: string; highlighted?: boolean }[] =
   [
-    { label: "회사소개", key: "company", href: "/about" },
+    { label: "회사소개", key: "company" },
     { label: "이용약관", key: "terms", highlighted: true },
     { label: "개인정보처리방침", key: "privacy" },
     { label: "리뷰 운영 정책", key: "review" },
@@ -113,9 +114,10 @@ const footerLinks: { label: string; key: FooterModalKey; href?: string; highligh
 export default function Footer() {
   const [activeModal, setActiveModal] = useState<FooterModalKey | null>(null);
   const currentModal = useMemo(
-    () => (activeModal ? modalContent[activeModal] : null),
+    () => (activeModal && activeModal !== "company" ? modalContent[activeModal] : null),
     [activeModal]
   );
+  const isCompanyModalOpen = activeModal === "company";
 
   useEffect(() => {
     if (!activeModal) return;
@@ -239,6 +241,10 @@ export default function Footer() {
           </div>
         </div>
       </footer>
+
+      {isCompanyModalOpen && (
+        <AboutCompanyModal onClose={() => setActiveModal(null)} />
+      )}
 
       {currentModal && (
         <div

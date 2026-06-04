@@ -5,6 +5,7 @@ import DashboardCommunitySection from "@/components/dashboard/DashboardCommunity
 import DashboardCertificateSection from "@/components/dashboard/DashboardCertificateSection";
 import DashboardCertificateReviewSection from "@/components/dashboard/DashboardCertificateReviewSection";
 import MobileDashboardPage from "@/mobile/pages/dashboard/MobileDashboardPage";
+import AboutCompanyModalTrigger from "@/components/common/AboutCompanyModalTrigger";
 
 export default function Page() {
   return (
@@ -26,10 +27,7 @@ export default function Page() {
           style={{ aspectRatio: "1079 / 416" }}
         >
           {/* 메인 카드 — col 1-2, row 1 */}
-          <Link
-            href="/community/1"
-            className="col-span-2 block h-full overflow-hidden rounded-3xl"
-          >
+          <AboutCompanyModalTrigger className="col-span-2 block h-full overflow-hidden rounded-3xl text-left">
             <Image
               src="/Group 22.svg"
               alt="오늘의 추천 메인"
@@ -38,7 +36,7 @@ export default function Page() {
               className="block h-full w-full object-cover"
               priority
             />
-          </Link>
+          </AboutCompanyModalTrigger>
 
           {/* 우측 카드 — col 3, row 1-2 */}
           <div className="row-span-2 h-full min-h-0">
