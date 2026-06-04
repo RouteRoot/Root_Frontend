@@ -206,7 +206,7 @@ export default function PlanGeneratePage() {
                 </span>
               </div>
 
-              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {DAYS.map((day) => {
                   const hours = weeklySchedule[day.key];
                   const isRest = hours === 0;
@@ -214,7 +214,7 @@ export default function PlanGeneratePage() {
                   return (
                     <div
                       key={day.key}
-                      className={`rounded-[8px] border px-3 py-3 ${
+                      className={`min-w-0 rounded-[8px] border px-3 py-3 ${
                         isRest
                           ? "border-[#EEF2F7] bg-[#FAFBFC]"
                           : "border-[#C8D9FF] bg-[#F5F8FF]"
@@ -232,12 +232,12 @@ export default function PlanGeneratePage() {
                           시간
                         </span>
                       </div>
-                      <div className="mt-3 flex items-center justify-between gap-2">
+                        <div className="mt-3 flex items-center justify-center gap-1.5">
                         <button
                           type="button"
                           onClick={() => setDayHours(day.key, hours - 1)}
                           disabled={hours === 0}
-                          className="flex h-8 w-8 items-center justify-center rounded-full border border-[#D8DDE6] bg-white text-[#667085] disabled:opacity-30"
+                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#D8DDE6] bg-white text-[#667085] disabled:opacity-30"
                           aria-label={`${day.label} 줄이기`}
                         >
                           <Minus className="h-3.5 w-3.5" />
@@ -250,13 +250,13 @@ export default function PlanGeneratePage() {
                           onChange={(event) =>
                             setDayHours(day.key, Math.floor(Number(event.target.value)))
                           }
-                          className="w-10 bg-transparent text-center text-[22px] font-semibold leading-none text-[#252A32] outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                          className="w-8 shrink-0 bg-transparent text-center text-[22px] font-semibold leading-none text-[#252A32] outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                         />
                         <button
                           type="button"
                           onClick={() => setDayHours(day.key, hours + 1)}
                           disabled={hours >= 12}
-                          className="flex h-8 w-8 items-center justify-center rounded-full border border-[#D8DDE6] bg-white text-[#667085] disabled:opacity-30"
+                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#D8DDE6] bg-white text-[#667085] disabled:opacity-30"
                           aria-label={`${day.label} 늘리기`}
                         >
                           <Plus className="h-3.5 w-3.5" />
@@ -269,7 +269,7 @@ export default function PlanGeneratePage() {
             </div>
           </section>
 
-          <section className="rounded-[8px] border border-[#E5E8EB] bg-white px-4 py-4">
+          <section className="flex h-full flex-col rounded-[8px] border border-[#E5E8EB] bg-white px-4 py-4">
             <h2 className="text-[14px] font-semibold text-[#252A32]">
               현재 수준
             </h2>
@@ -295,7 +295,7 @@ export default function PlanGeneratePage() {
               ))}
             </div>
 
-            <label className="mt-6 block">
+            <label className="mt-6 flex flex-1 flex-col">
               <span className="text-[14px] font-semibold text-[#252A32]">
                 학습 상황 <span className="font-normal text-[#98A2B3]">(선택)</span>
               </span>
@@ -303,7 +303,7 @@ export default function PlanGeneratePage() {
                 value={personalStory}
                 onChange={(event) => setPersonalStory(event.target.value)}
                 placeholder="평일에는 시간이 부족하고 주말에 집중해서 공부하고 싶어요."
-                className="mt-2 min-h-[110px] w-full resize-none rounded-[8px] border border-[#D8DDE6] bg-white px-3 py-3 text-[14px] leading-6 text-[#252A32] outline-none placeholder:text-[#B3BBC8] focus:border-[#4876EF]"
+                className="mt-2 min-h-[150px] flex-1 resize-none rounded-[8px] border border-[#D8DDE6] bg-white px-3 py-3 text-[14px] leading-6 text-[#252A32] outline-none placeholder:text-[#B3BBC8] focus:border-[#4876EF]"
               />
             </label>
 
