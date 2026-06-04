@@ -97,89 +97,43 @@ function findTodayPlan(
 }
 
 function GuestProgressCard() {
-  const recommendations = [
-    {
-      title: "정보처리기사 3주 완성 플랜",
-      meta: "비전공자 추천",
-      tag: "필기",
-      due: "D-21",
-    },
-    {
-      title: "SQLD 입문자 로드맵",
-      meta: "데이터 자격증",
-      tag: "기초",
-      due: "D-14",
-    },
-    {
-      title: "전기기사 핵심 개념 정리",
-      meta: "실기 대비",
-      tag: "요약",
-      due: "D-30",
-    },
-  ];
-
   return (
-    <div className="flex h-full min-h-[240px] flex-col overflow-hidden rounded-[10px] border border-[#D8E4FF] bg-white px-5 py-5">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-[13px] font-medium text-[#4876EF]">
-            로그인하면 맞춤 플랜 추천해드려요
-          </p>
-          <h2 className="mt-1 text-[21px] font-semibold leading-tight tracking-tight text-[#172033]">
-            목표 자격증까지
-            <br />
-            필요한 계획을 골라보세요.
-          </h2>
-        </div>
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#EEF4FF] text-[#4876EF]">
+    <div className="flex h-full min-h-[240px] flex-col justify-between overflow-hidden rounded-[10px] border border-[#D8E4FF] bg-[#FBFCFF] px-6 py-6">
+      <div>
+        <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-white text-[#4876EF] ring-1 ring-[#E4ECFF]">
           <Sparkles className="h-5 w-5" />
         </span>
+
+        <p className="mt-5 text-[13px] font-medium text-[#4876EF]">
+          맞춤 플랜
+        </p>
+        <h2 className="mt-2 text-[22px] font-medium leading-[1.28] tracking-tight text-[#333333]">
+          자격증 준비를
+          <br />
+          한 번에 시작해요
+        </h2>
+        <p className="mt-3 text-[13px] leading-[1.6] text-[#686A6D]">
+          뿌리와 함께 자격증 로드맵과 데일리 플랜을 쉽게 만들고, 오늘
+          해야 할 학습까지 한눈에 확인해보세요.
+        </p>
       </div>
 
-      <Link
-        href="/signup"
-        className="mt-4 flex h-11 items-center justify-between rounded-[8px] bg-[#4876EF] px-4 text-[14px] font-medium text-white transition hover:bg-[#3F68D8]"
-      >
-        무료로 맞춤 플랜 만들기
-        <ArrowRight className="h-4 w-4" />
-      </Link>
+      <div className="mt-6 space-y-3">
+        <Link
+          href="/signup"
+          className="flex h-12 items-center justify-center gap-2 rounded-[8px] bg-[#4876EF] px-4 text-[14px] font-medium text-white transition hover:bg-[#3F68D8]"
+        >
+          무료로 플랜 만들기
+          <ArrowRight className="h-4 w-4" />
+        </Link>
 
-      <div className="mt-4 flex flex-1 flex-col gap-2">
-        {recommendations.map((item) => (
-          <Link
-            key={item.title}
-            href="/login"
-            className="flex min-h-0 flex-1 flex-col justify-between rounded-[8px] border border-[#E4ECFF] bg-[#FBFCFF] px-4 py-3 transition hover:border-[#AFC7FF] hover:bg-white"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <p className="text-[12px] font-medium text-[#667085]">
-                {item.meta}
-              </p>
-              <span className="shrink-0 text-[11px] font-medium text-[#98A2B3]">
-                {item.due}
-              </span>
-            </div>
-            <h3 className="mt-1 line-clamp-1 text-[14px] font-semibold text-[#252A32]">
-              {item.title}
-            </h3>
-            <div className="mt-2 flex items-center gap-2">
-              <span className="rounded-[6px] bg-[#EEF4FF] px-2 py-1 text-[11px] font-medium text-[#4876EF]">
-                맞춤 추천
-              </span>
-              <span className="rounded-[6px] bg-[#F3F6FA] px-2 py-1 text-[11px] font-medium text-[#667085]">
-                {item.tag}
-              </span>
-            </div>
-          </Link>
-        ))}
+        <Link
+          href="/login"
+          className="flex h-11 items-center justify-center rounded-[8px] border border-[#D8E4FF] bg-white px-4 text-[14px] font-medium text-[#4876EF] transition hover:bg-[#F4F7FF]"
+        >
+          로그인하고 이어보기
+        </Link>
       </div>
-
-      <Link
-        href="/login"
-        className="mt-3 text-center text-[12px] font-medium text-[#667085] transition hover:text-[#4876EF]"
-      >
-        이미 계정이 있으신가요? 로그인
-      </Link>
     </div>
   );
 }
