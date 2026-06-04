@@ -1,14 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ArrowRight, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowRight, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { getPlanByExamTaskId, getPlanTabs } from "@/app/api/plan/plan";
-import { getRoadmapByToken } from "@/app/api/roadmap/roadmap";
-import { getMe } from "@/app/api/service/user";
 import type { DailyPlan, PlanResponse } from "@/app/api/plan/types";
-import type { Task } from "@/app/api/roadmap/types";
 
 type ProgressCardProps = {
   variant?: "dashboard" | "guest";
@@ -101,76 +97,106 @@ function findTodayPlan(
 }
 
 function GuestProgressCard() {
+  const recommendations = [
+    {
+      title: "정보처리기사 3주 완성 플랜",
+      meta: "비전공자 추천",
+      tag: "필기",
+      due: "D-21",
+    },
+    {
+      title: "SQLD 입문자 로드맵",
+      meta: "데이터 자격증",
+      tag: "기초",
+      due: "D-14",
+    },
+    {
+      title: "전기기사 핵심 개념 정리",
+      meta: "실기 대비",
+      tag: "요약",
+      due: "D-30",
+    },
+  ];
+
   return (
-    <div className="flex h-full min-h-[240px] flex-col justify-between overflow-hidden rounded-3xl border border-[#D8E9F6] bg-[#F7FBFE] px-6 py-6">
-      <div>
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#E4F2FB] text-[#0075C3]">
-          <Sparkles className="h-5 w-5" />
+    <div className="flex h-full min-h-[240px] flex-col overflow-hidden rounded-[10px] border border-[#D8E4FF] bg-white px-5 py-5">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-[13px] font-medium text-[#4876EF]">
+            로그인하면 맞춤 플랜 추천해드려요
+          </p>
+          <h2 className="mt-1 text-[21px] font-semibold leading-tight tracking-tight text-[#172033]">
+            목표 자격증까지
+            <br />
+            필요한 계획을 골라보세요.
+          </h2>
         </div>
-
-        <p className="mt-5 text-[13px] font-medium text-[#0075C3]">
-          맞춤 학습 로드맵
-        </p>
-        <h2 className="mt-2 text-[22px] font-black font-medium leading-tight tracking-tight text-[#172033]">
-          목표 자격증까지
-          <br />
-          오늘 할 일부터 잡아드릴게요.
-        </h2>
-        <p className="mt-3 text-[13px] leading-relaxed text-[#5E6B7A]">
-          회원가입 후 관심 자격증을 선택하면 시험일까지 남은 학습량과
-          오늘의 계획을 한 번에 확인할 수 있어요.
-        </p>
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[#EEF4FF] text-[#4876EF]">
+          <Sparkles className="h-5 w-5" />
+        </span>
       </div>
 
-      <div className="mt-6 flex flex-col gap-2">
-        <Link
-          href="/signup"
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-[10px] bg-[#0075C3] px-4 text-[14px] font-bold text-white transition hover:bg-[#0069AF]"
-        >
-          무료로 시작하기
-          <ArrowRight className="h-4 w-4" />
-        </Link>
-        <Link
-          href="/login"
-          className="inline-flex h-10 items-center justify-center rounded-[10px] border border-[#CFE1EE] bg-white text-[13px] font-semibold text-[#334155] transition hover:bg-[#F2F7FB]"
-        >
-          이미 계정이 있어요
-        </Link>
+      <Link
+        href="/signup"
+        className="mt-4 flex h-11 items-center justify-between rounded-[8px] bg-[#4876EF] px-4 text-[14px] font-medium text-white transition hover:bg-[#3F68D8]"
+      >
+        무료로 맞춤 플랜 만들기
+        <ArrowRight className="h-4 w-4" />
+      </Link>
+
+      <div className="mt-4 flex flex-1 flex-col gap-2">
+        {recommendations.map((item) => (
+          <Link
+            key={item.title}
+            href="/login"
+            className="flex min-h-0 flex-1 flex-col justify-between rounded-[8px] border border-[#E4ECFF] bg-[#FBFCFF] px-4 py-3 transition hover:border-[#AFC7FF] hover:bg-white"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-[12px] font-medium text-[#667085]">
+                {item.meta}
+              </p>
+              <span className="shrink-0 text-[11px] font-medium text-[#98A2B3]">
+                {item.due}
+              </span>
+            </div>
+            <h3 className="mt-1 line-clamp-1 text-[14px] font-semibold text-[#252A32]">
+              {item.title}
+            </h3>
+            <div className="mt-2 flex items-center gap-2">
+              <span className="rounded-[6px] bg-[#EEF4FF] px-2 py-1 text-[11px] font-medium text-[#4876EF]">
+                맞춤 추천
+              </span>
+              <span className="rounded-[6px] bg-[#F3F6FA] px-2 py-1 text-[11px] font-medium text-[#667085]">
+                {item.tag}
+              </span>
+            </div>
+          </Link>
+        ))}
       </div>
+
+      <Link
+        href="/login"
+        className="mt-3 text-center text-[12px] font-medium text-[#667085] transition hover:text-[#4876EF]"
+      >
+        이미 계정이 있으신가요? 로그인
+      </Link>
     </div>
   );
 }
 
 function DashboardProgressCard() {
-  const router = useRouter();
-  const [userName, setUserName] = useState("");
-  const [inProgressTasks, setInProgressTasks] = useState<Task[]>([]);
-  const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
   const [slides, setSlides] = useState<TodayPlanSlide[]>([]);
-  const [slideIndex, setSlideIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isScrolledToEnd, setIsScrolledToEnd] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let mounted = true;
 
     async function load() {
       try {
-        const [roadmap, tabs, me] = await Promise.all([
-          getRoadmapByToken(),
-          getPlanTabs(),
-          getMe().catch(() => null),
-        ]);
+        const tabs = await getPlanTabs();
         if (!mounted) return;
-
-        setUserName(me?.name ?? "");
-
-        const allTasks = roadmap.phases.flatMap((phase) => phase.tasks);
-        setInProgressTasks(
-          allTasks.filter((task) => task.status === "IN_PROGRESS")
-        );
-        setCompletedTasks(
-          allTasks.filter((task) => task.status === "COMPLETED")
-        );
 
         const results = await Promise.all(
           tabs.map(async (tab) => {
@@ -196,10 +222,9 @@ function DashboardProgressCard() {
           })
         );
 
-        if (!mounted) return;
-        setSlides(results.filter(Boolean) as TodayPlanSlide[]);
+        if (mounted) setSlides(results.filter(Boolean) as TodayPlanSlide[]);
       } catch {
-        // Dashboard cards stay empty when dashboard data is unavailable.
+        if (mounted) setSlides([]);
       } finally {
         if (mounted) setIsLoading(false);
       }
@@ -212,189 +237,127 @@ function DashboardProgressCard() {
     };
   }, []);
 
-  const total = slides.length;
-  const current = slides[slideIndex];
-  const dday = current?.examDate ? getDday(current.examDate) : "";
+  const scrollToNextPlan = () => {
+    const node = scrollRef.current;
+    if (!node) return;
 
-  useEffect(() => {
-    if (total <= 1) return;
+    if (isScrolledToEnd) {
+      node.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
 
-    const intervalId = window.setInterval(() => {
-      setSlideIndex((index) => (index + 1) % total);
-    }, 4000);
+    node.scrollBy({
+      top: Math.max(132, node.clientHeight * 0.72),
+      behavior: "smooth",
+    });
+  };
 
-    return () => window.clearInterval(intervalId);
-  }, [total]);
+  const handlePlanScroll = () => {
+    const node = scrollRef.current;
+    if (!node) return;
+
+    const remaining = node.scrollHeight - node.scrollTop - node.clientHeight;
+    setIsScrolledToEnd(remaining <= 8);
+  };
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-3 overflow-hidden">
-      <div className="flex-none rounded-2xl border border-[#E2E8F0] bg-[#F8F9FA] px-4 py-4">
-        <p className="text-[16px] font-bold tracking-[-0.03em] text-[#333333]">
-          안녕하세요{userName ? `, ${userName}님` : ""}
-        </p>
-        {isLoading ? (
-          <div className="mt-3 flex items-center gap-3">
-            <div className="h-4 w-28 animate-pulse rounded bg-[#E9EEF4]" />
-            <div className="h-4 w-24 animate-pulse rounded bg-[#E9EEF4]" />
-          </div>
-        ) : inProgressTasks.length === 0 && completedTasks.length === 0 ? (
-          <p className="mt-3 text-[12px] text-[#CBD5E1]">
-            등록된 자격증이 없어요
-          </p>
-        ) : (
-          <div className="mt-3 flex items-center gap-4 text-[13px] font-semibold text-[#333333]">
-            <span>진행중인 자격증 {inProgressTasks.length}개</span>
-            <span className="h-3 w-px bg-[#E5E8EB]" />
-            <span>취득한 자격증 {completedTasks.length}개</span>
-          </div>
-        )}
-      </div>
-
-      <div
-        className={`flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-[#E2E8F0] bg-[#F8F9FA] ${
-          total > 0 ? "cursor-pointer transition hover:bg-[#F3F6FA]" : ""
-        }`}
-        onClick={() => {
-          if (total > 0) router.push("/plan");
-        }}
-        role={total > 0 ? "button" : undefined}
-        tabIndex={total > 0 ? 0 : undefined}
-        onKeyDown={(e) => {
-          if (total > 0 && (e.key === "Enter" || e.key === " ")) {
-            e.preventDefault();
-            router.push("/plan");
-          }
-        }}
-      >
-        <div className="flex-none border-b border-[#EEF2F7] bg-[#FBFCFE] px-4 py-3">
-          {isLoading ? (
-            <div className="space-y-1.5">
-              <div className="h-3 w-24 animate-pulse rounded bg-[#E9EEF4]" />
-              <div className="h-3 w-20 animate-pulse rounded bg-[#E9EEF4]" />
-              <div className="h-4 w-32 animate-pulse rounded bg-[#E9EEF4]" />
+    <section className="relative flex h-full min-h-0 flex-col overflow-visible">
+      {isLoading ? (
+        <div className="flex h-full flex-1 flex-col gap-3">
+          {[1, 2, 3].map((item) => (
+            <div
+              key={item}
+              className="flex flex-1 flex-col justify-center rounded-[10px] border border-[#E5E8EB] bg-[#FBFCFF] px-4 py-4"
+            >
+              <div className="h-4 w-2/3 animate-pulse rounded bg-[#EEF2F7]" />
+              <div className="mt-3 h-3 w-full animate-pulse rounded bg-[#F3F6FA]" />
+              <div className="mt-2 h-3 w-4/5 animate-pulse rounded bg-[#F3F6FA]" />
             </div>
-          ) : total === 0 ? (
-            <p className="text-[12px] font-semibold text-[#A0AEC0]">
-              오늘의 플랜
-            </p>
-          ) : (
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <p className="text-[11px] font-semibold text-[#A0AEC0]">
-                  시험까지 {dday} 남았어요
-                </p>
-                <p className="mt-1 truncate text-[14px] font-bold text-[#0B1B3B]">
-                  {current?.taskName}
-                </p>
-                <p className="mt-0.5 text-[12px] font-bold text-[#333333]">
-                  Week {current?.weekNumber} / Day {current?.dayNumber} /{" "}
-                  {current?.estimatedHours}시간
-                </p>
-              </div>
-
-              {total > 1 && (
-                <div className="flex shrink-0 items-center gap-1 pt-0.5">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSlideIndex((i) => (i - 1 + total) % total);
-                    }}
-                    className="flex h-6 w-6 items-center justify-center rounded-full text-[#94A3B8] transition hover:bg-[#EEF2F7]"
-                    aria-label="이전 플랜"
-                  >
-                    <ChevronLeft className="h-3.5 w-3.5" />
-                  </button>
-                  <span className="text-[11px] font-medium text-[#94A3B8]">
-                    {slideIndex + 1}/{total}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSlideIndex((i) => (i + 1) % total);
-                    }}
-                    className="flex h-6 w-6 items-center justify-center rounded-full text-[#94A3B8] transition hover:bg-[#EEF2F7]"
-                    aria-label="다음 플랜"
-                  >
-                    <ChevronRight className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+          ))}
         </div>
+      ) : slides.length === 0 ? (
+        <div className="flex flex-1 flex-col justify-center rounded-[10px] border border-[#E5E8EB] bg-[#FBFCFF] px-5 text-center">
+          <p className="text-[14px] font-medium text-[#667085]">
+            오늘 진행할 플랜이 없어요.
+          </p>
+          <Link
+            href="/plan"
+            className="mt-3 inline-flex items-center justify-center gap-1 text-[13px] font-medium text-[#4876EF]"
+          >
+            플랜 만들기
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+      ) : (
+        <>
+        <div
+          ref={scrollRef}
+          onScroll={handlePlanScroll}
+          className="min-h-0 flex-1 snap-y snap-mandatory overflow-y-auto pb-7 pr-2 scrollbar-hide"
+        >
+          <div className="flex flex-col gap-3">
+            {slides.map((slide) => {
+              const dday = getDday(slide.examDate);
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-          {isLoading ? (
-            <div className="flex flex-1 flex-col gap-3 px-4 py-4">
-              <div className="flex gap-3">
-                <div className="h-16 w-16 animate-pulse rounded-[10px] bg-[#E9EEF4]" />
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 w-full animate-pulse rounded bg-[#E9EEF4]" />
-                  <div className="h-3 w-4/5 animate-pulse rounded bg-[#E9EEF4]" />
-                  <div className="h-3 w-3/5 animate-pulse rounded bg-[#E9EEF4]" />
-                </div>
-              </div>
-            </div>
-          ) : total === 0 ? (
-            <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
-              <p className="text-[13px] text-[#CBD5E1]">
-                오늘의 플랜이 없어요
-              </p>
-              <Link
-                href="/plan"
-                className="flex items-center gap-0.5 text-[12px] font-semibold text-[#4876EF] hover:opacity-70"
-              >
-                플랜 만들기 <ArrowRight className="h-3 w-3" />
-              </Link>
-            </div>
-          ) : (
-            <div className="flex min-h-0 flex-1 overflow-hidden">
-              <div
-                className="flex h-full w-full transition-transform duration-300 ease-in-out"
-                style={{ transform: `translateX(-${slideIndex * 100}%)` }}
-              >
-                {slides.map((slide) => (
-                  <div
-                    key={slide.examTaskId}
-                    className="flex h-full w-full shrink-0 flex-col px-4 py-4"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="relative flex h-3 w-3 shrink-0">
-                        {!slide.isCompleted && (
-                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#1606a5] opacity-30" />
-                        )}
-                        <span
-                          className={`relative inline-flex h-3 w-3 rounded-full ${
-                            slide.isCompleted ? "bg-[#CBD5E1]" : "bg-[#4876EF]"
-                          }`}
-                        />
-                      </span>
-                      <h3
-                        className={`line-clamp-2 text-[13px] font-bold leading-snug ${
-                          slide.isCompleted ? "text-[#94A3B8]" : "text-[#0F172A]"
-                        }`}
-                      >
-                        {slide.topic}
+              return (
+                <Link
+                  key={slide.examTaskId}
+                  href="/plan"
+                  className="flex min-h-[154px] snap-start flex-col justify-center overflow-hidden rounded-[10px] border border-[#E5E8EB] bg-[#fefefe] px-4 py-4 shadow-[0_2px_8px_rgba(15,23,42,0.035)] transition hover:border-[#D0D7E3] hover:bg-[#F8FAFD]"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-[12px] font-semibold text-[#4F73E8]">
+                        {slide.taskName}
+                      </p>
+                      <h3 className="mt-1 line-clamp-2 text-[16px] font-medium leading-snug text-[#333333]">
+                        {slide.topic || slide.taskName}
                       </h3>
                     </div>
-
-                    <p
-                      className={`mt-2 line-clamp-4 text-[12px] leading-relaxed ${
-                        slide.isCompleted ? "text-[#CBD5E1]" : "text-[#7B8798]"
-                      }`}
-                    >
-                      {slide.description}
-                    </p>
+                    {dday && (
+                      <span className="shrink-0 rounded-full border border-[#DDE7FF] bg-[#F7F8FA] px-2.5 py-1 text-[11px] font-semibold text-[#333333]">
+                        {dday}
+                      </span>
+                    )}
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
+
+                  <p className="mt-2 line-clamp-2 text-[13px] leading-[1.55] text-[#686A6D]">
+                    {slide.description || "오늘의 학습 내용을 확인해보세요."}
+                  </p>
+
+                  <div className="mt-3 flex items-center gap-2 text-[11px] font-normal text-[#686A6D]">
+                    <span className="rounded-[6px] bg-[#F1F5FF] px-2 py-1 font-medium text-[#4F73E8]">
+                      Week {slide.weekNumber}
+                    </span>
+                    <span className="rounded-[6px] bg-[#F7F8FA] px-2 py-1 ring-1 ring-[#E1E5EA]">
+                      Day {slide.dayNumber}
+                    </span>
+                    <span className="rounded-[6px] bg-[#F7F8FA] px-2 py-1 ring-1 ring-[#E1E5EA]">
+                      {slide.estimatedHours}시간
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
-      </div>
-    </div>
+        {slides.length > 1 && (
+          <button
+            type="button"
+            onClick={scrollToNextPlan}
+            aria-label={isScrolledToEnd ? "처음 플랜 보기" : "다음 플랜 보기"}
+            className="absolute bottom-0 left-1/2 flex h-9 w-9 -translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full border border-[#DCE8FF] bg-white text-[#333333] transition hover:border-[#BFD2FF] hover:bg-[#F7F8FA]"
+          >
+            {isScrolledToEnd ? (
+              <ChevronUp className="h-4.5 w-4.5" strokeWidth={1.6} />
+            ) : (
+              <ChevronDown className="h-4.5 w-4.5" strokeWidth={1.6} />
+            )}
+          </button>
+        )}
+        </>
+      )}
+    </section>
   );
 }
 

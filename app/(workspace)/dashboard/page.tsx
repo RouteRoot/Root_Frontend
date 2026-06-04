@@ -15,16 +15,17 @@ export default function Page() {
       </div>
 
       <div className="hidden flex-col gap-6 lg:flex">
-        <section>
+        <section className="relative">
           <p className="mb-8 mt-14 text-[22px] font-semibold tracking-tight text-[#333333]">
             오늘의 추천
           </p>
 
-          <div
-            className="grid w-full grid-cols-3 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] gap-4"
-            style={{ aspectRatio: "1079 / 416" }}
-          >
-            <AboutCompanyModalTrigger className="relative col-span-2 block h-full overflow-hidden rounded-[10px] text-left">
+          <div className="relative">
+            <div
+              className="grid w-full grid-cols-3 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] gap-4"
+              style={{ aspectRatio: "1079 / 416" }}
+            >
+              <AboutCompanyModalTrigger className="relative col-span-2 block h-full overflow-hidden rounded-[10px] text-left">
               <Image
                 src="/Group 58 (1).svg"
                 alt="뿌리 사용 방법"
@@ -105,7 +106,23 @@ export default function Page() {
                   전기기사, 이렇게 준비하면 합격합니다.
                 </h3>
               </div>
-            </Link>
+              </Link>
+            </div>
+
+            <div className="absolute left-[calc(100%+22px)] top-0 hidden 2xl:block">
+              <Link
+                href="/roadmap"
+                className="block w-[112px] overflow-hidden rounded-[10px] border border-[#E5E8EB] bg-white transition hover:border-[#D0D7E3]"
+              >
+                <Image
+                  src="/Group 59.svg"
+                  alt="나만의 맞춤형 로드맵 보러가기"
+                  width={240}
+                  height={300}
+                  className="block h-auto w-full"
+                />
+              </Link>
+            </div>
           </div>
         </section>
 
