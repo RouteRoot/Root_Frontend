@@ -43,7 +43,7 @@ export default function Page() {
                     뿌리 에디터
                   </span>
                 </div>
-                <h3 className="whitespace-pre-line text-[24px] font-semibold leading-[1.32] text-white">
+                <h3 className="whitespace-pre-line text-[24px] font-medium leading-[1.32] text-white">
                   {"뿌리가 처음이신가요?\n사용방법을 알려드릴게요!"}
                 </h3>
               </div>
@@ -74,7 +74,7 @@ export default function Page() {
                     뿌리 에디터
                   </span>
                 </div>
-                <h3 className="line-clamp-2 text-[18px] font-semibold leading-[1.32] text-white">
+                <h3 className="line-clamp-2 text-[18px] font-medium leading-[1.32] text-white">
                   SQLD 취득 완벽 로드맵 2026 [비전공자를 위한]
                 </h3>
               </div>
@@ -101,7 +101,7 @@ export default function Page() {
                     뿌리 에디터
                   </span>
                 </div>
-                <h3 className="line-clamp-2 text-[18px] font-semibold leading-[1.32] text-white">
+                <h3 className="line-clamp-2 text-[18px] font-medium leading-[1.32] text-white">
                   전기기사, 이렇게 준비하면 합격합니다.
                 </h3>
               </div>
