@@ -290,7 +290,9 @@ export default function GnbSearchBar({ compact = false }: GnbSearchBarProps) {
                     {certificateCategories.map(({ label, icon }) => (
                       <Link
                         key={label}
-                        href="/certificate"
+                        href={`/certificate/search?keyword=${encodeURIComponent(
+                          label
+                        )}`}
                         onClick={closeSearch}
                         className="flex items-center gap-2 rounded-[8px] bg-[#f7f9fb] px-4 py-3 text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#eef8fb]"
                       >

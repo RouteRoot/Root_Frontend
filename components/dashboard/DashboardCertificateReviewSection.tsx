@@ -92,7 +92,7 @@ function ReviewCard({ review }: { review: CertificateReview }) {
             className="flex h-12 items-center justify-center gap-1.5 rounded-[8px] bg-[#F8F9FA] px-3 text-center text-[14px] font-semibold text-[#575757] transition-colors hover:bg-[#EEF4FF] hover:text-[#4876EF]"
           >
             <MessageSquareText className="h-4 w-4 text-[#94A3B8]" />
-            1807개의 합격후기
+            합격후기 보러가기
           </Link>
           <Link
             href={`/certificate/search?keyword=${encodeURIComponent(review.certificateName)}`}
